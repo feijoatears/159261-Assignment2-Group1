@@ -1,4 +1,5 @@
-package src;
+package src.Characters;
+
 
 public class Character {
     protected int posX;

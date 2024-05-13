@@ -1,7 +1,4 @@
 package src;
-
-
-
 /*
     Assignment 2
 
@@ -13,16 +10,21 @@ package src;
  */
 
 
-import javax.imageio.ImageIO;
+import src.Characters.*;
+
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
 public class Assignment2 extends GameEngine
 {
+
+    
     static int framerate = 30;
     protected Image backgroundImage;
-    
+    public Player player = new Player();
+
+
     public static void main(String[] args) 
     {
         createGame(new Assignment2(), framerate);
@@ -45,21 +47,14 @@ public class Assignment2 extends GameEngine
             drawImage(backgroundImage, 0, 0, width(), height());
         }
 
-
     }
 
 
-    public Image loadImage(String filename) {
-        try {
-            Image image = ImageIO.read(new File(filename));
-            return image;
-        } catch (IOException e){
-            e.printStackTrace();
-            return null;
-        }
-    }
+    
+    
 
-    public void setupWindow(int width, int height){
+    public void setupWindow(int width, int height)
+    {
         // testing for adding a PNG background
 
 

@@ -1,14 +1,20 @@
 package src.Characters;
 
 
+import java.awt.*;
+
 public class Character {
     protected int posX;
     protected int posY;
     public int facingDir;
+    protected Image image;
     boolean[] hasKey = new boolean[10];
 
+    // empty constructor
+    public Character() {}
     // Constructor
-    public Character(int posX, int posY, int facingDir) {
+    public Character(int posX, int posY, int facingDir, Image image)
+    {
         this.posX = posX;
         this.posY = posY;
         this.facingDir = facingDir;

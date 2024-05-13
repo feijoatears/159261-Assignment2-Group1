@@ -1,13 +1,17 @@
 package src.Characters;
 
-public class Player extends Character {
-    public Player(int posX, int posY, int facingDir) {
-        super(posX, posY, facingDir);
+import java.awt.*;
 
+public class Player extends Character
+{
+    public Player()
+    {
+        super();
+    };
+    public Player(int posX, int posY, int facingDir, Image image)
+    {
+        super(posX, posY, facingDir, image);
 
     }
-
-
-
 
 }

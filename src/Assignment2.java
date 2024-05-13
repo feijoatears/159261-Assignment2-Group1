@@ -12,61 +12,52 @@ package src;
 
 import src.Characters.*;
 
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.ImageObserver;
+
 
 public class Assignment2 extends GameEngine
 {
-
-    
     static int framerate = 30;
+
     protected Image backgroundImage;
     public Player player = new Player();
 
+    public void setBackgroundImage(Image backgroundImage)
+    {
+        this.backgroundImage = backgroundImage;
+    }
 
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         createGame(new Assignment2(), framerate);
+
     }
     
     public void init() 
     {
-        setWindowSize(600, 600);
-        backgroundImage = loadImage("resources/TestBackground1.jpg");
-        mPanel.repaint();
-    }
+        setWindowSize(500, 500);
+        backgroundImage = loadImage("resources/priest.png"); //using png as an example
 
-    public void update(double dt) {}
-
-    public void paintComponent() {
-
-        if (mGraphics == null) return;
-
-        if (backgroundImage != null) {
-            drawImage(backgroundImage, 0, 0, width(), height());
-        }
 
     }
 
-
-    
-    
-
-    public void setupWindow(int width, int height)
+    public void update(double dt)
     {
-        // testing for adding a PNG background
-
-
-
-
-
 
     }
 
+    public void paintComponent()
+    {
+        //have to create imageObserver so make an inline one
+        mGraphics.drawImage(backgroundImage, 0, 0, width(), height(),  new ImageObserver()
+        {
+            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) { return false; }
+        });
 
 
-
+    }
     
     /*
      * TODO:

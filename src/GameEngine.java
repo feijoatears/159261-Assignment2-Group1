@@ -223,6 +223,14 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
     protected class GamePanel extends JPanel {
         private static final long serialVersionUID = 1L;
 
+        // *-* added this so background an image can be painted as a background
+        private Image background;
+
+        public void setBackground(Image background)
+        {
+            this.background = background;
+        }
+
         // This gets called any time the Operating System
         // tells the program to paint itself
         public void paintComponent(Graphics graphics) {
@@ -235,6 +243,12 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
 
             // Rendering settings
             mGraphics.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+
+            // *-* this sets the background as the background image
+            if(background != null)
+            {
+                mGraphics.drawImage(background, 0,0, this);
+            }
 
             // Paint the game
             if (initialised) {
@@ -328,6 +342,7 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
         // Set background colour
         mGraphics.setBackground(c);
     }
+
 
     // Changes the background Color to the color (red,green,blue)
     public void changeBackgroundColor(int red, int green, int blue) {
@@ -480,7 +495,7 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
         try {
             // Load Image
             Image image = ImageIO.read(new File(filename));
-
+            
             // Return Image
             return image;
         } catch (IOException e) {

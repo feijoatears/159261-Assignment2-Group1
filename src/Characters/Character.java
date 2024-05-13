@@ -1,3 +1,5 @@
+package src;
+
 public class Character {
     protected int posX;
     protected int posY;

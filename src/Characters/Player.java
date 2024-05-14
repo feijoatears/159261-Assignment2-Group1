@@ -74,20 +74,35 @@ public class Player extends Character
 
     public void keyPressed(KeyEvent event) {
         int keyCode = event.getKeyCode();
-        switch(keyCode) {
-            case KeyEvent.VK_RIGHT:
+
+
+        if(keyCode == KeyEvent.VK_RIGHT){
+            if(pressedKeys.contains(KeyEvent.VK_UP)) {
+                setDirection(Direction.Northeast);
+            } else if(pressedKeys.contains(KeyEvent.VK_DOWN)){
+                setDirection(Direction.Southeast);
+            } else {
                 setDirection(Direction.East);
-                break;
-            case KeyEvent.VK_LEFT:
+            }
+        } else if(keyCode == KeyEvent.VK_LEFT){
+            if(pressedKeys.contains(KeyEvent.VK_UP)) {
+                setDirection(Direction.Northwest);
+            } else if(pressedKeys.contains(KeyEvent.VK_DOWN)){
+                setDirection(Direction.Southwest);
+            } else {
                 setDirection(Direction.West);
-                break;
-            case KeyEvent.VK_DOWN:
-                setDirection(Direction.South);
-                break;
-            case KeyEvent.VK_UP:
+            }
+        } else if (keyCode == KeyEvent.VK_UP) {
+            if(!pressedKeys.contains(KeyEvent.VK_RIGHT) && !pressedKeys.contains(KeyEvent.VK_LEFT)) {
                 setDirection(Direction.North);
-                break;
-        }
+            }
+        } else if (keyCode == KeyEvent.VK_DOWN) {
+            if(!pressedKeys.contains(KeyEvent.VK_RIGHT) && !pressedKeys.contains(KeyEvent.VK_LEFT)) {
+                setDirection(Direction.South);
+            }
+        }    
+
+        pressedKeys.add(keyCode);
     }
 
 

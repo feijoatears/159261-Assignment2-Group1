@@ -71,6 +71,8 @@ public class Player extends Character
     }
 
 
+
+    // This is for making a square/rectangle for collisions
     public boolean checkCollision(Rectangle other) {
         Rectangle playerRect = new Rectangle(this.posX, this.posY, this.image.getWidth(null), this.image.getHeight(null));
         return playerRect.intersects(other);

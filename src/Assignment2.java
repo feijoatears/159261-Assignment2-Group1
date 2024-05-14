@@ -61,12 +61,42 @@ public class Assignment2 extends GameEngine
             player.move();
 
 
-            Rectangle leftSquare = new Rectangle(30, height() / 2 - 15, 30, 30);
-            Rectangle topSquare = new Rectangle(width() / 2 + 180, 30, 30, 30);
-            Rectangle rightSquare = new Rectangle(width() - 60, height() / 2 - 15, 30, 30);
+            Rectangle leftDoor = new Rectangle(15, height() / 2 - 15, 30, 50);
+            Rectangle topDoor = new Rectangle((width() / 2) - 20, 0+ 10 , 55, 30);
+            Rectangle rightDoor = new Rectangle(width() - 30, height() / 2 - 15, 30, 50);
 
-            if (player.checkCollision(leftSquare) || player.checkCollision(topSquare) || player.checkCollision(rightSquare)) {
-                System.out.println("Collision detected!");
+            if (player.checkCollision(leftDoor) || player.checkCollision(topDoor) || player.checkCollision(rightDoor)) {
+               // System.out.println("Collision detected!");
+            }
+
+
+            if (player.checkCollision(leftDoor)){
+                System.out.println("Left Door");
+
+                // if statements for checking key
+
+
+            }
+
+
+            if (player.checkCollision(topDoor)){
+                System.out.println("Top Door");
+
+
+                // if statements for checking key
+
+
+            }
+            if (player.checkCollision(rightDoor)){
+                System.out.println("Right Door");
+
+
+                // if statements for checking key
+
+
+
+
+
             }
 
 

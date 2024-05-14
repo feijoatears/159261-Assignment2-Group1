@@ -57,7 +57,7 @@ public class Enemy extends Character {
                 this.setPosY(this.getPosY() - speed);
                 this.setPosX(this.getPosX() + speed);
                 break;
-            case NorthWest:
+            case Northwest:
                 this.setPosY(this.getPosY() - speed);
                 this.setPosX(this.getPosX() - speed);
                 break;

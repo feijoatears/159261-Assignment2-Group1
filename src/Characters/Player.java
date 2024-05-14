@@ -1,6 +1,7 @@
 package src.Characters;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Player extends Character
 {
@@ -67,6 +68,25 @@ public class Player extends Character
                 this.setPosX(posX + speed);
                 break;
             }
+        }
+    }
+
+
+    public void keyPressed(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+        switch(keyCode) {
+            case KeyEvent.VK_RIGHT:
+                setDirection(Direction.East);
+                break;
+            case KeyEvent.VK_LEFT:
+                setDirection(Direction.West);
+                break;
+            case KeyEvent.VK_DOWN:
+                setDirection(Direction.South);
+                break;
+            case KeyEvent.VK_UP:
+                setDirection(Direction.North);
+                break;
         }
     }
 

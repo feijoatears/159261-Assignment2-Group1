@@ -11,6 +11,7 @@ package src;
 
 
 import src.Characters.*;
+import src.Objects.Key;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -25,11 +26,18 @@ public class Assignment2 extends GameEngine
     protected Image backgroundImage;
     public Player player = Player.getInstance();
 
-    //using a hashset to hold 2 key presses from user
-    Set<Integer> keys = new HashSet<>();
+
 
     //can be moved to player class
     public boolean isMoving = false;
+
+
+    // key shit
+    public Key key;
+    protected Image keyImage;
+    // using a hashset to hold 2 key presses from user
+    Set<Integer> keys = new HashSet<>();
+
 
 
     // Test variables, delete later
@@ -52,6 +60,11 @@ public class Assignment2 extends GameEngine
 
         //temporary player img
         player.setImage("resources/scaledNosferatu.png");
+
+        // key stuff
+        keyImage = loadImage("resources/key1.png");
+        key = new Key(250, 250, keyImage);
+
     }
 
     public void update(double dt)
@@ -67,6 +80,9 @@ public class Assignment2 extends GameEngine
 
             if (player.checkCollision(leftDoor) || player.checkCollision(topDoor) || player.checkCollision(rightDoor)) {
                // System.out.println("Collision detected!");
+
+
+
             }
 
 
@@ -84,6 +100,13 @@ public class Assignment2 extends GameEngine
 
 
                 // if statements for checking key
+                for (int i = 0; i < 10; i++){
+                    if (player.hasKey(0)){
+
+                    }
+                }
+
+
 
 
             }
@@ -99,8 +122,23 @@ public class Assignment2 extends GameEngine
 
             }
 
+            Rectangle playerRect = new Rectangle(player.getPosX(), player.getPosY(), player.getImage().getWidth(null), player.getImage().getHeight(null));
+            if (key.checkCollision(playerRect) && !key.getIsUsed()) {
+                player.collectKey(0); // for keyindex 0
+                key.setUsed(true);
+                System.out.println("Key collected!");
+            }
+
+
 
         }
+
+
+
+        if (player.hasKey(0)) {
+            System.out.println("Player has collected the key at index 0!");
+        }
+
     }
 
     public void paintComponent()
@@ -112,16 +150,16 @@ public class Assignment2 extends GameEngine
         });
 
         drawImage(player.getImage(), player.getPosX(), player.getPosY());
-
+        // drawImage(keyImage, key.getPosX(), key.getPosY());    -->   draw key in place
 
         // Drawing basic door hitbox, testing enable with space, disable with enter
         changeColor(red);
         if (test1) {
             float opacity = 0.5f; // 50% opacity
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-            mGraphics.setComposite(ac);
+            AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+            mGraphics.setComposite(opaque);
 
-
+            drawSolidRectangle(player.getPosX(), player.getPosY(), player.getImage().getWidth(null), player.getImage().getHeight(null));
             drawSolidRectangle(15, height() / 2 - 15, 30, 50);
             drawSolidRectangle((width() / 2) - 20, 0+ 10 , 55, 30);
             drawSolidRectangle(width() - 30, height() / 2 - 15, 30, 50);
@@ -131,6 +169,19 @@ public class Assignment2 extends GameEngine
 
             mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
+if (!key.getIsUsed()) {
+        drawImage(keyImage, key.getPosX(), key.getPosY());
+
+        // Draw a semi-transparent rectangle over the key, needed for when the background of the key goes away
+        float keyOpacity = 0.5f; // 50% opacity
+        AlphaComposite keyAc = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, keyOpacity);
+        mGraphics.setComposite(keyAc);
+
+
+        drawSolidRectangle(key.getPosX(), key.getPosY(), keyImage.getWidth(null), keyImage.getHeight(null));
+
+        mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+    }
 
 
     }

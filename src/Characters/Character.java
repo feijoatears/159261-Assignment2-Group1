@@ -60,17 +60,17 @@ public class Character {
     }
 
     // Method to check if a specific key is present
-    public boolean hasKey(int keyIndex) {
-        if (keyIndex >= 0 && keyIndex < hasKey.length) {
-            return hasKey[keyIndex];
+    public boolean hasKey(int keyNum) {
+        if (keyNum >= 0 && keyNum < hasKey.length) {
+            return hasKey[keyNum];
         }
         return false;
     }
 
     // Method to set a key as collected
-    public void collectKey(int keyIndex) {
-        if (keyIndex >= 0 && keyIndex < hasKey.length) {
-            hasKey[keyIndex] = true;
+    public void collectKey(int keyNum) {
+        if (keyNum >= 0 && keyNum < hasKey.length) {
+            hasKey[keyNum] = true;
         }
     }
 }

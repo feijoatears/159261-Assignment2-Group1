@@ -16,9 +16,11 @@ public class Enemy extends Character {
         int playerX = player.getPosX();
         int playerY = player.getPosY();
 
+        //calculate the horizontal and verticle distance between enemy and player
         int dx = playerX - this.getPosX();
         int dy = playerY - this.getPosY();
 
+        //finding the direction the enemy needs to move
         Direction moveDirection;
         if(Math.abs(dx) > Math.abs(dy)) {
             if(dx > 0){

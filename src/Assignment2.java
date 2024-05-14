@@ -135,8 +135,8 @@ public class Assignment2 extends GameEngine
 
 
 
-        if (player.hasKey(0)) {
-            System.out.println("Player has collected the key at index 0!");
+        if (player.hasKey(0)) { // v0.0.11
+            System.out.println("Player has collected the keyNum: 0!");
         }
 
     }

@@ -1,23 +1,26 @@
 package src.Characters;
 
+import src.Direction;
+import src.GameEngine;
+
 
 import java.awt.*;
 
 public class Character {
     protected int posX;
     protected int posY;
-    public int facingDir;
+    protected Direction direction;
     protected Image image;
     boolean[] hasKey = new boolean[10];
 
     // empty constructor
     public Character() {}
     // Constructor
-    public Character(int posX, int posY, int facingDir, Image image)
+    public Character(int posX, int posY, Direction direction, Image image)
     {
         this.posX = posX;
         this.posY = posY;
-        this.facingDir = facingDir;
+        this.direction = direction;
     }
 
     // Getters and setters for posX
@@ -38,13 +41,22 @@ public class Character {
         this.posY = posY;
     }
 
-    // Getters and setters for facingDir
-    public int getFacingDir() {
-        return facingDir;
+    // Getters and setters for direction
+
+
+    public Direction getDirection() {
+        return direction;
     }
 
-    public void setFacingDir(int facingDir) {
-        this.facingDir = facingDir;
+    public void setDirection(Direction direction) {this.direction = direction;}
+
+    public void setImage(String path)
+    {
+        this.image = GameEngine.loadImage(path);
+    }
+    public Image getImage()
+    {
+        return image;
     }
 
     // Method to check if a specific key is present

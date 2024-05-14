@@ -2,10 +2,13 @@ package src.Characters;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Player extends Character
 {
     private static Player instance;
+    private Set<Integer> pressedKeys = new HashSet<>();
 
     private Player() { };
     private int speed = 5;

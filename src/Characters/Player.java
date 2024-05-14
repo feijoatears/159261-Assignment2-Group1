@@ -5,6 +5,7 @@ public class Player extends Character
     private static Player instance;
 
     private Player() { };
+    private int speed = 5;
 
     public static Player getInstance()
     {
@@ -22,48 +23,58 @@ public class Player extends Character
         {
             case North:
             {
-                this.setPosY(posY - 1);
+                this.setPosY(posY - speed);
                 break;
             }
             case South:
             {
-                this.setPosY(posY + 1);
+                this.setPosY(posY + speed);
                 break;
             }
             case West:
             {
-                this.setPosX(posX - 1);
+                this.setPosX(posX - speed);
                 break;
             }
             case East:
             {
-                this.setPosX(posX + 1);
+                this.setPosX(posX + speed);
                 break;
             }
             case Northwest:
             {
-                this.setPosY(posY - 1);
-                this.setPosX(posX - 1);
+                this.setPosY(posY - speed);
+                this.setPosX(posX - speed);
                 break;
             }
             case Northeast:
             {
-                this.setPosY(posY - 1);
-                this.setPosX(posX + 1);
+                this.setPosY(posY - speed);
+                this.setPosX(posX + speed);
                 break;
             }
             case Southwest:
             {
-                this.setPosY(posY + 1);
-                this.setPosX(posX - 1);
+                this.setPosY(posY + speed);
+                this.setPosX(posX - speed);
                 break;
             }
             case Southeast:
             {
-                this.setPosY(posY + 1);
-                this.setPosX(posX + 1);
+                this.setPosY(posY + speed);
+                this.setPosX(posX + speed);
                 break;
             }
         }
+    }
+
+    public int getSpeed()
+    {
+        return speed;
+    }
+
+    public void setSpeed(int speed)
+    {
+        this.speed = speed;
     }
 }

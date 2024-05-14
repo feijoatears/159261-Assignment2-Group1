@@ -47,7 +47,7 @@ public class Assignment2 extends GameEngine
         backgroundImage = loadImage("resources/TestBackground1.png");
 
         //temporary player img
-        player.setImage("resources/nosferatu.png");
+        player.setImage("resources/scaledNosferatu.png");
     }
 
     public void update(double dt)

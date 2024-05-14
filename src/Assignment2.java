@@ -31,6 +31,10 @@ public class Assignment2 extends GameEngine
     //can be moved to player class
     public boolean isMoving = false;
 
+
+    // Test variables, delete later
+    boolean test1;
+
     public void setBackgroundImage(Image backgroundImage)
     {
         this.backgroundImage = backgroundImage;
@@ -55,24 +59,64 @@ public class Assignment2 extends GameEngine
         if(isMoving)
         {
             player.move();
+
+
+            Rectangle leftSquare = new Rectangle(30, height() / 2 - 15, 30, 30);
+            Rectangle topSquare = new Rectangle(width() / 2 + 180, 30, 30, 30);
+            Rectangle rightSquare = new Rectangle(width() - 60, height() / 2 - 15, 30, 30);
+
+            if (player.checkCollision(leftSquare) || player.checkCollision(topSquare) || player.checkCollision(rightSquare)) {
+                System.out.println("Collision detected!");
+            }
+
+
         }
     }
 
     public void paintComponent()
     {
-        //have to create imageObserver so make an inline one
+        // have to create imageObserver so make an inline one
         mGraphics.drawImage(backgroundImage, 0, 0, width(), height(),  new ImageObserver()
         {
             public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) { return false; }
         });
 
         drawImage(player.getImage(), player.getPosX(), player.getPosY());
+
+
+        // Drawing basic door hitbox, testing enable with space, disable with enter
+        changeColor(red);
+        if (test1) {
+            float opacity = 0.5f; // 50% opacity
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+            mGraphics.setComposite(ac);
+
+
+            drawSolidRectangle(15, height() / 2 - 15, 30, 50);
+            drawSolidRectangle((width() / 2) - 20, 0+ 10 , 55, 30);
+            drawSolidRectangle(width() - 30, height() / 2 - 15, 30, 50);
+
+
+
+
+            mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        }
+
+
     }
 
     Direction lastDirection = null;
     @Override
     public void keyPressed(KeyEvent event)
     {
+
+
+        if (event.getKeyCode() == KeyEvent.VK_SPACE){
+            test1 = true;
+        } else if (event.getKeyCode() == KeyEvent.VK_ENTER){
+            test1 = false;
+        }
+
         //max of 2 key presses allowed
         if (keys.size() >= 2)
         {

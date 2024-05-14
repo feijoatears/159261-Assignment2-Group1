@@ -1,5 +1,7 @@
 package src.Characters;
 
+import java.awt.*;
+
 public class Player extends Character
 {
     private static Player instance;
@@ -68,6 +70,11 @@ public class Player extends Character
         }
     }
 
+
+    public boolean checkCollision(Rectangle other) {
+        Rectangle playerRect = new Rectangle(this.posX, this.posY, this.image.getWidth(null), this.image.getHeight(null));
+        return playerRect.intersects(other);
+    }
     public int getSpeed()
     {
         return speed;

@@ -194,8 +194,8 @@ public class Assignment2 extends GameEngine
 
 
 
-        mGraphics.clearRect(0, 0, width(), height());
-       // mGraphics.drawImage(currentLevel.getImage(), 0, 0, width(), height(), null);
+        mGraphics.clearRect(0, 0, width(), height());                     // LEAVE OR TEARING WILL HAPPEN
+
 
 
         mGraphics.drawImage(currentLevel.getImage(), 0, 0, width(), height(), (img, infoflags, x, y, width, height) -> false);

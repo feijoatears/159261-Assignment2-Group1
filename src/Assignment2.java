@@ -110,7 +110,7 @@ public class Assignment2 extends GameEngine
         if(isMoving)
         {
             player.move();
-
+            // clearBackground(width(), height());
             // removed switch to eliminate duplicates
             if(player.getDirection() == Direction.East)
             {
@@ -140,18 +140,16 @@ public class Assignment2 extends GameEngine
             Rectangle rightDoor = new Rectangle(width() - 30, height() / 2 - 15, 30, 50);
             Rectangle bottomDoor = new Rectangle((width() / 2) - 20, height()-30, 50, 30);
 
-            if (player.checkCollision(leftDoor))
-            {
+            if (player.checkCollision(leftDoor)) {
                 System.out.println("Left Door");
-                if(!collisionHandled)
-                {
-                    levelIndex ++;
-                    currentLevel = levels.get(levelIndex);
+                if (!collisionHandled) {
+                    levelIndex++;
+                    if (levelIndex < levels.size()) {
+                        currentLevel = levels.get(levelIndex);
+                    }
                     collisionHandled = true;
                     clearBackground(width(), height());
                 }
-
-                // if statements for checking key
             }
 
             if (player.checkCollision(topDoor))
@@ -193,10 +191,14 @@ public class Assignment2 extends GameEngine
     public void paintComponent()
     {
         // have to create imageObserver so make an inline one
-        mGraphics.drawImage(currentLevel.getImage(), 0, 0, width(), height(),  new ImageObserver()
-        {
-            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) { return false; }
-        });
+
+
+
+        mGraphics.clearRect(0, 0, width(), height());
+       // mGraphics.drawImage(currentLevel.getImage(), 0, 0, width(), height(), null);
+
+
+        mGraphics.drawImage(currentLevel.getImage(), 0, 0, width(), height(), (img, infoflags, x, y, width, height) -> false);
 
         drawImage(player.getImage(), player.getPosX(), player.getPosY());
         // drawImage(keyImage, key.getPosX(), key.getPosY());    -->   draw key in place
@@ -242,6 +244,12 @@ public class Assignment2 extends GameEngine
             test1 = true;
         } else if (event.getKeyCode() == KeyEvent.VK_ENTER){
             test1 = false;
+        }
+
+
+        if (event.getKeyCode() == KeyEvent.VK_G){
+            mGraphics.clearRect(0, 0, width(), height());
+            System.out.println();
         }
 
         //max of 2 key presses allowed

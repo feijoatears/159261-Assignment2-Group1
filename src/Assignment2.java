@@ -24,8 +24,15 @@ public class Assignment2 extends GameEngine
     static int framerate = 30;
 
     protected Image backgroundImage;
+    protected Image playerSpriteSheet;
     public Player player = Player.getInstance();
 
+    private Image[] humanFrames;
+    private int currentFrameIndex = 0;
+    private int[] eastFrames = {0, 1};
+    private int[] southFrames = {2, 3};
+    private int[] westFrames = {8, 9};
+    private int[] northFrames = {6, 7};
 
 
     //can be moved to player class
@@ -58,8 +65,21 @@ public class Assignment2 extends GameEngine
         setWindowSize(500, 500);
         backgroundImage = loadImage("resources/TestBackground1.png");
 
-        //temporary player img
-        player.setImage("resources/scaledNosferatu.png");
+        playerSpriteSheet = loadImage("resources/scaledHuman-spritesheet copy.png");
+
+        int numFrames = 10;
+        int frameWidth = playerSpriteSheet.getWidth(null) / numFrames;
+        int frameHeight = playerSpriteSheet.getheight(null);
+
+        humanFrames = new Image[numFrames];
+
+        for (int i = 0; i < numFrames; i++){
+            humanFrames[i] = subImage(playerSpriteSheet, i * frameWidth, 0 , frameWidth, frameHeight);
+        }
+
+        player.setImage(humanFrames[0]);
+
+        
 
         // key stuff
         keyImage = loadImage("resources/key1.png");
@@ -73,6 +93,40 @@ public class Assignment2 extends GameEngine
         {
             player.move();
 
+            switch(player.getDirection()){
+                case East:
+                    currentFrameIndex = (currentFrameIndex + 1)% eastFrames.length;
+                    player.setImage(humanFrames[eastFrames[currentFrameIndex]]);
+                    break;
+                case South:
+                    currentFrameIndex = (currentFrameIndex + 1)% southFrames.length;
+                    player.setImage(humanFrames[southFrames[currentFrameIndex]]);
+                    break;
+                case West:
+                    currentFrameIndex = (currentFrameIndex + 1)% westFrames.length;
+                    player.setImage(humanFrames[westFrames[currentFrameIndex]]);
+                    break;
+                case North:
+                    currentFrameIndex = (currentFrameIndex + 1)% northFrames.length;
+                    player.setImage(humanFrames[northFrames[currentFrameIndex]]);
+                    break;
+                case Northeast:
+                    currentFrameIndex = (currentFrameIndex + 1)% northFrames.length;
+                    player.setImage(humanFrames[northFrames[currentFrameIndex]]);
+                    break;
+                case Northwest:
+                    currentFrameIndex = (currentFrameIndex + 1)% northFrames.length;
+                    player.setImage(humanFrames[northFrames[currentFrameIndex]]);
+                    break;
+                case Southeast:
+                    currentFrameIndex = (currentFrameIndex + 1)% southFrames.length;
+                    player.setImage(humanFrames[southFrames[currentFrameIndex]]);
+                    break;
+                case Southwest:
+                    currentFrameIndex = (currentFrameIndex + 1)% southFrames.length;
+                    player.setImage(humanFrames[southFrames[currentFrameIndex]]);
+                    break;
+            }
 
             Rectangle leftDoor = new Rectangle(15, height() / 2 - 15, 30, 50);
             Rectangle topDoor = new Rectangle((width() / 2) - 20, 0+ 10 , 55, 30);

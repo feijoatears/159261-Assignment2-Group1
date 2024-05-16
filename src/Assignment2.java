@@ -15,7 +15,6 @@ import src.Objects.Key;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.ImageObserver;
 import java.util.*;
 
 
@@ -37,9 +36,11 @@ public class Assignment2 extends GameEngine
     private final int[] northFrames = {6, 7};
 
     //arraylist to store all levels in map
-    private ArrayList<Level> levels = new ArrayList<>();
+
+    private ArrayList<ArrayList<Level>> map = new ArrayList<>();
     private Level currentLevel;
-    private int numLevels = 2, levelIndex = 0;
+
+    private int numLevels = 20, levelIndex = 0;
 
     //can be moved to player class
     public boolean isMoving = false;
@@ -70,20 +71,25 @@ public class Assignment2 extends GameEngine
     public void init()
     {
         setWindowSize(500, 500);
+
+        //create a temporary arraylist to hold a 'floor'
+        ArrayList<Level> temp = new ArrayList<>();
         for(int i = 0; i < numLevels; i++)
         {
-            Level level = new Level();
-            if(i == 1)
+            //every fourth level, create a new floor (5x4)
+            if(i % 4 == 0)
             {
-                level.setImage(loadImage("resources/priest.png"));
-                levels.add(level);
-                break;
+                map.add(temp);
+                temp.clear();
             }
-            level.setImage(loadImage("resources/TestBackground1.png"));
-
-            levels.add(level);
+            Level level = new Level(loadImage("resources/level" + i));
+            temp.add(level);
         }
-        currentLevel = levels.get(levelIndex);
+        map.add(temp);
+
+        Random r = new Random();
+        System.out.println(r.nextInt(2));
+
 
 
         playerSpriteSheet = loadImage("resources/scaledHuman-spritesheet copy.png");
@@ -144,9 +150,9 @@ public class Assignment2 extends GameEngine
                 System.out.println("Left Door");
                 if (!collisionHandled) {
                     levelIndex++;
-                    if (levelIndex < levels.size()) {
-                        currentLevel = levels.get(levelIndex);
-                    }
+                    /*if (levelIndex < levels.size()) {
+                        currentLevel = levels.get(0).get(levelIndex);
+                    }*/
                     collisionHandled = true;
                     clearBackground(width(), height());
                 }
@@ -196,7 +202,6 @@ public class Assignment2 extends GameEngine
 
         mGraphics.clearRect(0, 0, width(), height());
        // mGraphics.drawImage(currentLevel.getImage(), 0, 0, width(), height(), null);
-
 
         mGraphics.drawImage(currentLevel.getImage(), 0, 0, width(), height(), (img, infoflags, x, y, width, height) -> false);
 

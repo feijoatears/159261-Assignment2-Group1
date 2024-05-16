@@ -27,13 +27,19 @@ public class Assignment2 extends GameEngine
     protected Image playerSpriteSheet;
     public Player player = Player.getInstance();
 
+    public boolean collisionHandled = false;
+
     private Image[] humanFrames;
     private int currentFrameIndex = 0;
-    private int[] eastFrames = {0, 1};
-    private int[] southFrames = {2, 3};
-    private int[] westFrames = {8, 9};
-    private int[] northFrames = {6, 7};
+    private final int[] eastFrames = {0, 1};
+    private final int[] southFrames = {2, 3};
+    private final int[] westFrames = {8, 9};
+    private final int[] northFrames = {6, 7};
 
+    //arraylist to store all levels in map
+    private ArrayList<Level> levels = new ArrayList<>();
+    private Level currentLevel;
+    private int numLevels = 2, levelIndex = 0;
 
     //can be moved to player class
     public boolean isMoving = false;
@@ -50,6 +56,7 @@ public class Assignment2 extends GameEngine
     // Test variables, delete later
     boolean test1;
 
+    //function to change background of jpanel
     public void setBackgroundImage(Image backgroundImage)
     {
         this.backgroundImage = backgroundImage;
@@ -63,7 +70,21 @@ public class Assignment2 extends GameEngine
     public void init()
     {
         setWindowSize(500, 500);
-        backgroundImage = loadImage("resources/TestBackground1.png");
+        for(int i = 0; i < numLevels; i++)
+        {
+            Level level = new Level();
+            if(i == 1)
+            {
+                level.setImage(loadImage("resources/priest.png"));
+                levels.add(level);
+                break;
+            }
+            level.setImage(loadImage("resources/TestBackground1.png"));
+
+            levels.add(level);
+        }
+        currentLevel = levels.get(levelIndex);
+
 
         playerSpriteSheet = loadImage("resources/scaledHuman-spritesheet copy.png");
 
@@ -79,12 +100,9 @@ public class Assignment2 extends GameEngine
 
         player.setImage(humanFrames[0]);
 
-        
-
         // key stuff
         keyImage = loadImage("resources/key1.png");
         key = new Key(250, 250, keyImage);
-
     }
 
     public void update(double dt)
@@ -93,112 +111,89 @@ public class Assignment2 extends GameEngine
         {
             player.move();
 
-            switch(player.getDirection()){
-                case East:
-                    currentFrameIndex = (currentFrameIndex + 1)% eastFrames.length;
-                    player.setImage(humanFrames[eastFrames[currentFrameIndex]]);
-                    break;
-                case South:
-                    currentFrameIndex = (currentFrameIndex + 1)% southFrames.length;
-                    player.setImage(humanFrames[southFrames[currentFrameIndex]]);
-                    break;
-                case West:
-                    currentFrameIndex = (currentFrameIndex + 1)% westFrames.length;
-                    player.setImage(humanFrames[westFrames[currentFrameIndex]]);
-                    break;
-                case North:
-                    currentFrameIndex = (currentFrameIndex + 1)% northFrames.length;
-                    player.setImage(humanFrames[northFrames[currentFrameIndex]]);
-                    break;
-                case Northeast:
-                    currentFrameIndex = (currentFrameIndex + 1)% northFrames.length;
-                    player.setImage(humanFrames[northFrames[currentFrameIndex]]);
-                    break;
-                case Northwest:
-                    currentFrameIndex = (currentFrameIndex + 1)% northFrames.length;
-                    player.setImage(humanFrames[northFrames[currentFrameIndex]]);
-                    break;
-                case Southeast:
-                    currentFrameIndex = (currentFrameIndex + 1)% southFrames.length;
-                    player.setImage(humanFrames[southFrames[currentFrameIndex]]);
-                    break;
-                case Southwest:
-                    currentFrameIndex = (currentFrameIndex + 1)% southFrames.length;
-                    player.setImage(humanFrames[southFrames[currentFrameIndex]]);
-                    break;
+            // removed switch to eliminate duplicates
+            if(player.getDirection() == Direction.East)
+            {
+                currentFrameIndex = (currentFrameIndex + 1)% eastFrames.length;
+                player.setImage(humanFrames[eastFrames[currentFrameIndex]]);
+            }
+            else if (player.getDirection() == Direction.West)
+            {
+                currentFrameIndex = (currentFrameIndex + 1)% westFrames.length;
+                player.setImage(humanFrames[westFrames[currentFrameIndex]]);
+            }
+            else if(player.getDirection() == Direction.North ||
+                    player.getDirection() == Direction.Northeast ||
+                    player.getDirection() ==Direction.Northwest)
+            {
+                currentFrameIndex = (currentFrameIndex + 1)% northFrames.length;
+                player.setImage(humanFrames[northFrames[currentFrameIndex]]);
+            }
+            else
+            {
+                currentFrameIndex = (currentFrameIndex + 1)% southFrames.length;
+                player.setImage(humanFrames[southFrames[currentFrameIndex]]);
             }
 
-            Rectangle leftDoor = new Rectangle(15, height() / 2 - 15, 30, 50);
-            Rectangle topDoor = new Rectangle((width() / 2) - 20, 0+ 10 , 55, 30);
+            Rectangle leftDoor = new Rectangle(0, height() / 2 - 15, 30, 50);
+            Rectangle topDoor = new Rectangle((width() / 2) - 20, 0 , 55, 30);
             Rectangle rightDoor = new Rectangle(width() - 30, height() / 2 - 15, 30, 50);
+            Rectangle bottomDoor = new Rectangle((width() / 2) - 20, height()-30, 50, 30);
 
-            if (player.checkCollision(leftDoor) || player.checkCollision(topDoor) || player.checkCollision(rightDoor)) {
-               // System.out.println("Collision detected!");
-
-
-
-            }
-
-
-            if (player.checkCollision(leftDoor)){
+            if (player.checkCollision(leftDoor))
+            {
                 System.out.println("Left Door");
+                if(!collisionHandled)
+                {
+                    levelIndex ++;
+                    currentLevel = levels.get(levelIndex);
+                    collisionHandled = true;
+                    clearBackground(width(), height());
+                }
 
                 // if statements for checking key
-
-
             }
 
-
-            if (player.checkCollision(topDoor)){
+            if (player.checkCollision(topDoor))
+            {
                 System.out.println("Top Door");
-
-
                 // if statements for checking key
+
                 for (int i = 0; i < 10; i++){
                     if (player.hasKey(0)){
 
                     }
                 }
-
-
-
-
             }
-            if (player.checkCollision(rightDoor)){
+            if (player.checkCollision(rightDoor))
+            {
                 System.out.println("Right Door");
 
-
                 // if statements for checking key
-
-
-
-
-
+            }
+            if(player.checkCollision(bottomDoor))
+            {
+                System.out.println("Bottom Door");
             }
 
             Rectangle playerRect = new Rectangle(player.getPosX(), player.getPosY(), player.getImage().getWidth(null), player.getImage().getHeight(null));
-            if (key.checkCollision(playerRect) && !key.getIsUsed()) {
+            if (key.checkCollision(playerRect) && !key.getIsUsed())
+            {
                 player.collectKey(0); // for keyindex 0
                 key.setUsed(true);
                 System.out.println("Key collected!");
             }
-
-
-
         }
-
-
 
         if (player.hasKey(0)) { // v0.0.11
             System.out.println("Player has collected the keyNum: 0!");
         }
-
     }
 
     public void paintComponent()
     {
         // have to create imageObserver so make an inline one
-        mGraphics.drawImage(backgroundImage, 0, 0, width(), height(),  new ImageObserver()
+        mGraphics.drawImage(currentLevel.getImage(), 0, 0, width(), height(),  new ImageObserver()
         {
             public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) { return false; }
         });
@@ -214,30 +209,27 @@ public class Assignment2 extends GameEngine
             mGraphics.setComposite(opaque);
 
             drawSolidRectangle(player.getPosX(), player.getPosY(), player.getImage().getWidth(null), player.getImage().getHeight(null));
-            drawSolidRectangle(15, height() / 2 - 15, 30, 50);
-            drawSolidRectangle((width() / 2) - 20, 0+ 10 , 55, 30);
-            drawSolidRectangle(width() - 30, height() / 2 - 15, 30, 50);
 
-
-
+            drawSolidRectangle(0, (double) height() / 2 - 15, 30, 50);
+            drawSolidRectangle(((double) width() / 2) - 20, 0 , 55, 30);
+            drawSolidRectangle(width() - 30, (double) height() / 2 - 15, 30, 50);
+            drawSolidRectangle( ((double) width() / 2) - 20, height()-30, 50, 30);
 
             mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
-if (!key.getIsUsed()) {
-        drawImage(keyImage, key.getPosX(), key.getPosY());
+        if (!key.getIsUsed()) {
+            drawImage(keyImage, key.getPosX(), key.getPosY());
 
-        // Draw a semi-transparent rectangle over the key, needed for when the background of the key goes away
-        float keyOpacity = 0.5f; // 50% opacity
-        AlphaComposite keyAc = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, keyOpacity);
-        mGraphics.setComposite(keyAc);
-
-
-        drawSolidRectangle(key.getPosX(), key.getPosY(), keyImage.getWidth(null), keyImage.getHeight(null));
-
-        mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-    }
+            // Draw a semi-transparent rectangle over the key, needed for when the background of the key goes away
+            float keyOpacity = 0.5f; // 50% opacity
+            AlphaComposite keyAc = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, keyOpacity);
+            mGraphics.setComposite(keyAc);
 
 
+            drawSolidRectangle(key.getPosX(), key.getPosY(), keyImage.getWidth(null), keyImage.getHeight(null));
+
+            mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        }
     }
 
     Direction lastDirection = null;

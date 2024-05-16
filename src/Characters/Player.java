@@ -6,8 +6,10 @@ public class Player extends Character
 {
     private static Player instance;
 
-    private Player() { };
+    private Player() { }
     private int speed = 5;
+    public boolean[] hasKey = new boolean[10];
+
 
     public static Player getInstance()
     {
@@ -74,8 +76,8 @@ public class Player extends Character
         }
     }
 
-
-    public boolean checkCollision(Rectangle other) {
+    public boolean checkCollision(Rectangle other)
+    {
         Rectangle playerRect = new Rectangle(this.posX, this.posY, this.image.getWidth(null), this.image.getHeight(null));
         return playerRect.intersects(other);
     }
@@ -87,5 +89,20 @@ public class Player extends Character
     public void setSpeed(int speed)
     {
         this.speed = speed;
+    }
+
+    // Method to check if a specific key is present
+    public boolean hasKey(int keyNum) {
+        if (keyNum >= 0 && keyNum < hasKey.length) {
+            return hasKey[keyNum];
+        }
+        return false;
+    }
+
+    // Method to set a key as collected
+    public void collectKey(int keyNum) {
+        if (keyNum >= 0 && keyNum < hasKey.length) {
+            hasKey[keyNum] = true;
+        }
     }
 }

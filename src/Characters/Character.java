@@ -11,7 +11,7 @@ public class Character {
     protected int posY;
     protected Direction direction;
     protected Image image;
-    boolean[] hasKey = new boolean[10];
+
 
     // empty constructor
     public Character() {}
@@ -57,20 +57,5 @@ public class Character {
     public Image getImage()
     {
         return image;
-    }
-
-    // Method to check if a specific key is present
-    public boolean hasKey(int keyNum) {
-        if (keyNum >= 0 && keyNum < hasKey.length) {
-            return hasKey[keyNum];
-        }
-        return false;
-    }
-
-    // Method to set a key as collected
-    public void collectKey(int keyNum) {
-        if (keyNum >= 0 && keyNum < hasKey.length) {
-            hasKey[keyNum] = true;
-        }
     }
 }

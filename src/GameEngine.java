@@ -363,6 +363,7 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
     // Clears the background, makes the whole window whatever the background color is
     public void clearBackground(int width, int height) {
         // Clear background
+
         mGraphics.clearRect(0, 0, width, height);
     }
 

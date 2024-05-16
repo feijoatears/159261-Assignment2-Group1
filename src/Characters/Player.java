@@ -18,6 +18,10 @@ public class Player extends Character
         return instance;
     }
 
+    public void setImage(Image image) {
+        this.image = image;
+    }    
+
     public void move()
     {
         //unique to player bc controllable, other sprites will move in a pre-programmed manner

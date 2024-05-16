@@ -69,7 +69,7 @@ public class Assignment2 extends GameEngine
 
         int numFrames = 10;
         int frameWidth = playerSpriteSheet.getWidth(null) / numFrames;
-        int frameHeight = playerSpriteSheet.getheight(null);
+        int frameHeight = playerSpriteSheet.getHeight(null);
 
         humanFrames = new Image[numFrames];
 

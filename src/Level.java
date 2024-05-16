@@ -7,7 +7,11 @@ public class Level
     private int index;
     private Image image;
 
-    public Level(){};
+    public Level(Image image)
+    {
+        this.image = image;
+    };
+    public Level(){}
 
     public void setImage(Image image)
     {

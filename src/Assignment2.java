@@ -107,7 +107,7 @@ public class Assignment2 extends GameEngine
             }
         }
 
-        playerSpriteSheet = loadImage("resources/scaledHuman-spritesheet copy.png");
+        playerSpriteSheet = loadImage("resources/Player-spritesheet.png");
 
         int numFrames = 10;
         int frameWidth = playerSpriteSheet.getWidth(null) / numFrames;

@@ -9,7 +9,7 @@ public class Player extends Character
     private Player() { }
     private int speed = 5;
     public boolean[] hasKey = new boolean[10];
-
+    private boolean isMoving = false;
 
     public static Player getInstance()
     {
@@ -104,5 +104,14 @@ public class Player extends Character
         if (keyNum >= 0 && keyNum < hasKey.length) {
             hasKey[keyNum] = true;
         }
+    }
+
+    public boolean isMoving()
+    {
+        return isMoving;
+    }
+    public void setMoving(boolean moving)
+    {
+        isMoving = moving;
     }
 }

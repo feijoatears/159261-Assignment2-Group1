@@ -1,11 +1,15 @@
-package src;
+package src.generalClasses;
 
 import java.awt.*;
+import src.Direction;
 
 public class Level
 {
     private int index;
     private Image image;
+
+    private Direction doorDirections;
+
 
     public Level(Image image)
     {

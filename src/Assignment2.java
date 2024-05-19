@@ -22,6 +22,8 @@ public class Assignment2 extends GameEngine
 {
     static int framerate = 30;
 
+    private boolean keyCollected = false;
+
     protected Image backgroundImage;
     protected Image playerSpriteSheet;
     public Player player = Player.getInstance();
@@ -180,6 +182,7 @@ public class Assignment2 extends GameEngine
 
                 for (int i = 0; i < 10; i++){
                     if (player.hasKey(0)){
+                        keyCollected = true;
 
                     }
                 }
@@ -201,6 +204,8 @@ public class Assignment2 extends GameEngine
                 player.collectKey(0); // for keyindex 0
                 key.setUsed(true);
                 System.out.println("Key collected!");
+                keyCollected = true;
+                mFrame.repaint();
             }
         }
 
@@ -252,6 +257,15 @@ public class Assignment2 extends GameEngine
 
             mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
+         if(keyCollected) {
+            mGraphics.setColor(Color.BLACK);
+            mGraphics.fillRect(100, 350, 300, 100);
+            mGraphics.setColor(Color.WHITE);
+            mGraphics.drawRect(100, 350, 300, 100);
+            mGraphics.drawString("You have collected a key!", 110, 370);
+            mGraphics.drawString("Find the door it unlocks to escape.", 110, 390);
+            mGraphics.drawString("ENTER", 350, 440);
+        }
     }
 
     Direction lastDirection = null;
@@ -264,6 +278,7 @@ public class Assignment2 extends GameEngine
             test1 = true;
         } else if (event.getKeyCode() == KeyEvent.VK_ENTER){
             test1 = false;
+            keyCollected = false;
         }
 
 

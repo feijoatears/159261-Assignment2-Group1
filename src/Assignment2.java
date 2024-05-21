@@ -17,6 +17,7 @@ import src.generalClasses.*;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.AudioInputStream;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -47,6 +48,7 @@ public class Assignment2 extends GameEngine
     private Clip backgroundMusic;
     private Clip keyCollectedSound;
 
+    private VolumeControl backgroundVolumeControl;
     private int score = 0;
 
     private boolean inStartMenu = true;
@@ -122,6 +124,8 @@ public class Assignment2 extends GameEngine
         // Load sound files
         backgroundMusic = loadSound("resources/C.wav");
         keyCollectedSound = loadSound("resources/Key.wav");
+        //Control Sound
+        backgroundVolumeControl = new VolumeControl(backgroundMusic);
 
         // Play background music in a loop
         if (backgroundMusic != null) {
@@ -132,6 +136,7 @@ public class Assignment2 extends GameEngine
         keyImage = loadImage("resources/key1.png");
         key = new Key(250, 250, keyImage);
         generateMap();
+        addVolumeControl();
     }
 
     /**
@@ -152,6 +157,21 @@ public class Assignment2 extends GameEngine
         }
     }
 
+    private void addVolumeControl() {
+        JSlider volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        volumeSlider.addChangeListener(e -> {
+            int value = volumeSlider.getValue();
+            float volume = value / 100f;
+            backgroundVolumeControl.setVolume(volume);
+        });
+
+        JFrame frame = new JFrame("Volume Control");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        frame.add(volumeSlider, BorderLayout.CENTER);
+        frame.setSize(300, 100);
+        frame.setVisible(true);
+    }
     /**
      * Updates the game state, including player movement and key collection logic.
      *

@@ -330,7 +330,16 @@ public class Assignment2 extends GameEngine
      * Generates the game map.
      */
     public void generateMap()
-    {
+    {/*
+            creating a testing map which looks like this:
+
+                []
+             [] [] []
+                []
+
+            player spawns in centre
+        */
+
         //init arrays with null elements
         ArrayList<Level> floor1 = new ArrayList<>(),
                 floor2 = new ArrayList<>(),
@@ -351,6 +360,29 @@ public class Assignment2 extends GameEngine
         map.addFloor(floor1);
         map.addFloor(1, floor2);
         map.addFloor(2, floor3);
+
+        /*
+            /////////////////////////////////////////////////////////////
+            // this is the correct code for the program  with 20 lvls, //
+            // testing code above                                      //
+            /////////////////////////////////////////////////////////////
+
+            //create a temporary arraylist to hold a 'floor'
+            ArrayList<Level> temp = new ArrayList<>();
+            for(int i = 0; i < numLevels; i++)
+            {
+                //every fourth level, create a new floor (5x4)
+                if(temp.size() > 3)
+                {
+                    map.add(temp);
+                    //don't call .clear(), will point to same object in memory???
+                    temp = new ArrayList<>();
+                }
+                Level level = new Level(loadImage("resources/level" + (i + 1) + ".png"));
+                temp.add(level);
+            }
+            map.add(temp);
+        */
     }
 
     /**
@@ -453,6 +485,18 @@ public class Assignment2 extends GameEngine
         Direction lastDirection = handleDirection();
         player.setDirection(lastDirection);
     }
+
+    /*
+     * TODO:
+     *
+     * Maze generation algorithm
+     * (Sprite) Animations
+     * AI and Player Movement
+     * Collisions
+     * Interactable items (keys, doors)
+     * Menu/Player Options
+     *
+     */
 
     /**
      * Handles key release events to stop player movement.

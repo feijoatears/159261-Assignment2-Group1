@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class MazeMap
 {
     private static MazeMap instance;
-    private final ArrayList<ArrayList<Level>> map;
+    private ArrayList<ArrayList<Level>> map;
 
     private int currentFloor,
                 currentRoom;
@@ -22,6 +22,11 @@ public class MazeMap
     private MazeMap()
     {
         map = new ArrayList<>();
+    }
+
+    public void reset()
+    {
+        map = new ArrayList<ArrayList<Level>>();
     }
 
     public void addFloor(ArrayList<Level> levels)
@@ -90,5 +95,7 @@ public class MazeMap
     {
         return new int[]{currentFloor, currentRoom};
     }
+
+
 }
 

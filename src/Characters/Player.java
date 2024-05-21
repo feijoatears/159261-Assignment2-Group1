@@ -1,13 +1,70 @@
 package src.Characters;
 
+import src.Direction;
+import src.GameEngine;
+
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static src.GameEngine.*;
+
+
 
 public class Player extends Character
 {
     private static Player instance;
 
-    private Player() { }
-    private int speed = 5;
+    protected Image playerSpriteSheet = loadImage("resources/Sprites/Player-spritesheet.png");
+    private final Image heartImage = loadImage("resources/Objects/heart.png");
+
+    private final Image[] humanFrames;
+
+    private final int[] eastFrames = {0, 1},
+                        southFrames = {2, 3},
+                        westFrames = {8, 9},
+                        northFrames = {6, 7};
+
+    private int speed = 5,
+                lives = 3,
+                currentFrameIndex = 0;
+
+    private static Thread thread;
+
+    public void reset()
+    {
+        lives = 3;
+    }
+    private Player()
+    {
+        int numFrames = 10,
+            frameWidth = playerSpriteSheet.getWidth(null) / numFrames,
+            frameHeight = playerSpriteSheet.getHeight(null);
+
+        humanFrames = new Image[numFrames];
+
+        for (int i = 0; i < numFrames; i++)
+        {
+
+            humanFrames[i] = subImage(playerSpriteSheet, i * frameWidth, 0 , frameWidth, frameHeight);
+        }
+        setImage(humanFrames[0]);
+    }
+
+    private Image subImage(Image source, int x, int y, int w, int h)
+    {
+        if(source == null)
+        {
+            System.out.println("Error: cannot extract a subImage from a null image.\n");
+            return null;
+        }
+
+        BufferedImage buffered = (BufferedImage)source;
+
+        return buffered.getSubimage(x, y, w, h);
+    }
+
     public boolean[] hasKey = new boolean[10];
     private boolean isMoving = false;
 
@@ -74,6 +131,29 @@ public class Player extends Character
                 break;
             }
         }
+
+        if (direction == Direction.East)
+        {
+            currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
+            image = (humanFrames[eastFrames[currentFrameIndex]]);
+        }
+        else if (direction == Direction.West)
+        {
+            currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
+            image = (humanFrames[westFrames[currentFrameIndex]]);
+        }
+        else if (direction == Direction.North ||
+                direction == Direction.Northeast ||
+                direction == Direction.Northwest)
+        {
+            currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
+            image = (humanFrames[northFrames[currentFrameIndex]]);
+        }
+        else
+        {
+            currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
+            image = (humanFrames[southFrames[currentFrameIndex]]);
+        }
     }
 
     public boolean checkCollision(Rectangle other)
@@ -113,5 +193,53 @@ public class Player extends Character
     public void setMoving(boolean moving)
     {
         isMoving = moving;
+    }
+
+    //life functions
+    public Image getHeartImage()
+    {
+        return heartImage;
+    }
+    public int getLives()
+    {
+        return lives;
+    }
+
+    public synchronized void damage(Rectangle other)
+    {
+        if (checkCollision(other))
+        {
+            //starts a thread that checks every two seconds if player is on a damaging object
+            //if they are, player loses a life, stop thread if not
+            //adds iFrames so player doesn't immediately die when they touch a damaging object
+            if(thread == null || !thread.isAlive())
+            {
+                thread = new Thread( () ->
+                {
+                    try
+                    {
+                        lives -= 1;
+                        Thread.sleep(2000);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        //player leaves damaging object hitbox
+                        Thread.currentThread().interrupt();
+                    }
+                });
+                thread.start();
+            }
+        }
+        else
+        {
+            if(thread != null)
+            {
+                thread.interrupt();
+            }
+        }
+    }
+    public void gainLife()
+    {
+        lives += 1;
     }
 }

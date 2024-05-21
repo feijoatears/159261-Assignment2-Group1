@@ -2,15 +2,13 @@ package src.Objects;
 
 import java.awt.*;
 
-public class Key extends Objects
+public class Key extends Object
 {
     private int id;
 
-    public Key(int posX, int posY, Image image)
+    public Key(int posX, int posY, Image keyImage)
     {
-        this.posX = posX;
-        this.posY = posY;
-        this.image = image;
+        super(posX, posY, keyImage);
         this.isInteractable = true;
         this.isUsed = false;
     }

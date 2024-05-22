@@ -23,6 +23,7 @@ public class Player extends Character
 
     private final int[] eastFrames = {0, 1},
                         southFrames = {2, 3},
+                       damageFrames = {4, 5},
                         westFrames = {8, 9},
                         northFrames = {6, 7};
 
@@ -220,7 +221,8 @@ public class Player extends Character
                     {
                         lives -= 1;
                         Thread.sleep(2000);
-                    }
+                        currentFrameIndex = (currentFrameIndex + 1) % damageFrames.length;
+                        image = (humanFrames[damageFrames[currentFrameIndex]]);                    }
                     catch (InterruptedException e)
                     {
                         //player leaves damaging object hitbox

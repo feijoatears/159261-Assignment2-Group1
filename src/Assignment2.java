@@ -265,10 +265,13 @@ public class Assignment2 extends GameEngine
 
             // BLUE == INVISIBLE WALL
             changeColor(blue);
-            drawSolidRectangle(100, 100, 50, 10);
-            drawSolidRectangle(200, 200, 10, 50);
-
+           // drawSolidRectangle(100, 100, 50, 10);
+           // drawSolidRectangle(200, 200, 10, 50);
+            for (Rectangle wall : walls) {
+                drawSolidRectangle(wall.x, wall.y, wall.width, wall.height);
+            }
             // ORANGE FOR BOUNDS
+            changeColor(Color.ORANGE);
             drawSolidRectangle(0, 0, width(), 10);
             drawSolidRectangle(0, height() - 10, width(), 10);
             drawSolidRectangle(0, 0, 10, height());

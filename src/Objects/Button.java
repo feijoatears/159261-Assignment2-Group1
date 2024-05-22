@@ -15,15 +15,17 @@ public class Button extends Object
     private final ArrayList<Image> images;
     private AudioClip onSound, offSound;
     private boolean slotMachineActive = false;
-    private boolean slotMachineRolling = false;
-    private String slotMachineResult = "Press X to roll";
+    private boolean rolling = false;
+    private String slotMachineResult = "";
+    private int[][] slots = new int[3][3];
+    private Random random = new Random();
+    private boolean rigged = false;
+    private int currentSlot = 0;
+    private int currentRow = 0;
+    private int[] finalRows = new int[3];
+    private int[] selectedColumns = {1, 1, 1};
 
-    private char[] slotChars = {'X', '!', '@', '#', '$', '%', '^', '&', '*'};
-    private char[][] slots = new char[3][3];
-    private int[] slotPositions = {0, 0, 0};
 
-    private Timer slotMachineTimer;
-    private int animationStep = 0;
 
 
     public Button(int posX, int posY, ArrayList<AudioClip> sounds)
@@ -38,8 +40,6 @@ public class Button extends Object
         this.hitbox = new Rectangle(posX, posY, image.getHeight(null), image.getHeight(null));
 
 
-        initializeSlots();
-
     }
 
     public Image getCurrentImage()
@@ -50,13 +50,13 @@ public class Button extends Object
     public void activate() {
         this.image = images.get(1);
         isUsed = true;
-        slotMachineActive = true;
+        toggleSlotMachine();
     }
 
     public void deactivate() {
         this.image = images.get(0);
         isUsed = false;
-        slotMachineActive = false;
+        toggleSlotMachine();
     }
 
     public AudioClip getOnSound()
@@ -71,15 +71,6 @@ public class Button extends Object
     // slots stuff
 
 
-    private void initializeSlots() {
-        Random random = new Random();
-        for (int i = 0; i < slots.length; i++) {
-            for (int j = 0; j < slots[i].length; j++) {
-                slots[i][j] = slotChars[random.nextInt(slotChars.length)];
-            }
-        }
-    }
-
     public void showPopup(Graphics2D g, int width, int height) {
         if (!slotMachineActive) return;
 
@@ -92,61 +83,89 @@ public class Button extends Object
         g.fillRect(x, y, popupWidth, popupHeight);
         g.setColor(Color.WHITE);
         g.drawRect(x, y, popupWidth, popupHeight);
-        g.drawString("Slot Machine!", x + 10, y + 20);
+        g.drawString("Slot Machine!", x + 115, y + 20);
+        g.drawString(slotMachineResult, x + 130, y + 40);
+        g.drawString("Press X to roll", x + 115, y + 60);
 
-        for (int i = 0; i < slots.length; i++) {
-            for (int j = 0; j < slots[i].length; j++) {
-                g.drawString(String.valueOf(slots[i][j]), x + 40 + (i * 40), y + 60 + (j * 20));
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (rolling && j == currentSlot && i == finalRows[j]) {
+                    g.setColor(Color.RED);
+                } else if (!rolling && i == finalRows[j]) {
+                    g.setColor(Color.RED);
+                } else {
+                    g.setColor(Color.WHITE);
+                }
+                g.drawString(Integer.toString(slots[i][j]), x + 115 + j * 30, y + 80 + i * 30);
             }
         }
-
-        g.drawString(slotMachineResult, x + 10, y + 120);
-        g.drawString("Press X to roll", x + 10, y + 140);
     }
-
-
-
 
     public void rollSlotMachine() {
-        if (slotMachineRolling) return;
-
-        slotMachineRolling = true;
-        slotMachineResult = "Rolling...";
-        animationStep = 0;
-        slotMachineTimer = new Timer();
-        slotMachineTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                updateSlots();
-            }
-        }, 0, 100);
+        if (!rolling) {
+            rolling = true;
+            slotMachineResult = "Rolling...";
+            new Thread(() -> {
+                try {
+                    // Initial spinning of all slots
+                    for (int i = 0; i < 10; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            for (int k = 0; k < 3; k++) {
+                                slots[j][k] = random.nextInt(5);
+                            }
+                        }
+                        Thread.sleep(100);
+                    }
+                    // Stop each column one by one
+                    for (int j = 0; j < 3; j++) {
+                        for (int i = 0; i < 10; i++) {
+                            for (int k = 0; k < 3; k++) {
+                                if (rigged && j == 2 && i == 9) {
+                                    slots[1][0] = slots[1][1] = slots[1][2] = random.nextInt(5);
+                                    slots[0][j] = slots[1][j];
+                                    slots[2][j] = slots[1][j];
+                                } else {
+                                    slots[k][j] = random.nextInt(5);
+                                }
+                            }
+                            currentSlot = j;  // update current slot being stopped
+                            if (i == 9) {  // highlight final row
+                                finalRows[j] = 1;  // middle row = final row
+                            }
+                            Thread.sleep(100);
+                        }
+                    }
+                    determineResult();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                rolling = false;
+            }).start();
+        }
     }
 
-    private void updateSlots() {
-        animationStep++;
-        Random random = new Random();
-        for (int i = 0; i < slots.length; i++) {
-            slotPositions[i] = (slotPositions[i] + 1) % slotChars.length;
-            for (int j = 0; j < slots[i].length; j++) {
-                slots[i][j] = slotChars[(slotPositions[i] + j) % slotChars.length];
-            }
-        }
-
-        if (animationStep >= 20) {
-            slotMachineTimer.cancel();
-            slotMachineRolling = false;
-            checkSlotMachineResult();
-        }
-    }
-
-    private void checkSlotMachineResult() {
-        Random random = new Random();
-        if (random.nextInt(5) == 0) {
+    private void determineResult() {
+        // Determine if the middle row matches
+        if (slots[1][0] == slots[1][1] && slots[1][1] == slots[1][2]) {
             slotMachineResult = "You Win!";
         } else {
             slotMachineResult = "Try Again!";
         }
+        rigged = false;
     }
 
+    public void toggleSlotMachine() {
+        slotMachineActive = !slotMachineActive;
+    }
+
+
+
+    public void rigSlotMachine() {
+        slots[1][0] = random.nextInt(5);
+        slots[1][1] = slots[1][0];
+        slots[1][2] = slots[1][0];
+        slotMachineResult = "You Win!";
+    }
 
 }

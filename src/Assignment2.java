@@ -339,7 +339,7 @@ public class Assignment2 extends GameEngine
             drawImage(player.getHeartImage(), 20 * i, 0);
         }
 
-
+        // slot
         if (showButtonPopup && activeButton != null) {
             activeButton.showPopup(mGraphics, width(), height());
         }
@@ -561,14 +561,22 @@ public class Assignment2 extends GameEngine
             mGraphics.clearRect(0, 0, width(), height());
             System.out.println();
         }
-
+        // ========================================================
         // GAMBLE TIME
+        // ========================================================
         if (event.getKeyCode() == KeyEvent.VK_X && showButtonPopup && activeButton != null) {
             activeButton.rollSlotMachine();
             mFrame.repaint();
         }
+        // rig slot machinea
+        if (event.getKeyCode() == KeyEvent.VK_R && showButtonPopup && activeButton != null) {
+            activeButton.rigSlotMachine();
+            mFrame.repaint();
+        }
 
 
+
+        // ========================================================
 
         //max of 2 key presses allowed
         if (keyPresses.size() >= 2)

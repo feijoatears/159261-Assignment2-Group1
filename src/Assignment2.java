@@ -44,10 +44,12 @@ public class Assignment2 extends GameEngine
     private int numLevels = 5;
     // door flippy shit
     private boolean flippyDoor = false;
-    // walls, warning -> PAINFUL AS ALL HELL
+    // walls, pain
     public ArrayList<Rectangle> walls = new ArrayList<>();
-
-
+    private Image wallImage;
+    // WOOO SLOT MACHINE!
+    private boolean showButtonPopup = false;
+    private Button activeButton = null;
 
     // key shit
     public Key key;
@@ -101,6 +103,8 @@ public class Assignment2 extends GameEngine
     public void init()
     {
         setWindowSize(500, 500);
+
+        wallImage = loadImage("resources/Objects/DEBUGWALL.png");
 
         // set starting position
         map.setStart(1, 1);
@@ -197,6 +201,8 @@ public class Assignment2 extends GameEngine
                 {
                     b.activate();
                     playAudio(b.getOnSound());
+                    showButtonPopup = true;
+                    activeButton = b;
                 }
             }
             else
@@ -205,6 +211,8 @@ public class Assignment2 extends GameEngine
                 {
                     b.deactivate();
                     playAudio(b.getOffSound());
+                    showButtonPopup = false;
+                    activeButton = null;
                 }
             }
         }
@@ -244,6 +252,11 @@ public class Assignment2 extends GameEngine
         mGraphics.drawImage(map.getCurrentLevel().getImage(), 0, 0, width(), height(), (img, infoflags, x, y, width, height) -> false);
 
         drawImage(player.getImage(), player.getPosX(), player.getPosY());
+
+        for (Rectangle wall : walls) {
+            drawImage(wallImage, wall.x, wall.y, wall.width, wall.height);
+        }
+
 
         changeColor(red);
         if (test1) {
@@ -325,6 +338,15 @@ public class Assignment2 extends GameEngine
         {
             drawImage(player.getHeartImage(), 20 * i, 0);
         }
+
+
+        if (showButtonPopup && activeButton != null) {
+            activeButton.showPopup(mGraphics, width(), height());
+        }
+
+
+
+
     }
 
     /**
@@ -539,6 +561,14 @@ public class Assignment2 extends GameEngine
             mGraphics.clearRect(0, 0, width(), height());
             System.out.println();
         }
+
+        // GAMBLE TIME
+        if (event.getKeyCode() == KeyEvent.VK_X && showButtonPopup && activeButton != null) {
+            activeButton.rollSlotMachine();
+            mFrame.repaint();
+        }
+
+
 
         //max of 2 key presses allowed
         if (keyPresses.size() >= 2)

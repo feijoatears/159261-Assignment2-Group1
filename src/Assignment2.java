@@ -44,6 +44,8 @@ public class Assignment2 extends GameEngine
     private int numLevels = 5;
     // door flippy shit
     private boolean flippyDoor = false;
+    // walls, warning -> PAINFUL AS ALL HELL
+    public ArrayList<Rectangle> walls = new ArrayList<>();
 
 
 
@@ -109,6 +111,24 @@ public class Assignment2 extends GameEngine
         player.setPosX(spawnPosX);
         player.setPosY(spawnPosY);
 
+        // WALLLLLLLLLLL - Nathan
+        walls.clear();
+        // basic example walls
+        walls.add(new Rectangle(100, 100, 50, 10)); // wall at (100, 100) with width 50 and height 10
+        walls.add(new Rectangle(200, 200, 10, 50)); // wall at (200, 200) with width 10 and height 50
+
+
+        // Screen boundaries as walls
+        walls.add(new Rectangle(0, 0, width(), 10)); // top boundary
+        walls.add(new Rectangle(0, height() - 10, width(), 10)); // bottom boundary
+        walls.add(new Rectangle(0, 0, 10, height())); // left boundary
+        walls.add(new Rectangle(width() - 10, 0, 10, height())); // right boundary
+
+
+
+
+
+
 
         // Play background music in a loop
         if (volumeControl.getBackgroundMusic() != null) {
@@ -133,9 +153,6 @@ public class Assignment2 extends GameEngine
         obstacles.add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
 
     }
-
-
-
     /**
      * Updates the game state, including player movement and key collection logic.
      *
@@ -154,7 +171,7 @@ public class Assignment2 extends GameEngine
         }
 
         if (player.isMoving()) {
-            player.move();
+            player.move(walls);
 
             Rectangle playerRect = new Rectangle(player.getPosX(), player.getPosY(), player.getImage().getWidth(null), player.getImage().getHeight(null));
             if (key.checkCollision(playerRect) && !key.getIsUsed()) {
@@ -201,7 +218,6 @@ public class Assignment2 extends GameEngine
             isKeyCollected = true;
         }
     }
-
     /**
      * Updates the score.
      *
@@ -211,7 +227,6 @@ public class Assignment2 extends GameEngine
         score += points;
         System.out.println("Score: " + score);
     }
-
     /**
      * Paints the game components on the screen.
      */
@@ -222,11 +237,7 @@ public class Assignment2 extends GameEngine
             return;
         }
 
-        if (flippyDoor) {
-            mGraphics.translate(width(), height());
-            mGraphics.scale(-1, -1);
-            flippyDoor = false; // reset flag after applying transformation
-        }
+
 
 
         // have to create imageObserver so make an inline one
@@ -248,6 +259,29 @@ public class Assignment2 extends GameEngine
             drawSolidRectangle(((double) width() / 2) - 20, height()-30, 50, 30);
 
             drawSolidRectangle(obstacles.getFirst().getPosX(), obstacles.getFirst().getPosY(), obstacles.getFirst().getWidth(), obstacles.getFirst().getHeight());
+
+
+            // walls, gotta manually add for all tests ill try fix this
+
+            // BLUE == INVISIBLE WALL
+            changeColor(blue);
+            drawSolidRectangle(100, 100, 50, 10);
+            drawSolidRectangle(200, 200, 10, 50);
+
+            // ORANGE FOR BOUNDS
+            drawSolidRectangle(0, 0, width(), 10);
+            drawSolidRectangle(0, height() - 10, width(), 10);
+            drawSolidRectangle(0, 0, 10, height());
+            drawSolidRectangle(width() - 10, 0, 10, height());
+
+
+
+
+
+
+
+
+
 
             mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }

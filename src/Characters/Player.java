@@ -5,6 +5,7 @@ import src.GameEngine;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -81,56 +82,88 @@ public class Player extends Character
         this.image = image;
     }    
 
-    public void move()
+    public void move(ArrayList<Rectangle> walls)
     {
+
+        int nextPosX = posX;
+        int nextPosY = posY;
+
+
         //unique to player bc controllable, other sprites will move in a pre-programmed manner
         switch (this.getDirection())
         {
             case North:
             {
-                this.setPosY(posY - speed);
+                //this.setPosY(posY - speed);
+                nextPosY = posY - speed;
                 break;
             }
             case South:
             {
-                this.setPosY(posY + speed);
+                //this.setPosY(posY + speed);
+                nextPosY = posY + speed;
                 break;
             }
             case West:
             {
-                this.setPosX(posX - speed);
+                //this.setPosX(posX - speed);
+                nextPosX = posX - speed;
                 break;
             }
             case East:
             {
-                this.setPosX(posX + speed);
+                //this.setPosX(posX + speed);
+                nextPosX = posX + speed;
                 break;
             }
             case Northwest:
             {
-                this.setPosY(posY - speed);
-                this.setPosX(posX - speed);
+                //this.setPosY(posY - speed);
+                //this.setPosX(posX - speed);
+                nextPosY = posY - speed;
+                nextPosX = posX - speed;
                 break;
             }
             case Northeast:
             {
-                this.setPosY(posY - speed);
-                this.setPosX(posX + speed);
+                //this.setPosY(posY - speed);
+                //this.setPosX(posX + speed);
+                nextPosY = posY - speed;
+                nextPosX = posX + speed;
                 break;
             }
             case Southwest:
             {
-                this.setPosY(posY + speed);
-                this.setPosX(posX - speed);
+                //this.setPosY(posY + speed);
+                //this.setPosX(posX - speed);
+                nextPosY = posY + speed;
+                nextPosX = posX - speed;
                 break;
             }
             case Southeast:
             {
-                this.setPosY(posY + speed);
-                this.setPosX(posX + speed);
+                //this.setPosY(posY + speed);
+                //this.setPosX(posX + speed);
+                nextPosY = posY + speed;
+                nextPosX = posX + speed;
                 break;
             }
         }
+
+        Rectangle nextRect = new Rectangle(nextPosX, nextPosY, image.getWidth(null), image.getHeight(null));
+        for (Rectangle wall : walls) {
+            if (nextRect.intersects(wall)) {
+                return; // Collision detected, don't move the player
+            }
+        }
+
+        this.setPosX(nextPosX);
+        this.setPosY(nextPosY);
+
+        if (nextPosX < 0 || nextPosY < 0 || nextPosX + image.getWidth(null) > 500 || nextPosY + image.getHeight(null) > 500) {
+            return; // Outside screen boundaries, don't move the player
+        }
+
 
         if (direction == Direction.East)
         {

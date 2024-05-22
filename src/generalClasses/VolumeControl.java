@@ -13,7 +13,9 @@ public class VolumeControl
     private static VolumeControl instance;
     // Load sound files
     private final Clip keyCollectedSound = loadSound("resources/Sounds/Key.wav");
-    private final Clip backgroundMusic =  loadSound("resources/Sounds/C.wav");
+
+    // undo when needed too loud for rn
+   private final Clip backgroundMusic =  loadSound("resources/Sounds/*UNDO LATER*.wav");
     //Control Sound
     private final src.VolumeControl backgroundVolumeControl = new src.VolumeControl(backgroundMusic);
 
@@ -32,7 +34,11 @@ public class VolumeControl
         volumeSlider.addChangeListener(e -> {
             int value = volumeSlider.getValue();
             float volume = value / 100f;
-            backgroundVolumeControl.setVolume(volume);
+
+
+
+
+           backgroundVolumeControl.setVolume(volume);
         });
 
         JFrame frame = new JFrame("Volume Control");

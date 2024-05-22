@@ -42,6 +42,8 @@ public class Assignment2 extends GameEngine
     public boolean showMap = true;
 
     private int numLevels = 5;
+    // door flippy shit
+    private boolean flippyDoor = false;
 
 
 
@@ -57,6 +59,7 @@ public class Assignment2 extends GameEngine
     public ArrayList<DamagingObject> obstacles = new ArrayList<>();
     // Test variables, delete later
     boolean test1;
+
 
 
 
@@ -100,6 +103,11 @@ public class Assignment2 extends GameEngine
         // set starting position
         map.setStart(1, 1);
 
+        int spawnPosX = width() / 2 - player.getImage().getWidth(null) / 2; // using this to offset playing image to
+        int spawnPosY = (int) (height() * 2 / 3.0) - player.getImage().getHeight(null) / 2; // using this to offset playing image to
+
+        player.setPosX(spawnPosX);
+        player.setPosY(spawnPosY);
 
 
         // Play background music in a loop
@@ -214,6 +222,13 @@ public class Assignment2 extends GameEngine
             return;
         }
 
+        if (flippyDoor) {
+            mGraphics.translate(width(), height());
+            mGraphics.scale(-1, -1);
+            flippyDoor = false; // reset flag after applying transformation
+        }
+
+
         // have to create imageObserver so make an inline one
         mGraphics.drawImage(map.getCurrentLevel().getImage(), 0, 0, width(), height(), (img, infoflags, x, y, width, height) -> false);
 
@@ -293,8 +308,12 @@ public class Assignment2 extends GameEngine
                 return;
             }
             map.moveLeft();
-            player.setPosX(width() - 100);
-            player.setPosY(height() / 2);
+
+            player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
+            player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
+            //player.setPosX(width() - 100);
+            // player.setPosY(height() / 2);
+            // flippyDoor = true;
             collisionHandled = true;
 
         }
@@ -306,8 +325,11 @@ public class Assignment2 extends GameEngine
                 return;
             }
             map.moveRight();
-            player.setPosX(100);
-            player.setPosY(height() / 2);
+            player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
+            player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
+           // player.setPosX(100);
+           // player.setPosY(height() / 2);
+            // flippyDoor = true;
             collisionHandled = true;
 
         }
@@ -319,8 +341,11 @@ public class Assignment2 extends GameEngine
                 return;
             }
             map.moveUp();
-            player.setPosX(width() / 2);
-            player.setPosY(100);
+            player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
+            player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
+            //player.setPosX(width() / 2);
+            //player.setPosY(100);
+            // flippyDoor = true;
             collisionHandled = true;
         }
         else if (player.checkCollision(bottomDoor) && !collisionHandled)
@@ -331,8 +356,11 @@ public class Assignment2 extends GameEngine
                 return;
             }
             map.moveDown();
-            player.setPosX(width() / 2);
-            player.setPosY(height() - 100);
+            player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
+            player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
+            //player.setPosX(width() / 2);
+            //player.setPosY(height() - 100);
+            // flippyDoor = true;
             collisionHandled = true;
         }
 

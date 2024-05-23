@@ -162,15 +162,13 @@ public class Assignment2 extends GameEngine
      *
      * @param dt The time delta since the last update.
      */
-    public void update(double dt)
-    {
+    public void update(double dt) {
         if (inStartMenu) {
             return;
         }
 
-        //restart
-        if (player.getLives() <= 0)
-        {
+        // Restart if player has no lives
+        if (player.getLives() <= 0) {
             init();
         }
 
@@ -189,26 +187,30 @@ public class Assignment2 extends GameEngine
                 }
                 mFrame.repaint();
             }
+
+            // Handle collision with damaging objects
+            for (DamagingObject o : obstacles) {
+                if (player.checkCollision(o.getHitbox())) {
+                    player.damage(o.getHitbox());
+                    player.bounceBack(player.getDirection(), 2); // Bounce back 2 steps
+                }
+            }
         }
 
-        //collision checks
+        // Collision checks for doors
         handleDoorCollision();
-        for(Button b : buttons)
-        {
-            if(player.checkCollision(b.getHitbox()))
-            {
-                if(!b.getIsUsed())
-                {
+
+        // Button collision checks
+        for (Button b : buttons) {
+            if (player.checkCollision(b.getHitbox())) {
+                if (!b.getIsUsed()) {
                     b.activate();
                     playAudio(b.getOnSound());
                     showButtonPopup = true;
                     activeButton = b;
                 }
-            }
-            else
-            {
-                if(b.getIsUsed())
-                {
+            } else {
+                if (b.getIsUsed()) {
                     b.deactivate();
                     playAudio(b.getOffSound());
                     showButtonPopup = false;
@@ -216,16 +218,14 @@ public class Assignment2 extends GameEngine
                 }
             }
         }
-        for(DamagingObject o : obstacles)
-        {
-            player.damage(o.getHitbox());
-        }
-        //added isKeyCollected flag - easier to debug
-        if (player.hasKey(0) && !isKeyCollected) { // v0.0.11
+
+        // Check if key is collected
+        if (player.hasKey(0) && !isKeyCollected) {
             System.out.println("Player has collected the keyNum: 0!");
             isKeyCollected = true;
         }
     }
+
     /**
      * Updates the score.
      *

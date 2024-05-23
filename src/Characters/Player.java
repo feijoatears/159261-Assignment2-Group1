@@ -277,4 +277,38 @@ public class Player extends Character
     {
         lives += 1;
     }
+
+    public void bounceBack(Direction direction, int steps) {
+        int stepSize = 10; // Define the size of each step 
+        switch (direction) {
+            case North:
+                setPosY(getPosY() + stepSize * steps);
+                break;
+            case South:
+                setPosY(getPosY() - stepSize * steps);
+                break;
+            case East:
+                setPosX(getPosX() - stepSize * steps);
+                break;
+            case West:
+                setPosX(getPosX() + stepSize * steps);
+                break;
+            case Northeast:
+                setPosX(getPosX() - stepSize * steps);
+                setPosY(getPosY() + stepSize * steps);
+                break;
+            case Northwest:
+                setPosX(getPosX() + stepSize * steps);
+                setPosY(getPosY() + stepSize * steps);
+                break;
+            case Southeast:
+                setPosX(getPosX() - stepSize * steps);
+                setPosY(getPosY() - stepSize * steps);
+                break;
+            case Southwest:
+                setPosX(getPosX() + stepSize * steps);
+                setPosY(getPosY() - stepSize * steps);
+                break;
+        }
+    }
 }

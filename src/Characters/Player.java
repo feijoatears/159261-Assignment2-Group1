@@ -311,4 +311,16 @@ public class Player extends Character
                 break;
         }
     }
+
+    public void attack(ArrayList<Enemy> enemies) {
+        Rectangle attackRange = new Rectangle(getPosX() - 10, getPosY() - 10, getImage().getWidth(null) + 20, getImage().getHeight(null) + 20);
+        for (Enemy enemy : enemies) {
+            if (attackRange.intersects(enemy.getHitbox())) {
+                // Damage the enemy or remove it
+                // Example: Remove enemy for simplicity
+                enemies.remove(enemy);
+                break;
+            }
+        }
+    }
 }

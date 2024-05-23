@@ -1,77 +1,85 @@
 package src.Characters;
 
 import src.Direction;
-
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Enemy extends Character {
-    private int speed = 3;
+    private Image image;
+    private int width;
+    private int height;
+    private int speed;
+    private int damage;
 
-    public Enemy(int posX, int posY, Direction direction, Image image) {
-        super(posX, posY, direction, image);
-
+    public Enemy(Image image, int posX, int posY, int width, int height, int speed, int damage) {
+        this.image = image;
+        this.setPosX(posX);
+        this.setPosY(posY);
+        this.width = width;
+        this.height = height;
+        this.speed = speed;
+        this.damage = damage;
     }
 
-    public void followPlayer(Player player) {
+    public Image getImage() {
+        return image;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void chasePlayer(Player player, ArrayList<Rectangle> walls) {
         int playerX = player.getPosX();
         int playerY = player.getPosY();
 
-        //calculate the horizontal and verticle distance between enemy and player
-        int dx = playerX - this.getPosX();
-        int dy = playerY - this.getPosY();
+        int newPosX = getPosX();
+        int newPosY = getPosY();
 
-        //finding the direction the enemy needs to move
-        Direction moveDirection;
-        if(Math.abs(dx) > Math.abs(dy)) {
-            if(dx > 0){
-                moveDirection = Direction.East;
-            } else {
-                moveDirection = Direction.West;
-            }
-        } else {
-            if(dy > 0 ) {
-                moveDirection = Direction.South;
-            } else {
-                moveDirection = Direction.North;
-            }
+        if (newPosX < playerX) {
+            newPosX += speed;
+        } else if (newPosX > playerX) {
+            newPosX -= speed;
         }
 
-        this.move(moveDirection);
+        if (newPosY < playerY) {
+            newPosY += speed;
+        } else if (newPosY > playerY) {
+            newPosY -= speed;
+        }
+
+        // Check for collisions with walls at new positions
+        if (!checkWallCollision(walls, newPosX, getPosY())) {
+            setPosX(newPosX);
+        }
+
+        if (!checkWallCollision(walls, getPosX(), newPosY)) {
+            setPosY(newPosY);
+        }
+
+        System.out.println("Enemy new position: (" + getPosX() + ", " + getPosY() + ")");
     }
 
-    private void move (Direction direction) {
-        switch(direction) {
-            case North:
-                this.setPosY(this.getPosY() - speed);
-                break;
-            case South:
-                this.setPosY(this.getPosY() + speed);
-                break;
-            case West:
-                this.setPosX(this.getPosX() - speed);
-                break; 
-            case East:
-                this.setPosX(this.getPosX() + speed);
-                break;    
-            case Northeast:
-                this.setPosY(this.getPosY() - speed);
-                this.setPosX(this.getPosX() + speed);
-                break;
-            case Northwest:
-                this.setPosY(this.getPosY() - speed);
-                this.setPosX(this.getPosX() - speed);
-                break;
-            case Southeast:
-                this.setPosY(this.getPosY() + speed);
-                this.setPosX(this.getPosX() + speed);
-                break;   
-            case Southwest:
-                this.setPosY(this.getPosY() + speed);
-                this.setPosX(this.getPosX() - speed);
-                break;
+    private boolean checkWallCollision(ArrayList<Rectangle> walls, int x, int y) {
+        Rectangle enemyRect = new Rectangle(x, y, width, height);
+        for (Rectangle wall : walls) {
+            if (enemyRect.intersects(wall)) {
+                System.out.println("Collision with wall at: (" + wall.x + ", " + wall.y + ")");
+                return true;
+            }
         }
+        return false;
+    }
+
+    public Rectangle getHitbox() {
+        return new Rectangle(getPosX(), getPosY(), width, height);
     }
 }
-
-
-        

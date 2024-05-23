@@ -46,6 +46,8 @@ public class Assignment2 extends GameEngine
     private boolean flippyDoor = false;
     // walls, pain
     public ArrayList<Rectangle> walls = new ArrayList<>();
+    public ArrayList<Enemy> enemies = new ArrayList<>();
+
     private Image wallImage;
     // WOOO SLOT MACHINE!
     private boolean showButtonPopup = false;
@@ -111,6 +113,14 @@ public class Assignment2 extends GameEngine
 
         int spawnPosX = width() / 2 - player.getImage().getWidth(null) / 2; // using this to offset playing image to
         int spawnPosY = (int) (height() * 2 / 3.0) - player.getImage().getHeight(null) / 2; // using this to offset playing image to
+
+        // Clear enemies list before adding new enemies
+        enemies.clear();
+        Image enemyImage = loadImage("resources/Sprites/nosferatu.png");
+        enemies.add(new Enemy(enemyImage, 50, 50, player.getImage().getWidth(null), player.getImage().getHeight(null), 2, 1));
+
+
+
 
         player.setPosX(spawnPosX);
         player.setPosY(spawnPosY);
@@ -197,6 +207,15 @@ public class Assignment2 extends GameEngine
             }
         }
 
+        // Update enemy movement and interactions
+        for (Enemy enemy : enemies) {
+            enemy.chasePlayer(player, walls);
+            if (player.checkCollision(enemy.getHitbox())) {
+                player.damage(enemy.getHitbox());
+                player.bounceBack(player.getDirection(), 2); // Bounce back 2 steps
+            }
+        }
+
         // Collision checks for doors
         handleDoorCollision();
 
@@ -245,9 +264,6 @@ public class Assignment2 extends GameEngine
             return;
         }
 
-
-
-
         // have to create imageObserver so make an inline one
         mGraphics.drawImage(map.getCurrentLevel().getImage(), 0, 0, width(), height(), (img, infoflags, x, y, width, height) -> false);
 
@@ -257,6 +273,11 @@ public class Assignment2 extends GameEngine
             drawImage(wallImage, wall.x, wall.y, wall.width, wall.height);
         }
 
+
+        // Draw enemies
+        for (Enemy enemy : enemies) {
+            drawImage(enemy.getImage(), enemy.getPosX(), enemy.getPosY(), enemy.getWidth(), enemy.getHeight());
+        }
 
         changeColor(red);
         if (test1) {
@@ -289,16 +310,6 @@ public class Assignment2 extends GameEngine
             drawSolidRectangle(0, height() - 10, width(), 10);
             drawSolidRectangle(0, 0, 10, height());
             drawSolidRectangle(width() - 10, 0, 10, height());
-
-
-
-
-
-
-
-
-
-
             mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
         if (!key.getIsUsed()) {
@@ -561,6 +572,9 @@ public class Assignment2 extends GameEngine
             mGraphics.clearRect(0, 0, width(), height());
             System.out.println();
         }
+
+
+
         // ========================================================
         // GAMBLE TIME
         // ========================================================
@@ -575,6 +589,10 @@ public class Assignment2 extends GameEngine
         }
 
 
+        // Handle attack key
+        if (event.getKeyCode() == KeyEvent.VK_F) {
+            player.attack(enemies);
+        }
 
         // ========================================================
 

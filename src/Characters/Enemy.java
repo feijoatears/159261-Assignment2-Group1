@@ -11,6 +11,16 @@ public class Enemy extends Character {
     private int speed;
     private int damage;
 
+    protected Image enemySpriteSheet = loadImage("resources/Sprites/Vampire-SpriteSheetFinal.png");
+    private final Image [] enemyFrames;
+
+    private int currentFrameIndex = 0;
+
+    private final int[] eastFrames = {0, 1};
+    private final int[] southFrames = {2, 3};
+    private final int[] westFrames = {6, 7};
+    private final int[] northFrames = {4, 5};
+    
     public Enemy(Image image, int posX, int posY, int width, int height, int speed, int damage) {
         this.image = image;
         this.setPosX(posX);
@@ -19,8 +29,39 @@ public class Enemy extends Character {
         this.height = height;
         this.speed = speed;
         this.damage = damage;
+
+         int numFrames = 8,
+                frameWidth = enemySpriteSheet.getWidth(null) / numFrames,
+                frameHeight = enemySpriteSheet.getHeight(null);
+
+        enemyFrames = new Image[numFrames];
+
+        for (int i = 0; i < numFrames; i++)
+        {
+
+            enemyFrames[i] = subImage(enemySpriteSheet, i * frameWidth, 0 , frameWidth, frameHeight);
+        }
+        setImage(enemyFrames[0]);
     }
 
+
+    private Image subImage(Image source, int x, int y, int w, int h)
+    {
+        if(source == null)
+        {
+            System.out.println("Error: cannot extract a subImage from a null image.\n");
+            return null;
+        }
+
+        BufferedImage buffered = (BufferedImage)source;
+
+        return buffered.getSubimage(x, y, w, h);
+    }
+
+     public void setImage(Image image) {
+        this.image = image;   
+    }   
+    
     public Image getImage() {
         return image;
     }
@@ -46,14 +87,26 @@ public class Enemy extends Character {
 
         if (newPosX < playerX) {
             newPosX += speed;
+            currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
+            image = (enemyFrames[eastFrames[currentFrameIndex]]);
         } else if (newPosX > playerX) {
             newPosX -= speed;
+            currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
+            image = (enemyFrames[westFrames[currentFrameIndex]]);
         }
 
         if (newPosY < playerY) {
             newPosY += speed;
+            if(newPosX == playerX) {
+                currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
+                image = (enemyFrames[southFrames[currentFrameIndex]]);
+            }
         } else if (newPosY > playerY) {
             newPosY -= speed;
+            if(newPosX == playerX) {
+                currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
+                image = (enemyFrames[northFrames[currentFrameIndex]]);
+            }
         }
 
         // Check for collisions with walls at new positions

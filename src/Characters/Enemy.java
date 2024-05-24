@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import static src.GameEngine.loadImage;
+
 public class Enemy extends Character {
     private Image image;
     private int width;

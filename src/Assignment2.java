@@ -30,6 +30,8 @@ public class Assignment2 extends GameEngine
     private boolean isKeyCollected = false;
 
     protected Image backgroundImage;
+
+    protected Image enemySpriteSheet;
     public Player player = Player.getInstance();
 
     public boolean collisionHandled = false;
@@ -116,8 +118,8 @@ public class Assignment2 extends GameEngine
 
         // Clear enemies list before adding new enemies
         enemies.clear();
-        Image enemyImage = loadImage("resources/Sprites/nosferatu.png");
-        enemies.add(new Enemy(enemyImage, 50, 50, player.getImage().getWidth(null), player.getImage().getHeight(null), 2, 1));
+        enemySpriteSheet = loadImage("resources/Sprites/Vampire-SpriteSheetFinal.png");
+        enemies.add(new Enemy(enemySpriteSheet, 50, 50, player.getImage().getWidth(null), player.getImage().getHeight(null), 2, 1));
 
 
 

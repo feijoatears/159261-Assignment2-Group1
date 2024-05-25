@@ -192,8 +192,6 @@ public class Player extends Character
                     {
                         lives -= 1;
                         Thread.sleep(2000);
-                        currentFrameIndex = (currentFrameIndex + 1) % damageFrames.length;
-                        image = (humanFrames[damageFrames[currentFrameIndex]]);
                     }
                     catch (InterruptedException e)
                     {

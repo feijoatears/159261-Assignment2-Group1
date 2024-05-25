@@ -110,9 +110,6 @@ public class Assignment2 extends GameEngine
 
         wallImage = loadImage("resources/Objects/DEBUGWALL.png");
 
-        // set starting position
-        map.setStart(1, 1);
-
         int spawnPosX = width() / 2 - player.getImage().getWidth(null) / 2; // using this to offset playing image to
         int spawnPosY = (int) (height() * 2 / 3.0) - player.getImage().getHeight(null) / 2; // using this to offset playing image to
 
@@ -120,9 +117,6 @@ public class Assignment2 extends GameEngine
         enemies.clear();
         enemySpriteSheet = loadImage("resources/Sprites/Vampire-SpriteSheetFinal.png");
         enemies.add(new Enemy(enemySpriteSheet, 50, 50, player.getImage().getWidth(null), player.getImage().getHeight(null), 2, 1));
-
-
-
 
         player.setPosX(spawnPosX);
         player.setPosY(spawnPosY);
@@ -155,7 +149,8 @@ public class Assignment2 extends GameEngine
         // Key stuff
         keyImage = loadImage("resources/Objects/key1.png");
         key = new Key(250, 250, keyImage);
-        generateMap();
+        map.generate(11);
+
 
         //button testing
         buttons.add(new Button(300, 300, new ArrayList<>()
@@ -307,8 +302,9 @@ public class Assignment2 extends GameEngine
                 drawSolidRectangle(wall.x, wall.y, wall.width, wall.height);
             }
             // ORANGE FOR BOUNDS
-            changeColor(Color.ORANGE);
-            drawSolidRectangle(0, 0, width(), 10);
+            changeColor(Color.GREEN);
+            drawSolidRectangle(map.getCurrentLevel().getLeftDoor().x,map.getCurrentLevel().getLeftDoor().y, 10, 10 );
+            changeColor(orange);
             drawSolidRectangle(0, height() - 10, width(), 10);
             drawSolidRectangle(0, 0, 10, height());
             drawSolidRectangle(width() - 10, 0, 10, height());
@@ -371,12 +367,9 @@ public class Assignment2 extends GameEngine
         //increase to add gap between player spawn and door
         final int doorConst = 5;
 
-        Rectangle leftDoor = new Rectangle(0, height() / 2 - 15, 30, 50),
-                  topDoor = new Rectangle((width() / 2) - 20, 0 , 55, 30),
-                  rightDoor = new Rectangle(width() - 30, height() / 2 - 15, 30, 50),
-                  bottomDoor = new Rectangle((width() / 2) - 20, height()-30, 50, 30);
 
-        if (player.checkCollision(leftDoor) && !collisionHandled)
+
+        if (player.checkCollision(map.getCurrentLevel().getLeftDoor()) && !collisionHandled)
         {
             if (map.getCurrentRoomNum() <= 0 ||
                 map.getMap().get(map.getCurrentFloorNum()).get(map.getCurrentRoomNum() - 1) == null)
@@ -391,7 +384,7 @@ public class Assignment2 extends GameEngine
             // flippyDoor = true;
 
         }
-        else if (player.checkCollision(rightDoor) && !collisionHandled)
+        else if (player.checkCollision(map.getCurrentLevel().getRightDoor()) && !collisionHandled)
         {
             if (map.getCurrentRoomNum() >= map.getMap().get(map.getCurrentFloorNum()).size() - 1 ||
                 map.getMap().get(map.getCurrentFloorNum()).get(map.getCurrentRoomNum() + 1) == null)
@@ -405,7 +398,7 @@ public class Assignment2 extends GameEngine
             // flippyDoor = true;
 
         }
-        else if (player.checkCollision(topDoor) && !collisionHandled)
+        else if (player.checkCollision(map.getCurrentLevel().getTopDoor()) && !collisionHandled)
         {
             if (map.getCurrentFloorNum() <= 0 ||
                 map.getMap().get(map.getCurrentFloorNum() - 1).get(map.getCurrentRoomNum()) == null)
@@ -418,7 +411,7 @@ public class Assignment2 extends GameEngine
             collisionHandled = true;
             // flippyDoor = true;
         }
-        else if (player.checkCollision(bottomDoor) && !collisionHandled)
+        else if (player.checkCollision(map.getCurrentLevel().getBottomDoor()) && !collisionHandled)
         {
             if (map.getCurrentFloorNum() >= map.getMap().size() - 1 ||
                 map.getMap().get(map.getCurrentFloorNum() + 1).get(map.getCurrentRoomNum()) == null)
@@ -443,62 +436,7 @@ public class Assignment2 extends GameEngine
     /**
      * Generates the game map.
      */
-    public void generateMap()
-    {/*
-            creating a testing map which looks like this:
 
-                []
-             [] [] []
-                []
-
-            player spawns in centre
-        */
-        //reset map array
-        map.reset();
-        //init arrays with null elements
-        ArrayList<Level> floor1 = new ArrayList<>(),
-                floor2 = new ArrayList<>(),
-                floor3 = new ArrayList<>();
-
-        floor1.add(null);
-        floor1.add(new Level(loadImage("resources/Levels/level2.png")));
-        floor1.add(null);
-
-        floor2.add(new Level(loadImage("resources/Levels/level5.png")));
-        floor2.add(new Level(loadImage("resources/Levels/level1.png")));
-        floor2.add(new Level(loadImage("resources/Levels/level3.png")));
-
-        floor3.add(null);
-        floor3.add( new Level(loadImage("resources/Levels/level4.png")));
-        floor3.add(null);
-
-        map.addFloor(floor1);
-        map.addFloor(1, floor2);
-        map.addFloor(2, floor3);
-
-        /*
-            /////////////////////////////////////////////////////////////
-            // this is the correct code for the program  with 20 lvls, //
-            // testing code above                                      //
-            /////////////////////////////////////////////////////////////
-
-            //create a temporary arraylist to hold a 'floor'
-            ArrayList<Level> temp = new ArrayList<>();
-            for(int i = 0; i < numLevels; i++)
-            {
-                //every fourth level, create a new floor (5x4)
-                if(temp.size() > 3)
-                {
-                    map.add(temp);
-                    //don't call .clear(), will point to same object in memory???
-                    temp = new ArrayList<>();
-                }
-                Level level = new Level(loadImage("resources/level" + (i + 1) + ".png"));
-                temp.add(level);
-            }
-            map.add(temp);
-        */
-    }
 
     /**
      * Draws the minimap on the screen.

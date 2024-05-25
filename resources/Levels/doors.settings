@@ -1,0 +1,61 @@
+Room 1
+{
+    Up,
+    Right,
+    Down,
+    Left
+}
+Room 2
+{
+    Up,
+    Right
+}
+Room 3
+{
+    Right,
+    Down
+}
+Room 4
+{
+    Left,
+    Down
+}
+Room 5
+{
+    Right,
+    Down,
+    Left
+}
+Room 6
+{
+    Up,
+    Down,
+    Left
+}
+Room 7
+{
+    Up,
+    Right,
+    Down
+}
+Room 8
+{
+    Up,
+    Right,
+    Left
+}
+Room 9
+{
+    Up,
+    Left
+}
+Room 10
+{
+    Right,
+    Left
+}
+Room 11
+{
+    Up,
+    Down
+}

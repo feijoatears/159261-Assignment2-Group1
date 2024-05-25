@@ -6,9 +6,11 @@ import src.GameEngine;
 
 import java.awt.*;
 
-public class Character {
-    protected int posX;
-    protected int posY;
+public abstract class Character {
+    protected int posX,
+                  posY,
+                  speed = 5;
+
     protected Direction direction;
     protected Image image;
 
@@ -57,5 +59,39 @@ public class Character {
     public Image getImage()
     {
         return image;
+    }
+
+    public int getSpeed()
+    {
+        return speed;
+    }
+
+    public void setSpeed(int speed)
+    {
+        this.speed = speed;
+    }
+
+
+    public void handleWallCollision()
+    {
+        //makes inside area of map valid
+        Rectangle validPosition = new Rectangle(0,0,450,450);
+        if(this.posX > validPosition.width)
+        {
+            this.posX = validPosition.width;
+        }
+        else if(this.posX < 0)
+        {
+            this.posX = 0;
+        }
+
+        if(this.posY > validPosition.height)
+        {
+            this.posY = validPosition.height;
+        }
+        else if(this.posY < 0)
+        {
+            this.posY = 0;
+        }
     }
 }

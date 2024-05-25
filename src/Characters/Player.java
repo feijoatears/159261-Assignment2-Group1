@@ -1,7 +1,7 @@
 package src.Characters;
 
 import src.Direction;
-import src.GameEngine;
+
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -28,16 +28,25 @@ public class Player extends Character
                         westFrames = {8, 9},
                         northFrames = {6, 7};
 
-    private int speed = 5,
-                lives = 3,
+    private int lives = 3,
                 currentFrameIndex = 0;
 
-    private static Thread thread;
+    private static Thread iFrameThread,
+                          bouncyThread;
+
+    public boolean[] hasKey = new boolean[10];
+    private boolean isMoving = false;
+
+
+    ////////////////////
+    //END OF VARIABLES//
+    ////////////////////
 
     public void reset()
     {
         lives = 3;
     }
+
     private Player()
     {
         int numFrames = 10,
@@ -67,8 +76,6 @@ public class Player extends Character
         return buffered.getSubimage(x, y, w, h);
     }
 
-    public boolean[] hasKey = new boolean[10];
-    private boolean isMoving = false;
 
     public static Player getInstance()
     {
@@ -85,86 +92,25 @@ public class Player extends Character
 
     public void move(ArrayList<Rectangle> walls)
     {
-
-        int nextPosX = posX;
-        int nextPosY = posY;
-
-
         //unique to player bc controllable, other sprites will move in a pre-programmed manner
-        switch (this.getDirection())
+
+        //array of vectors for player movement, easier to read than switch
+        //i.e. east = index 3({1,0}), expands to nextPosX += 1 * speed, nextPosY += 0 * speed;
+        int[][] directionVals =
         {
-            case North:
-            {
-                //this.setPosY(posY - speed);
-                nextPosY = posY - speed;
-                break;
-            }
-            case South:
-            {
-                //this.setPosY(posY + speed);
-                nextPosY = posY + speed;
-                break;
-            }
-            case West:
-            {
-                //this.setPosX(posX - speed);
-                nextPosX = posX - speed;
-                break;
-            }
-            case East:
-            {
-                //this.setPosX(posX + speed);
-                nextPosX = posX + speed;
-                break;
-            }
-            case Northwest:
-            {
-                //this.setPosY(posY - speed);
-                //this.setPosX(posX - speed);
-                nextPosY = posY - speed;
-                nextPosX = posX - speed;
-                break;
-            }
-            case Northeast:
-            {
-                //this.setPosY(posY - speed);
-                //this.setPosX(posX + speed);
-                nextPosY = posY - speed;
-                nextPosX = posX + speed;
-                break;
-            }
-            case Southwest:
-            {
-                //this.setPosY(posY + speed);
-                //this.setPosX(posX - speed);
-                nextPosY = posY + speed;
-                nextPosX = posX - speed;
-                break;
-            }
-            case Southeast:
-            {
-                //this.setPosY(posY + speed);
-                //this.setPosX(posX + speed);
-                nextPosY = posY + speed;
-                nextPosX = posX + speed;
-                break;
-            }
-        }
+            {0, -1},  // N
+            {0, 1},   // S
+            {-1, 0},  // W
+            {1, 0},   // E
+            {-1, -1}, // NW
+            {1, -1},  // NE
+            {-1, 1},  // SW
+            {1, 1}    // SE
+        };
+        int i = this.getDirection().ordinal();
 
-        Rectangle nextRect = new Rectangle(nextPosX, nextPosY, image.getWidth(null), image.getHeight(null));
-        for (Rectangle wall : walls) {
-            if (nextRect.intersects(wall)) {
-                return; // Collision detected, don't move the player
-            }
-        }
-
-        this.setPosX(nextPosX);
-        this.setPosY(nextPosY);
-
-        if (nextPosX < 0 || nextPosY < 0 || nextPosX + image.getWidth(null) > 500 || nextPosY + image.getHeight(null) > 500) {
-            return; // Outside screen boundaries, don't move the player
-        }
-
+        posX += directionVals[i][0] * speed;
+        posY += directionVals[i][1] * speed;
 
         if (direction == Direction.East)
         {
@@ -195,15 +141,7 @@ public class Player extends Character
         Rectangle playerRect = new Rectangle(this.posX, this.posY, this.image.getWidth(null), this.image.getHeight(null));
         return playerRect.intersects(other);
     }
-    public int getSpeed()
-    {
-        return speed;
-    }
 
-    public void setSpeed(int speed)
-    {
-        this.speed = speed;
-    }
 
     // Method to check if a specific key is present
     public boolean hasKey(int keyNum) {
@@ -239,37 +177,39 @@ public class Player extends Character
         return lives;
     }
 
-    public synchronized void damage(Rectangle other)
+    public synchronized void damage(Rectangle other, double dt)
     {
         if (checkCollision(other))
         {
             //starts a thread that checks every two seconds if player is on a damaging object
             //if they are, player loses a life, stop thread if not
             //adds iFrames so player doesn't immediately die when they touch a damaging object
-            if(thread == null || !thread.isAlive())
+            if(iFrameThread == null || !iFrameThread.isAlive())
             {
-                thread = new Thread( () ->
+                iFrameThread = new Thread( () ->
                 {
                     try
                     {
                         lives -= 1;
                         Thread.sleep(2000);
                         currentFrameIndex = (currentFrameIndex + 1) % damageFrames.length;
-                        image = (humanFrames[damageFrames[currentFrameIndex]]);                    }
+                        image = (humanFrames[damageFrames[currentFrameIndex]]);
+                    }
                     catch (InterruptedException e)
                     {
                         //player leaves damaging object hitbox
                         Thread.currentThread().interrupt();
                     }
                 });
-                thread.start();
+                iFrameThread.start();
             }
+            bounceBack(direction, 2, dt);
         }
         else
         {
-            if(thread != null)
+            if(iFrameThread != null)
             {
-                thread.interrupt();
+                iFrameThread.interrupt();
             }
         }
     }
@@ -278,38 +218,33 @@ public class Player extends Character
         lives += 1;
     }
 
-    public void bounceBack(Direction direction, int steps) {
-        int stepSize = 10; // Define the size of each step 
-        switch (direction) {
-            case North:
-                setPosY(getPosY() + stepSize * steps);
-                break;
-            case South:
-                setPosY(getPosY() - stepSize * steps);
-                break;
-            case East:
-                setPosX(getPosX() - stepSize * steps);
-                break;
-            case West:
-                setPosX(getPosX() + stepSize * steps);
-                break;
-            case Northeast:
-                setPosX(getPosX() - stepSize * steps);
-                setPosY(getPosY() + stepSize * steps);
-                break;
-            case Northwest:
-                setPosX(getPosX() + stepSize * steps);
-                setPosY(getPosY() + stepSize * steps);
-                break;
-            case Southeast:
-                setPosX(getPosX() - stepSize * steps);
-                setPosY(getPosY() - stepSize * steps);
-                break;
-            case Southwest:
-                setPosX(getPosX() + stepSize * steps);
-                setPosY(getPosY() - stepSize * steps);
-                break;
-        }
+    public synchronized void bounceBack(Direction direction, int steps, double dt)
+    {
+        int[][] directionVals =
+        {
+                {0, 1},   // N
+                {0, -1},  // S
+                {1, 0},   // W
+                {-1, 0},  // E
+                {1, 1},   // NW
+                {-1, 1},  // NE
+                {1, -1},   // SW
+                {-1, -1} // SE
+        };
+        int i = direction.ordinal();
+
+        int targetX = getPosX() + directionVals[i][0] * 10 * steps;
+        int targetY = getPosY() + directionVals[i][1] * 10 * steps;
+
+        // Interpolate between current position and target position
+        int interpolatedX = (int) (getPosX() + (targetX - getPosX()) * 1.5);
+        int interpolatedY = (int) (getPosY() + (targetY - getPosY()) * 1.5);
+
+        // Update the position
+        posX = interpolatedX;
+        posY = interpolatedY;
+
+
     }
 
     public void attack(ArrayList<Enemy> enemies) {

@@ -203,8 +203,8 @@ public class Assignment2 extends GameEngine
             // Handle collision with damaging objects
             for (DamagingObject o : obstacles) {
                 if (player.checkCollision(o.getHitbox())) {
-                    player.damage(o.getHitbox());
-                    player.bounceBack(player.getDirection(), 2); // Bounce back 2 steps
+                    player.damage(o.getHitbox(), dt);
+                     // Bounce back 2 steps
                 }
             }
         }
@@ -213,12 +213,12 @@ public class Assignment2 extends GameEngine
         for (Enemy enemy : enemies) {
             enemy.chasePlayer(player, walls);
             if (player.checkCollision(enemy.getHitbox())) {
-                player.damage(enemy.getHitbox());
-                player.bounceBack(player.getDirection(), 2); // Bounce back 2 steps
+                player.damage(enemy.getHitbox(), dt);
+
             }
         }
 
-        // Collision checks for doors
+        player.handleWallCollision();
         handleDoorCollision();
 
         // Button collision checks
@@ -367,10 +367,14 @@ public class Assignment2 extends GameEngine
      */
     public void handleDoorCollision()
     {
+        //mostly stops flickering when entering room
+        //increase to add gap between player spawn and door
+        final int doorConst = 5;
+
         Rectangle leftDoor = new Rectangle(0, height() / 2 - 15, 30, 50),
-                topDoor = new Rectangle((width() / 2) - 20, 0 , 55, 30),
-                rightDoor = new Rectangle(width() - 30, height() / 2 - 15, 30, 50),
-                bottomDoor = new Rectangle((width() / 2) - 20, height()-30, 50, 30);
+                  topDoor = new Rectangle((width() / 2) - 20, 0 , 55, 30),
+                  rightDoor = new Rectangle(width() - 30, height() / 2 - 15, 30, 50),
+                  bottomDoor = new Rectangle((width() / 2) - 20, height()-30, 50, 30);
 
         if (player.checkCollision(leftDoor) && !collisionHandled)
         {
@@ -381,12 +385,10 @@ public class Assignment2 extends GameEngine
             }
             map.moveLeft();
 
-            player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
+            player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null) - doorConst);
             player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
-            //player.setPosX(width() - 100);
-            // player.setPosY(height() / 2);
-            // flippyDoor = true;
             collisionHandled = true;
+            // flippyDoor = true;
 
         }
         else if (player.checkCollision(rightDoor) && !collisionHandled)
@@ -397,12 +399,10 @@ public class Assignment2 extends GameEngine
                 return;
             }
             map.moveRight();
-            player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
+            player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null) + doorConst);
             player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
-           // player.setPosX(100);
-           // player.setPosY(height() / 2);
-            // flippyDoor = true;
             collisionHandled = true;
+            // flippyDoor = true;
 
         }
         else if (player.checkCollision(topDoor) && !collisionHandled)
@@ -414,11 +414,9 @@ public class Assignment2 extends GameEngine
             }
             map.moveUp();
             player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
-            player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
-            //player.setPosX(width() / 2);
-            //player.setPosY(100);
-            // flippyDoor = true;
+            player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null) - doorConst);
             collisionHandled = true;
+            // flippyDoor = true;
         }
         else if (player.checkCollision(bottomDoor) && !collisionHandled)
         {
@@ -429,11 +427,9 @@ public class Assignment2 extends GameEngine
             }
             map.moveDown();
             player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
-            player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
-            //player.setPosX(width() / 2);
-            //player.setPosY(height() - 100);
-            // flippyDoor = true;
+            player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null) + doorConst);
             collisionHandled = true;
+            // flippyDoor = true;
         }
 
         for(Key k : keys) {
@@ -584,7 +580,7 @@ public class Assignment2 extends GameEngine
             activeButton.rollSlotMachine();
             mFrame.repaint();
         }
-        // rig slot machinea
+        // rig slot machine
         if (event.getKeyCode() == KeyEvent.VK_R && showButtonPopup && activeButton != null) {
             activeButton.rigSlotMachine();
             mFrame.repaint();

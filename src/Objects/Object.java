@@ -40,6 +40,9 @@ public abstract class Object
         this.posX = posX;
         this.posY = posY;
         this.image = image;
+
+        this.width = image.getWidth(null);
+        this.height = image.getHeight(null);
     };
 
     public Image getImage()

@@ -2,13 +2,15 @@ package src.Objects;
 
 import java.awt.*;
 
+import static src.GameEngine.loadImage;
+
 public class Key extends Object
 {
     private int id;
 
-    public Key(int posX, int posY, Image keyImage)
+    public Key(int posX, int posY)
     {
-        super(posX, posY, keyImage);
+        super(posX, posY, loadImage("resources/Objects/keyScaled.png"));
         this.isInteractable = true;
         this.isUsed = false;
     }

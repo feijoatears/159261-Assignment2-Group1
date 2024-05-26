@@ -37,8 +37,6 @@ public class Assignment2 extends GameEngine
                     showButtonPopup = false,
                     test1;
 
-    protected Image keyImage;
-
     public static Player player = Player.getInstance();
 
     public VolumeControl volumeControl = VolumeControl.getInstance();
@@ -54,10 +52,6 @@ public class Assignment2 extends GameEngine
     public static void main(String[] args)
     {
         createGame(new Assignment2(), framerate);
-    }
-    public void initImages()
-    {
-        keyImage = loadImage("resources/Objects/key1.png");
     }
     public void initPlayer()
     {
@@ -78,7 +72,7 @@ public class Assignment2 extends GameEngine
     }
     public void initObjects()
     {
-        key = new Key(250, 250, keyImage);
+        key = new Key(250, 250);
 
         map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>()
         {{
@@ -104,7 +98,6 @@ public class Assignment2 extends GameEngine
             volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
         }
 
-        initImages();
         initPlayer();
         initEnemies();
         initObjects();
@@ -173,14 +166,8 @@ public class Assignment2 extends GameEngine
         }
         if (!key.getIsUsed())
         {
-            drawImage(keyImage, key.getPosX(), key.getPosY());
 
-            // Draw a semi-transparent rectangle over the key, needed for when the background of the key goes away
-            float keyOpacity = 0.5f; // 50% opacity
-            AlphaComposite keyAc = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, keyOpacity);
-            mGraphics.setComposite(keyAc);
-            drawSolidRectangle(key.getPosX(), key.getPosY(), keyImage.getWidth(null), keyImage.getHeight(null));
-            mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            drawImage(key.getImage(), key.getPosX(), key.getPosY());
         }
         if (showButtonPopup && activeButton != null)
         {

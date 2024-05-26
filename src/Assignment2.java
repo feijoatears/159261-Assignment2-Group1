@@ -266,6 +266,8 @@ public class Assignment2 extends GameEngine
 
         drawImage(player.getImage(), player.getPosX(), player.getPosY());
 
+        player.paintRedCircle(mGraphics);
+        
         for (Rectangle wall : walls) {
             drawImage(wallImage, wall.x, wall.y, wall.width, wall.height);
         }

@@ -24,6 +24,20 @@ public abstract class Enemy extends Character
 
     public void chasePlayer(Player player)
     {
+
+        int targetX = player.getPosX();
+        int targetY = player.getPosY();
+
+        // Define the hit range
+        int hitRange = 0;
+
+        if (Math.abs(posX - targetX) <= hitRange && Math.abs(posY - targetY) <= hitRange) {
+            // The enemy is close enough to hit the player
+            // Perform hit logic
+            System.out.println("Enemy hits the player!");
+            return;
+        }
+
         //issue w/ enemy moving back and forth sporadically, was due to being unable to access odd coordinates
         if(Math.abs(posX - player.getPosX()) <= 5)
         {

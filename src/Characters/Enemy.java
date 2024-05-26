@@ -1,120 +1,50 @@
 package src.Characters;
 
-
-import src.Direction;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
-import static src.GameEngine.loadImage;
+public class Enemy extends Character
+{
+    private int currentFrameIndex = 0,
+                damage = 0;
 
-public class Enemy extends Character {
-    private Image image;
-    private int width;
-    private int height;
-    private int speed;
-    private int damage;
+    private final int[] eastFrames = {0, 1},
+                        southFrames = {2, 3},
+                        westFrames = {6, 7},
+                        northFrames = {4, 5};
 
-    protected Image enemySpriteSheet = loadImage("resources/Sprites/Vampire-SpriteSheetFinal.png");
-    private final Image [] enemyFrames;
-
-    private int currentFrameIndex = 0;
-
-    private final int[] eastFrames = {0, 1};
-    private final int[] southFrames = {2, 3};
-    private final int[] westFrames = {6, 7};
-    private final int[] northFrames = {4, 5};
-    
-    public Enemy(Image image, int posX, int posY, int width, int height, int speed, int damage) {
-        this.image = image;
-        this.setPosX(posX);
-        this.setPosY(posY);
-        this.width = width;
-        this.height = height;
-        this.speed = speed;
-        this.damage = damage;
-
-         int numFrames = 8,
-                frameWidth = enemySpriteSheet.getWidth(null) / numFrames,
-                frameHeight = enemySpriteSheet.getHeight(null);
-
-        enemyFrames = new Image[numFrames];
-
-        for (int i = 0; i < numFrames; i++)
-        {
-
-            enemyFrames[i] = subImage(enemySpriteSheet, i * frameWidth, 0 , frameWidth, frameHeight);
-        }
-        setImage(enemyFrames[0]);
-    }
-
-
-    private Image subImage(Image source, int x, int y, int w, int h)
+    public Enemy(Image spritesheet, int posX, int posY, int speed, int damage)
     {
-        if(source == null)
-        {
-            System.out.println("Error: cannot extract a subImage from a null image.\n");
-            return null;
-        }
+        super(posX, posY, speed, spritesheet, 8);
+        this.damage = damage;
+    };
 
-        BufferedImage buffered = (BufferedImage)source;
+    public void setDamage(int damage) { this.damage = damage; }
+    public int getDamage() { return damage; }
 
-        return buffered.getSubimage(x, y, w, h);
-    }
-
-     public void setImage(Image image) {
-        this.image = image;   
-    }   
-    
-    public Image getImage() {
-        return image;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public void chasePlayer(Player player, ArrayList<Rectangle> walls)
+    public void chasePlayer(Player player)
     {
         //issue w/ enemy moving back and forth sporadically, was due to being unable to access odd coordinates
-        if(posX + 1 == player.getPosX())
+        if(Math.abs(posX - player.getPosX()) <= 5)
         {
-            posX += 1;
+            posX = player.posX;
         }
-        else if(posX - 1 == player.getPosX())
+        if(Math.abs(posY - player.getPosY()) <= 5)
         {
-            posX -= 1;
-        }
-        if(posY + 1 == player.getPosY())
-        {
-            posY += 1;
-        }
-        else if(posY - 1 == player.getPosY())
-        {
-            posY -= 1;
+            posY = player.posY;
         }
 
         if (posX < player.getPosX())
         {
             posX += speed;
             currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
-            image = (enemyFrames[eastFrames[currentFrameIndex]]);
-
+            image = (frames[eastFrames[currentFrameIndex]]);
         }
         else if (posX > player.getPosX())
         {
             posX -= speed;
             currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
-            image = (enemyFrames[westFrames[currentFrameIndex]]);
-
+            image = (frames[westFrames[currentFrameIndex]]);
         }
 
         if (posY < player.getPosY())
@@ -122,7 +52,7 @@ public class Enemy extends Character {
             if(posX == player.getPosX())
             {
                 currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
-                image = (enemyFrames[southFrames[currentFrameIndex]]);
+                image = (frames[southFrames[currentFrameIndex]]);
             }
             posY += speed;
         }
@@ -131,18 +61,12 @@ public class Enemy extends Character {
             if(posX == player.getPosX())
             {
                 currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
-                image = (enemyFrames[northFrames[currentFrameIndex]]);
+                image = (frames[northFrames[currentFrameIndex]]);
             }
             posY -= speed;
         }
 
+        this.hitbox = new Rectangle(posX, posY, width, height);
         handleWallCollision();
-
-        System.out.println("Enemy new position: (" + getPosX() + ", " + getPosY() + ")");
-    }
-
-
-    public Rectangle getHitbox() {
-        return new Rectangle(getPosX(), getPosY(), width, height);
     }
 }

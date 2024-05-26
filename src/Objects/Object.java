@@ -26,6 +26,8 @@ public abstract class Object
         this.posY = posY;
         this.width = width;
         this.height = height;
+
+        this.hitbox = new Rectangle(posX,posY,width,height);
     }
     public Object(int posX, int posY, ArrayList<GameEngine.AudioClip> sounds)
     {

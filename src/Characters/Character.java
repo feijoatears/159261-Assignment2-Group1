@@ -5,31 +5,68 @@ import src.GameEngine;
 
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
-public abstract class Character {
+public abstract class Character
+{
     protected int posX,
                   posY,
+                  width,
+                  height,
                   speed = 5;
 
     protected Direction direction;
-    protected Image image;
 
+    protected Image spriteSheet;
+    protected Image image;
+    protected Image[] frames = new Image[]{};
+
+    protected Rectangle hitbox;
 
     // empty constructor
     public Character() {}
-    // Constructor
-    public Character(int posX, int posY, Direction direction, Image image)
+
+    public Character(int posX, int posY, int speed, Image spriteSheet, int numFrames)
     {
         this.posX = posX;
         this.posY = posY;
-        this.direction = direction;
+        this.speed = speed;
+        this.spriteSheet = spriteSheet;
+
+        int frameWidth = spriteSheet.getWidth(null) / numFrames,
+            frameHeight = spriteSheet.getHeight(null);
+
+        frames = new Image[numFrames];
+
+        for (int i = 0; i < numFrames; i++)
+        {
+
+            frames[i] = subImage(spriteSheet, i * frameWidth, 0 , frameWidth, frameHeight);
+        }
+        image = (frames[0]);
+
+        this.width = image.getWidth(null);
+        this.height = image.getHeight(null);
+        this.hitbox = new Rectangle(width, height);
+    }
+
+    private Image subImage(Image source, int x, int y, int w, int h)
+    {
+        if(source == null)
+        {
+            System.out.println("Error: cannot extract a subImage from a null image.\n");
+            return null;
+        }
+
+        BufferedImage buffered = (BufferedImage)source;
+
+        return buffered.getSubimage(x, y, w, h);
     }
 
     // Getters and setters for posX
     public int getPosX() {
         return posX;
     }
-
     public void setPosX(int posX) {
         this.posX = posX;
     }
@@ -38,24 +75,23 @@ public abstract class Character {
     public int getPosY() {
         return posY;
     }
-
     public void setPosY(int posY) {
         this.posY = posY;
     }
 
+    public void setWidth(int width) { this.width = width; }
+    public int getWidth() { return width; }
+
+    public void setHeight(int height) { this.height = height; }
+    public int getHeight() { return height; }
+
     // Getters and setters for direction
-
-
     public Direction getDirection() {
         return direction;
     }
-
     public void setDirection(Direction direction) {this.direction = direction;}
 
-    public void setImage(String path)
-    {
-        this.image = GameEngine.loadImage(path);
-    }
+    public void setImage(String path) { this.image = GameEngine.loadImage(path); }
     public Image getImage()
     {
         return image;
@@ -65,31 +101,30 @@ public abstract class Character {
     {
         return speed;
     }
-
     public void setSpeed(int speed)
     {
         this.speed = speed;
     }
 
+    public void setHitbox(Rectangle hitbox) { this.hitbox = hitbox; }
+    public Rectangle getHitbox() { return hitbox; }
 
     public void handleWallCollision()
     {
+
         //makes inside area of map valid
-        Rectangle validPosition = new Rectangle(0,0,450,450);
-        if(this.posX > validPosition.width)
+        Rectangle validPosition = new Rectangle(0, 0, 450, 450);
+        if (this.posX > validPosition.width)
         {
             this.posX = validPosition.width;
-        }
-        else if(this.posX < 0)
+        } else if (this.posX < 0)
         {
             this.posX = 0;
         }
-
-        if(this.posY > validPosition.height)
+        if (this.posY > validPosition.height)
         {
             this.posY = validPosition.height;
-        }
-        else if(this.posY < 0)
+        } else if (this.posY < 0)
         {
             this.posY = 0;
         }

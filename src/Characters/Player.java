@@ -1,6 +1,10 @@
 package src.Characters;
 
 import src.Direction;
+import src.GameEngine;
+import src.Objects.Button;
+import src.Objects.DamagingObject;
+import src.Objects.Key;
 
 
 import java.awt.*;
@@ -20,10 +24,7 @@ public class Player extends Character
     private static Timer redCircleTimer;
     private boolean showRedCircle = false;
     
-    protected Image playerSpriteSheet = loadImage("resources/Sprites/Player-spritesheet.png");
     private final Image heartImage = loadImage("resources/Objects/heart.png");
-
-    private final Image[] humanFrames;
 
     private final int[] eastFrames = {0, 1},
                         southFrames = {2, 3},
@@ -34,51 +35,16 @@ public class Player extends Character
     private int lives = 3,
                 currentFrameIndex = 0;
 
-    private static Thread iFrameThread,
-                          bouncyThread;
+    private static Thread iFrameThread;
 
     public boolean[] hasKey = new boolean[10];
     private boolean isMoving = false;
 
-
-    ////////////////////
-    //END OF VARIABLES//
-    ////////////////////
-
-    public void reset()
-    {
-        lives = 3;
-    }
-
     private Player()
     {
-        int numFrames = 10,
-            frameWidth = playerSpriteSheet.getWidth(null) / numFrames,
-            frameHeight = playerSpriteSheet.getHeight(null);
-
-        humanFrames = new Image[numFrames];
-
-        for (int i = 0; i < numFrames; i++)
-        {
-
-            humanFrames[i] = subImage(playerSpriteSheet, i * frameWidth, 0 , frameWidth, frameHeight);
-        }
-        setImage(humanFrames[0]);
+        super(0, 0, 0, loadImage("resources/Sprites/Player-SpriteSheet.png"),10);
+        direction = Direction.East;
     }
-
-    private Image subImage(Image source, int x, int y, int w, int h)
-    {
-        if(source == null)
-        {
-            System.out.println("Error: cannot extract a subImage from a null image.\n");
-            return null;
-        }
-
-        BufferedImage buffered = (BufferedImage)source;
-
-        return buffered.getSubimage(x, y, w, h);
-    }
-
 
     public static Player getInstance()
     {
@@ -89,16 +55,12 @@ public class Player extends Character
         return instance;
     }
 
-    public void setImage(Image image) {
-        this.image = image;
-    }    
-
-    public void move(ArrayList<Rectangle> walls)
+    public void move()
     {
-        //unique to player bc controllable, other sprites will move in a pre-programmed manner
+        hitbox = new Rectangle(getPosX(), getPosY(), getImage().getWidth(null), getImage().getHeight(null));
 
         //array of vectors for player movement, easier to read than switch
-        //i.e. east = index 3({1,0}), expands to nextPosX += 1 * speed, nextPosY += 0 * speed;
+        //i.e. east = index 3({1,0}), evaluates to nextPosX += 1 * speed, nextPosY += 0 * speed;
         int[][] directionVals =
         {
             {0, -1},  // N
@@ -118,33 +80,32 @@ public class Player extends Character
         if (direction == Direction.East)
         {
             currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
-            image = (humanFrames[eastFrames[currentFrameIndex]]);
+            image = (frames[eastFrames[currentFrameIndex]]);
         }
         else if (direction == Direction.West)
         {
             currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
-            image = (humanFrames[westFrames[currentFrameIndex]]);
+            image = (frames[westFrames[currentFrameIndex]]);
         }
         else if (direction == Direction.North ||
                 direction == Direction.Northeast ||
                 direction == Direction.Northwest)
         {
             currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
-            image = (humanFrames[northFrames[currentFrameIndex]]);
+            image = (frames[northFrames[currentFrameIndex]]);
         }
         else
         {
             currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
-            image = (humanFrames[southFrames[currentFrameIndex]]);
+            image = (frames[southFrames[currentFrameIndex]]);
         }
     }
 
     public boolean checkCollision(Rectangle other)
     {
-        Rectangle playerRect = new Rectangle(this.posX, this.posY, this.image.getWidth(null), this.image.getHeight(null));
+        Rectangle playerRect = new Rectangle(posX, posY, width, height);
         return playerRect.intersects(other);
     }
-
 
     // Method to check if a specific key is present
     public boolean hasKey(int keyNum) {
@@ -175,73 +136,20 @@ public class Player extends Character
     {
         return heartImage;
     }
+    public void setLives(int lives)
+    {
+        this.lives = lives;
+    }
     public int getLives()
     {
         return lives;
     }
-
-    public synchronized void damage(Rectangle other, double dt)
-    {
-        if (checkCollision(other))
-        {
-
-            setShowRedCircle();
-            //starts a thread that checks every two seconds if player is on a damaging object
-            //if they are, player loses a life, stop thread if not
-            //adds iFrames so player doesn't immediately die when they touch a damaging object
-            if(iFrameThread == null || !iFrameThread.isAlive())
-            {
-                iFrameThread = new Thread( () ->
-                {
-                    try
-                    {
-                        lives -= 1;
-                        Thread.sleep(2000);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        //player leaves damaging object hitbox
-                        Thread.currentThread().interrupt();
-                    }
-                });
-                iFrameThread.start();
-            }
-            bounceBack(direction, 2, dt);
-        }
-        else
-        {
-            if(iFrameThread != null)
-            {
-                iFrameThread.interrupt();
-            }
-        }
-    }
-     public synchronized void setShowRedCircle() {
-        showRedCircle = true;
-
-        redCircleTimer = new Timer();
-        redCircleTimer.schedule(new TimerTask() {
-            @Override
-            public void run () {
-                showRedCircle = false;
-                redCircleTimer.cancel();
-            }
-        }, 100);
-    }
-
-    public void paintRedCircle(Graphics g) {
-        if (showRedCircle) {
-            g.setColor(new Color(255,0,0,128));
-            g.fillOval(posX, posY, image.getWidth(null), image.getHeight(null));
-        }
-    }
-    
     public void gainLife()
     {
         lives += 1;
     }
 
-    public synchronized void bounceBack(Direction direction, int steps, double dt)
+    public synchronized void bounceBack(Direction direction, int steps)
     {
         int[][] directionVals =
         {
@@ -259,19 +167,31 @@ public class Player extends Character
         int targetX = getPosX() + directionVals[i][0] * 10 * steps;
         int targetY = getPosY() + directionVals[i][1] * 10 * steps;
 
-        // Interpolate between current position and target position
         int interpolatedX = (int) (getPosX() + (targetX - getPosX()) * 1.5);
         int interpolatedY = (int) (getPosY() + (targetY - getPosY()) * 1.5);
 
-        // Update the position
+        if(interpolatedX < 0)
+        {
+            interpolatedX = 0;
+        }
+        else if(interpolatedX > 450)
+        {
+            interpolatedX = 450;
+        }
+        if(interpolatedY < 0)
+        {
+            interpolatedY = 0;
+        }
+        else if (interpolatedY > 450)
+        {
+            interpolatedY = 450;
+        }
         posX = interpolatedX;
         posY = interpolatedY;
-
-
     }
 
     public void attack(ArrayList<Enemy> enemies) {
-        Rectangle attackRange = new Rectangle(getPosX() - 10, getPosY() - 10, getImage().getWidth(null) + 20, getImage().getHeight(null) + 20);
+        Rectangle attackRange = new Rectangle(getPosX() - 10, getPosY() - 10, width + 20, height + 20);
         for (Enemy enemy : enemies) {
             if (attackRange.intersects(enemy.getHitbox())) {
                 // Damage the enemy or remove it
@@ -279,6 +199,104 @@ public class Player extends Character
                 enemies.remove(enemy);
                 break;
             }
+        }
+    }
+
+    public boolean handleKeyCollision(Key key)
+    {
+        if (key.checkCollision(hitbox) && !key.getIsUsed())
+        {
+            collectKey(0); // for keyindex 0
+            key.setUsed(true);
+            System.out.println("Key collected!");
+            return true;
+        }
+        return false;
+    }
+    public boolean handleButtonCollision(ArrayList<Button> buttons)
+    {
+        for (Button b : buttons)
+        {
+            if (checkCollision(b.getHitbox()))
+            {
+                if (!b.getIsUsed())
+                {
+                    b.activate();
+                    playAudio(b.getOnSound());
+                    return true;
+                }
+            }
+            else
+            {
+                if (b.getIsUsed())
+                {
+                    b.deactivate();
+                    playAudio(b.getOffSound());
+                }
+            }
+        }
+        return false;
+    }
+
+    public void damage(ArrayList<DamagingObject> objects, ArrayList<Enemy> enemies)
+    {
+        for(DamagingObject ob : objects)
+        {
+            if (checkCollision(ob.getHitbox()))
+            {
+                //starts a thread that checks every two seconds if player is on a damaging object
+                //if they are, player loses a life, stop thread if not
+                //adds iFrames so player doesn't immediately die when they touch a damaging object
+
+                activateIFrames();
+                bounceBack(direction, 2);
+            }
+        }
+        for (Enemy e : enemies)
+        {
+            if(checkCollision(e.getHitbox()))
+            {
+                activateIFrames();
+                bounceBack(direction, 2);
+            }
+        }
+    }
+    public synchronized void activateIFrames()
+    {
+        if(iFrameThread == null || !iFrameThread.isAlive())
+        {
+            iFrameThread = new Thread( () ->
+            {
+                try
+                {
+                    lives -= 1;
+                    showRedCircle = true;
+                    redCircleTimer = new Timer();
+                    redCircleTimer.schedule(new TimerTask()
+                    {
+                        public void run ()
+                        {
+                            showRedCircle = false;
+                            redCircleTimer.cancel();
+                        }
+                    }, 100);
+                    Thread.sleep(2000);
+                }
+                catch (InterruptedException e)
+                {
+                    //player leaves damaging object hitbox
+                    Thread.currentThread().interrupt();
+                }
+            });
+            iFrameThread.start();
+        }
+    }
+    public void showDamagedCircle(Graphics2D g)
+    {
+        if (showRedCircle)
+        {
+            g.setColor(new Color(255,0,0,128));
+            g.fillOval(posX, posY, width, height);
         }
     }
 }

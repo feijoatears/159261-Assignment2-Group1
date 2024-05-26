@@ -25,6 +25,7 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
     Graphics2D mGraphics;
     boolean initialised = false;
 
+
     //-------------------------------------------------------
     // Time-Related functions
     //-------------------------------------------------------
@@ -700,7 +701,7 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
     }
 
     // Plays an AudioClip
-    public void playAudio(AudioClip audioClip) {
+    public static void playAudio(AudioClip audioClip) {
         // Check audioClip for null
         if(audioClip == null) {
             // Print error message

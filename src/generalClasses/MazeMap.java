@@ -96,9 +96,12 @@ public class MazeMap
         currentRoom++;
     }
 
-    public ArrayList<ArrayList<String>> getDoorConfigs()
+    public ArrayList<Level> loadLevels()
     {
+
         ArrayList<ArrayList<String>> configs = new ArrayList<>();
+        ArrayList<Level> levels = new ArrayList<>();
+
         String line = "";
 
         try
@@ -117,83 +120,70 @@ public class MazeMap
                     }
                     currentConfig.add(line.trim());
                 }
-                else if(line.contains("Room") && !line.contains("Room 1"))
-                {
-                    roomIndex++;
-                }
-                else if(line.contains("{"))
+                else if(line.contains("Room") && !line.contains("Room 1:"))
                 {
                     configs.add(roomIndex, currentConfig);
+                    roomIndex++;
+                    currentConfig = new ArrayList<>();
                 }
+            }
+            configs.add(currentConfig);
+            scanner.close();
+
+            for(int i = 0; i < configs.size(); i++)
+            {
+                String levelString = "resources/Levels/ScaledRoom" + (i + 1) + ".png";
+                Level level = new Level();
+                Image img = loadImage(levelString);
+                level.setImage(img);
+                level.setDoors(configs.get(i));
+                levels.add(level);
             }
         }
         catch (Exception e)
         {
             System.out.println(e);
         }
-        return configs;
+        return levels;
     }
+
     public void generate(int numLevels)
     {
-
-        ArrayList<ArrayList<String>> configs = getDoorConfigs();
-
         reset();
-        ArrayList<Level> temp = new ArrayList<>();
+        ArrayList<Level> levels = loadLevels(),
+                         temp = new ArrayList<>();
+
         for(int i = 0; i < numLevels; i++)
         {
             //every fourth level, create a new floor (5x4)
             if(temp.size() > 3)
             {
                 map.add(temp);
-                //don't call .clear(), will point to same object in memory???
                 temp = new ArrayList<>();
             }
-            String levelString = "resources/Levels/room" + (i + 1) + ".png";
 
-            Level level = new Level();
-            Image img = loadImage(levelString);
-            level.setImage(img);
+            int random = new Random().nextInt(0,11);
 
-            level.setDoors(configs.get(i));
-
-            //corner logic (just hardcoding for now)
-            if(temp.isEmpty() && map.isEmpty()) // top right corner
-            {
-                level.setImage(loadImage("resources/Levels/room3.png"));
-                level.setDoors(configs.get(2));
-            }
-            else if(temp.size() == 3 && map.isEmpty())
-            {
-                level.setImage(loadImage("resources/Levels/room4.png"));
-                level.setDoors(configs.get(3));
-            }
-            else if(temp.isEmpty() && map.size() == 3)
-            {
-                level.setImage(loadImage("resources/Levels/room2.png"));
-                level.setDoors(configs.get(1));
-            }
-            else if(temp.size() == 3 && map.size() == 3)
-            {
-                level.setImage(loadImage("resources/Levels/room9.png"));
-                level.setDoors(configs.get(8));
-            }
-            temp.add(level);
+            temp.add(levels.get(random));
 
             /*
                 gonna have to find a way to make all rooms accessible,
                 there might be a chance that the room generation will
                 result in inaccessible rooms
-             */
+
+
+                set player start to room 1
+
+                if(levelString.equals("resources/Levels/room1.png"))
+                {
+                    setStart(i, temp.size() - 1);
+                }
+            */
         }
 
         map.add(temp);
 
-        setStart(new Random().nextInt(1, map.size()), new Random().nextInt(1, map.get(0).size()));
+        setStart(new Random().nextInt(0, map.size()), new Random().nextInt(0, map.get(0).size()));
     }
-/*if(levelString.equals("resources/Levels/room1.png"))
-    {
-        setStart(i, temp.size() - 1);
-    }*/
 }
 

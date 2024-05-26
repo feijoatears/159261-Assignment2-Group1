@@ -30,7 +30,7 @@ public class VolumeControl
 
     private VolumeControl()
     {
-        JSlider volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        JSlider volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
         volumeSlider.addChangeListener(e -> {
             int value = volumeSlider.getValue();
             float volume = value / 100f;

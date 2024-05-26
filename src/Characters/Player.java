@@ -17,6 +17,9 @@ public class Player extends Character
 {
     private static Player instance;
 
+    private static Timer redCircleTimer;
+    private boolean showRedCircle = false;
+    
     protected Image playerSpriteSheet = loadImage("resources/Sprites/Player-spritesheet.png");
     private final Image heartImage = loadImage("resources/Objects/heart.png");
 
@@ -181,6 +184,8 @@ public class Player extends Character
     {
         if (checkCollision(other))
         {
+
+            setShowRedCircle();
             //starts a thread that checks every two seconds if player is on a damaging object
             //if they are, player loses a life, stop thread if not
             //adds iFrames so player doesn't immediately die when they touch a damaging object
@@ -211,6 +216,26 @@ public class Player extends Character
             }
         }
     }
+     public synchronized void setShowRedCircle() {
+        showRedCircle = true;
+
+        redCircleTimer = new Timer();
+        redCircleTimer.schedule(new TimerTask() {
+            @Override
+            public void run () {
+                showRedCircle = false;
+                redCircleTimer.cancel();
+            }
+        }, 100);
+    }
+
+    public void paintRedCircle(Graphics g) {
+        if (showRedCircle) {
+            g.setColor(new Color(255,0,0,128));
+            g.fillOval(posX, posY, image.getWidth(null), image.getHeight(null));
+        }
+    }
+    
     public void gainLife()
     {
         lives += 1;

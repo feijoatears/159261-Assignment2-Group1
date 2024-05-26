@@ -3,7 +3,7 @@ package src.Characters;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Enemy extends Character
+public abstract class Enemy extends Character
 {
     private int currentFrameIndex = 0,
                 damage = 0;

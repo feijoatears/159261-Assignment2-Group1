@@ -197,7 +197,7 @@ public class Assignment2 extends GameEngine
      */
     public void handleDoorCollision()
     {
-        final int doorConst = 10; //stops flickering when room entered
+        final int doorConst = 20; //gap between door and player
         for(Door door : map.getCurrentLevel().getDoors())
         {
             if(player.checkCollision(door.getHitbox()) && !collisionHandled)
@@ -305,6 +305,10 @@ public class Assignment2 extends GameEngine
         {
             drawImage(player.getHeartImage(), 20 * i, 0);
         }
+        for(Door d: map.getCurrentLevel().getDoors())
+        {
+            drawImage(d.getImage(), d.getPosX(),d.getPosY());
+        }
     }
     public void drawCharacters()
     {
@@ -316,7 +320,6 @@ public class Assignment2 extends GameEngine
             drawImage(enemy.getImage(), enemy.getPosX(), enemy.getPosY(), enemy.getWidth(), enemy.getHeight());
         }
     }
-
     /**
      * Updates the score.
      *

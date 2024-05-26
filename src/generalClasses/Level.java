@@ -11,6 +11,8 @@ import src.Objects.DamagingObject;
 import src.Objects.Door;
 import src.Objects.Key;
 
+import static src.GameEngine.loadImage;
+
 public class Level
 {
     private final ArrayList<Enemy> enemies = new ArrayList<>();
@@ -32,22 +34,26 @@ public class Level
         {
             if(s.equals("Up"))
             {
-                topDoor = new Door((500 / 2) - 20, 0 , 55, 30);
+                topDoor = new Door((500 / 2) - 20, 10 , 55, 30);
+                topDoor.setImage(loadImage("resources/Objects/DoorTop.png"));
                 doors.add(topDoor);
             }
             if(s.equals("Right"))
             {
-                rightDoor = new Door(500 - 30, 500 / 2 - 15, 30, 50);
+                rightDoor = new Door(500 - 42, 500 / 2 - 20, 30, 50);
+                rightDoor.setImage(loadImage("resources/Objects/DoorRight.png"));
                 doors.add(rightDoor);
             }
             if (s.equals("Down"))
             {
-                bottomDoor = new Door((500 / 2) - 20, 500-30, 50, 30);
+                bottomDoor = new Door((500 / 2) - 20, 500-42, 50, 30);
+                bottomDoor.setImage(loadImage("resources/Objects/DoorBottom.png"));
                 doors.add(bottomDoor);
             }
             if (s.equals("Left"))
             {
-                leftDoor = new Door(0, 500 / 2 - 15, 30, 50);
+                leftDoor = new Door(10, 500 / 2 - 20, 30, 50);
+                leftDoor.setImage(loadImage("resources/Objects/DoorLeft.png"));
                 doors.add(leftDoor);
             }
         }

@@ -17,8 +17,9 @@ public abstract class Character
 
     protected Direction direction;
 
-    protected Image spriteSheet;
-    protected Image image;
+    protected Image spriteSheet,
+                    image;
+
     protected Image[] frames = new Image[]{};
 
     protected Rectangle hitbox;

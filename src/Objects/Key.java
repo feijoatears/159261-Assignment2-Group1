@@ -10,7 +10,7 @@ public class Key extends Object
 
     public Key(int posX, int posY)
     {
-        super(posX, posY, loadImage("resources/Objects/keyScaled.png"));
+        super(posX, posY, loadImage("resources/Objects/newKey.png"));
         this.isInteractable = true;
         this.isUsed = false;
     }

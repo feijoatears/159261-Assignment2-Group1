@@ -401,9 +401,14 @@ public class Assignment2 extends GameEngine
     public void displayStartMenu(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width(), height());
+
+        Image titleImage = loadImage("resources/Sprites/title.png");
+        if (titleImage != null) {
+            g.drawImage(titleImage, 125,50, width()/2,height()/3,null);
+        }
+
         g.setColor(Color.WHITE);
-        g.drawString("Press ENTER to Start", width() / 2 - 50, height() / 2);
-    }
+        g.drawString("Press ENTER to Start", width() / 2-65, height() / 2);    }
 
     Direction lastDirection = null;
 

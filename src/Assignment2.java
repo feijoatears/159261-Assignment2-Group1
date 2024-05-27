@@ -32,6 +32,8 @@ public class Assignment2 extends GameEngine
     private int score = 0;
     static int framerate = 30;
 
+    private boolean showHelpScreen = false;
+    
     private boolean keyCollected = false,
             collisionHandled = false,
             inStartMenu = true,
@@ -226,7 +228,10 @@ public class Assignment2 extends GameEngine
         if (inStartMenu) {
             displayStartMenu(mGraphics);
             return;
-        }
+        } else if (showHelpScreen) {
+            displayHelpScreen(mGraphics);
+            return;
+        }    
 
         if (test1) {
             showTests();
@@ -408,8 +413,21 @@ public class Assignment2 extends GameEngine
         
 
         g.setColor(Color.WHITE);
-        g.drawString("Press ENTER to Start", width() / 2-65, height() / 2);    }
+        g.drawString("Press ENTER to Start", width() / 2-65, height() / 2);
+        g.drawString("Press H for Help", width()/2-55, height()/2+20);     
+    }
+    public void displayHelpScreen(Graphics g){
+        g.setColor(Color.BLACK);
+        g.fillRect(0,0,width(),height());
 
+        g.setColor(Color.WHITE);
+        g.drawString("Controls:", 50,50);
+        g.drawString("-Movement: W (Up), A (Left), S (Down), D (Right)", 50, 70);
+        g.drawString("Game Objective:", 50, 170);
+        g.drawString("Navigate through the maze, collect keys,", 50, 190);
+        g.drawString("avoid enemies and obstacles, and reach the exit door.", 50, 210);
+        g.drawString("Press Q to return to main menu", 50, 300);
+    }
     Direction lastDirection = null;
 
     /**
@@ -432,7 +450,16 @@ public class Assignment2 extends GameEngine
         {
             showMap = !showMap;
         }
-
+        if(inStartMenu && event.getKeyCode() == KeyEvent.VK_H)
+        {
+            showHelpScreen = true;
+            inStartMenu = false;
+        }
+         if(event.getKeyCode() == KeyEvent.VK_Q && showHelpScreen)
+        {
+            showHelpScreen = false;
+            inStartMenu = true;
+        }
         if (event.getKeyCode() == KeyEvent.VK_SPACE){
             test1 = true;
         } else if (event.getKeyCode() == KeyEvent.VK_ENTER){

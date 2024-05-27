@@ -492,22 +492,26 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
     // Image Functions
     //-------------------------------------------------------
 
-    // Loads an image from file
-    public static Image loadImage(String filename) {
+    // Loads an image from file// changed
+    public static Image loadImage(String path) {
         try {
-            // Load Image
-            Image image = ImageIO.read(new File(filename));
-            
-            // Return Image
+            File imageFile = new File(path);
+            if (!imageFile.exists()) {
+                System.err.println("Error: file does not exist at path: " + path);
+                return null;
+            }
+            Image image = ImageIO.read(imageFile);
+            if (image == null) {
+                System.err.println("Error: image is null after loading from path: " + path);
+            } else {
+                System.out.println("Successfully loaded image from path: " + path);
+            }
             return image;
         } catch (IOException e) {
-            // Show Error Message
-            System.out.println("Error: could not load image " + filename);
-            System.exit(1);
+            System.err.println("Error: cannot load image from path: " + path);
+            e.printStackTrace();
+            return null;
         }
-
-        // Return null
-        return null;
     }
 
     // Loads a sub-image out of an image

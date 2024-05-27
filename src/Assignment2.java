@@ -140,7 +140,7 @@ public class Assignment2 extends GameEngine
             return;
         }
 
-        if (inStartMenu) {
+        if (inStartMenu || showHelpScreen) {
             return;
         }
 

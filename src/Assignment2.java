@@ -10,10 +10,9 @@ package src;
  */
 
 import src.Characters.*;
+import src.Objects.*;
 import src.Objects.Button;
-import src.Objects.DamagingObject;
-import src.Objects.Door;
-import src.Objects.Key;
+import src.Objects.MathButton;
 import src.generalClasses.*;
 import src.generalClasses.VolumeControl;
 import src.Characters.Skeleton;
@@ -79,9 +78,18 @@ public class Assignment2 extends GameEngine
 
         map.getCurrentLevel().getEnemies().add(new Vampire(50, 50, 2, 1));
     }
-    public void initObjects()
-    {
+    public void initObjects() {
         key = new Key(250, 250);
+
+        // Add MathButton for the math quiz in level 5
+        if (map.getCurrentLevelNumber() == 5) {
+            map.getCurrentLevel().getButtons().add(new MathButton(300, 300, new ArrayList<>()
+            {{
+                add(loadAudio("resources/Sounds/buttonOn.wav"));
+                add(loadAudio("resources/Sounds/buttonOff.wav"));
+            }}
+            ));
+        }
 
         map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>()
         {{
@@ -92,6 +100,7 @@ public class Assignment2 extends GameEngine
 
         map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
     }
+
 
     /**
      * Initializes the game, loads images and sounds, and sets up the initial game state.
@@ -139,12 +148,28 @@ public class Assignment2 extends GameEngine
             init();
         }
 
-        if (player.isMoving())
-        {
+        if (player.isMoving()) {
             player.move();
             showButtonPopup = player.handleButtonCollision(map.getCurrentLevel().getButtons());
             keyCollected = player.handleKeyCollision(key);
+
+            // Check if the player interacts with a button
+            if (showButtonPopup && activeButton != null) {
+                if (activeButton instanceof MathButton) {
+                    MathButton mathButton = (MathButton) activeButton;
+                    boolean quizCompleted = startQuizGame(mathButton);
+                    if (quizCompleted) {
+                        key.setPosX(200);
+                        key.setPosY(200);
+                        keyCollected = true;
+                        System.out.println("Quiz completed! Key has spawned.");
+                    } else {
+                        System.out.println("Quiz failed. Try again.");
+                    }
+                }
+            }
         }
+
 
         // Update enemy movement and interactions
         for (Enemy enemy : map.getCurrentLevel().getEnemies())
@@ -166,6 +191,21 @@ public class Assignment2 extends GameEngine
 
         printCurrentLevel(); // Print the current level during updates
 
+    }
+
+
+
+    public boolean startQuizGame(MathButton mathButton) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(mathButton.getQuizQuestion());
+        String answer = scanner.nextLine();
+        boolean isCorrect = mathButton.checkAnswer(answer);
+        if (isCorrect) {
+            System.out.println("Correct!");
+        } else {
+            System.out.println("Incorrect. The correct answer was: " + mathButton.getQuizAnswer());
+        }
+        return isCorrect;
     }
 
     /**

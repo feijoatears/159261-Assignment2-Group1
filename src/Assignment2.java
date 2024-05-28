@@ -25,7 +25,6 @@ import java.io.File;
 import java.util.*;
 import javax.sound.sampled.Clip;
 
-import static com.sun.org.apache.xerces.internal.util.DOMUtil.setVisible;
 
 public class Assignment2 extends GameEngine
 {
@@ -51,9 +50,6 @@ public class Assignment2 extends GameEngine
 
     static MazeMap map = MazeMap.getInstance();
 
-    private int previousFloor = -1;
-    private int previousRoom = -1;
-
     public static void main(String[] args)
     {
         createGame(new Assignment2(), framerate);
@@ -68,7 +64,7 @@ public class Assignment2 extends GameEngine
         player.setPosX(spawnPosX);
         player.setPosY(spawnPosY);
 
-        player.setSpeed(10);
+        player.setSpeed(20);
     }
     public void initEnemies() {
         map.getCurrentLevel().getEnemies().clear();
@@ -76,20 +72,13 @@ public class Assignment2 extends GameEngine
         //map.getCurrentLevel().getEnemies().add(new Skeleton(50, 50, 3, 2)); // Add Skeleton at specified position
 
 
-        map.getCurrentLevel().getEnemies().add(new Vampire(50, 50, 2, 1));
+       // map.getCurrentLevel().getEnemies().add(new Vampire(50, 50, 2, 1));
     }
-    public void initObjects() {
+    public void initObjects()
+    {
         key = new Key(250, 250);
 
-        // Add MathButton for the math quiz in level 5
-        if (map.getCurrentLevelNumber() == 5) {
-            map.getCurrentLevel().getButtons().add(new MathButton(300, 300, new ArrayList<>()
-            {{
-                add(loadAudio("resources/Sounds/buttonOn.wav"));
-                add(loadAudio("resources/Sounds/buttonOff.wav"));
-            }}
-            ));
-        }
+
 
         map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>()
         {{
@@ -109,8 +98,7 @@ public class Assignment2 extends GameEngine
     {
         setWindowSize(500, 500);
 
-        map.generate(20);// Generate a maze with 24 rooms
-        map.setStart(0, 0);
+        map.generate(20);// Generate a maze with 20 rooms
         setVisible(true);
 
         if (volumeControl.getBackgroundMusic() != null)
@@ -188,9 +176,6 @@ public class Assignment2 extends GameEngine
         handleDoorCollision();
         player.handleWallCollision();
         player.damage(map.getCurrentLevel().getObstacles(), map.getCurrentLevel().getEnemies());
-
-        printCurrentLevel(); // Print the current level during updates
-
     }
 
 
@@ -262,7 +247,7 @@ public class Assignment2 extends GameEngine
                         player.setPosX(width() - player.getPosX() - player.getWidth() - doorConst);
                         player.setPosY(height() - player.getPosY() - player.getHeight());
                         collisionHandled = true;
-                        printCurrentLevel(); // Print the current level
+
                     }
                 }
                 if (door == map.getCurrentLevel().getRightDoor()) {
@@ -271,7 +256,7 @@ public class Assignment2 extends GameEngine
                         player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null) + doorConst);
                         player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
                         collisionHandled = true;
-                        printCurrentLevel(); // Print the current level
+
                     }
                 }
                 if (door == map.getCurrentLevel().getTopDoor()) {
@@ -280,7 +265,6 @@ public class Assignment2 extends GameEngine
                         player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
                         player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null) - doorConst);
                         collisionHandled = true;
-                        printCurrentLevel(); // Print the current level
                     }
                 }
                 if (door == map.getCurrentLevel().getBottomDoor()) {
@@ -289,7 +273,6 @@ public class Assignment2 extends GameEngine
                         player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
                         player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null) + doorConst);
                         collisionHandled = true;
-                        printCurrentLevel(); // Print the current level
                     }
                 }
             }
@@ -572,20 +555,6 @@ public class Assignment2 extends GameEngine
         return d;
     }
 
-    /**
-     * Prints the current level, floor, and room information.
-     */
-    public void printCurrentLevel() {
-        int currentFloor = map.getCurrentFloorNum();
-        int currentRoom = map.getCurrentRoomNum();
-
-        if (currentFloor != previousFloor || currentRoom != previousRoom) {
-            int currentLevel = map.getCurrentLevelNumber();
-            System.out.println("Current Level: " + currentLevel + " (Floor: " + currentFloor + ", Room: " + currentRoom + ")");
-            previousFloor = currentFloor;
-            previousRoom = currentRoom;
-        }
-    }
 
     public void showTests()
     {
@@ -598,10 +567,7 @@ public class Assignment2 extends GameEngine
 
         for(Door d: map.getCurrentLevel().getDoors())
         {
-            if(d != null)
-            {
-                drawSolidRectangle(d.getPosX(), d.getPosY(), d.getWidth(),d.getHeight());
-            }
+            drawSolidRectangle(d.getPosX(), d.getPosY(), d.getWidth(),d.getHeight());
         }
         for(Enemy e : map.getCurrentLevel().getEnemies())
         {

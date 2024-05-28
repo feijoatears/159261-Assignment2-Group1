@@ -503,8 +503,6 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
             Image image = ImageIO.read(imageFile);
             if (image == null) {
                 System.err.println("Error: image is null after loading from path: " + path);
-            } else {
-                System.out.println("Successfully loaded image from path: " + path);
             }
             return image;
         } catch (IOException e) {

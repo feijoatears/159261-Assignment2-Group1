@@ -18,51 +18,39 @@ public class Level {
     private final ArrayList<DamagingObject> obstacles = new ArrayList<>();
     private final ArrayList<Door> doors = new ArrayList<>();
 
-    private Door leftDoor = null, topDoor = null, rightDoor = null, bottomDoor = null;
+    private Door topDoor = null,
+                 bottomDoor = null,
+                 leftDoor = null,
+                 rightDoor = null;
+
     private Image image;
 
-    public void setDoors(ArrayList<String> config) {
-        for (String s : config) {
-            System.out.println("Setting door: " + s);
-            switch (s) {
+    public void setDoors(ArrayList<String> config)
+    {
+        for (String s : config)
+        {
+            switch (s)
+            {
                 case "Up":
                     topDoor = new Door((500 / 2) - 20, 10, 55, 30);
-                    Image topDoorImage = loadImage("resources/Objects/DoorTop.png");
-                    if (topDoorImage == null) {
-                        System.err.println("Error: cannot load image from path: resources/Objects/DoorTop.png");
-                    }
-                    topDoor.setImage(topDoorImage);
+                    topDoor.setImage(loadImage("resources/Objects/DoorTop.png"));
+
                     doors.add(topDoor);
                     break;
                 case "Right":
                     rightDoor = new Door(500 - 42, 500 / 2 - 20, 30, 50);
-                    Image rightDoorImage = loadImage("resources/Objects/DoorRight.png");
-                    if (rightDoorImage == null) {
-                        System.err.println("Error: cannot load image from path: resources/Objects/DoorRight.png");
-                    }
-                    rightDoor.setImage(rightDoorImage);
+                    rightDoor.setImage(loadImage("resources/Objects/DoorRight.png"));
                     doors.add(rightDoor);
-                    System.out.println("Added right door at (" + rightDoor.getPosX() + ", " + rightDoor.getPosY() + ")");
                     break;
                 case "Down":
                     bottomDoor = new Door((500 / 2) - 20, 500 - 42, 50, 30);
-                    Image bottomDoorImage = loadImage("resources/Objects/DoorBottom.png");
-                    if (bottomDoorImage == null) {
-                        System.err.println("Error: file does not exist at path: resources/Objects/DoorBottom.png");
-                    }
-                    bottomDoor.setImage(bottomDoorImage);
+                    bottomDoor.setImage(loadImage("resources/Objects/DoorBottom.png"));
                     doors.add(bottomDoor);
-                    System.out.println("Added down door at (" + bottomDoor.getPosX() + ", " + bottomDoor.getPosY() + ")");
                     break;
                 case "Left":
                     leftDoor = new Door(10, 500 / 2 - 20, 30, 50);
-                    Image leftDoorImage = loadImage("resources/Objects/DoorLeft.png");
-                    if (leftDoorImage == null) {
-                        System.err.println("Error: file does not exist at path: resources/Objects/DoorLeft.png");
-                    }
-                    leftDoor.setImage(leftDoorImage);
+                    leftDoor.setImage(loadImage("resources/Objects/DoorLeft.png"));
                     doors.add(leftDoor);
-                    System.out.println("Added left door at (" + leftDoor.getPosX() + ", " + leftDoor.getPosY() + ")");
                     break;
             }
         }

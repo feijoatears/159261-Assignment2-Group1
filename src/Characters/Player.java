@@ -110,7 +110,7 @@ public class Player extends Character
 
     public boolean checkCollision(Rectangle other)
     {
-        Rectangle playerRect = new Rectangle(posX, posY, width, height);
+        Rectangle playerRect = new Rectangle(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
         return playerRect.intersects(other);
     }
 

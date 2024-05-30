@@ -46,7 +46,7 @@ public abstract class Character
         }
         image = (frames[0]);
 
-        this.width = image.getWidth(null);
+        this.width = 20;
         this.height = image.getHeight(null);
         this.hitbox = new Rectangle(width, height);
     }
@@ -129,15 +129,17 @@ public abstract class Character
         }
 
         // Check for collisions with obstacles
-        Rectangle newHitbox = new Rectangle(this.posX, this.posY, this.width, this.height);
-        if (!level.isPositionClear(newHitbox)) {
+        Rectangle newHitbox = new Rectangle(this.posX + 15, this.posY, this.width, this.height);
+        if (!level.isPositionClear(newHitbox))
+        {
             // Revert to the last valid position
             this.posX = previousPosX;
             this.posY = previousPosY;
         }
 
         // Update the hitbox position
-        this.hitbox.setLocation(this.posX, this.posY);
+        this.hitbox.x = newHitbox.x;
+        this.hitbox.y = newHitbox.y;
     }
 
 }

@@ -555,6 +555,10 @@ public class Assignment2 extends GameEngine
             player.attack(map.getCurrentLevel().getEnemies());
         }
 
+        if(event.getKeyCode() == KeyEvent.VK_K)
+        {
+            volumeControl.setBackgroundMusic();
+        }
         // ========================================================
 
         //max of 2 key presses allowed
@@ -675,8 +679,12 @@ public class Assignment2 extends GameEngine
         AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
         mGraphics.setComposite(opaque);
 
-        drawSolidRectangle(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
+        changeColor(blue);
+        //drawSolidRectangle(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
+        changeColor(orange);
+        drawSolidRectangle(player.getHitbox().x, player.getHitbox().y, player.getHitbox().width, player.getHitbox().height);
 
+        changeColor(red);
         for (Door d : currentLevel.getDoors()) {
             drawSolidRectangle(d.getPosX(), d.getPosY(), d.getWidth(), d.getHeight());
         }

@@ -15,7 +15,7 @@ public class VolumeControl
     private final Clip keyCollectedSound = loadSound("resources/Sounds/Key.wav");
 
     // undo when needed too loud for rn
-    private final Clip backgroundMusic =  loadSound("resources/Sounds/C.wav");
+    private final Clip backgroundMusic =  loadSound("asasasgasg/Sounds/C.wav");
     //Control Sound
     private final src.VolumeControl backgroundVolumeControl = new src.VolumeControl(backgroundMusic);
 
@@ -77,4 +77,8 @@ public class VolumeControl
     {
         return backgroundMusic;
     }
+    public void setBackgroundMusic()
+    {
+        instance = null;
+    };
 }

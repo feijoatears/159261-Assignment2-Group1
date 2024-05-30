@@ -199,7 +199,7 @@ public class Assignment2 extends GameEngine {
 
         // Restart if player has no lives
         if (player.getLives() <= 0) {
-            gameOver(mGraphics)
+            gameOver(mGraphics);
             return;
         }
 

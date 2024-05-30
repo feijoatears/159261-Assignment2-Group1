@@ -133,55 +133,55 @@ public class MazeMap {
 
             // Add invisible walls for each room with precise hitboxes
             if (levelString.contains("ScaledRoom1.png")) {
-                //addScaledRoom1Walls(level);
+                addScaledRoom1Walls(level);
             } else if (levelString.contains("ScaledRoom2.png")) {
-                //addScaledRoom2Walls(level);
+                addScaledRoom2Walls(level);
             } else if (levelString.contains("ScaledRoom3.png")) {
-                //addScaledRoom3Walls(level);
+                addScaledRoom3Walls(level);
             } else if (levelString.contains("ScaledRoom4.png")) {
-                //addScaledRoom4Walls(level);
+                addScaledRoom4Walls(level);
             } else if (levelString.contains("ScaledRoom5.png")) {
-                //addScaledRoom5Walls(level);
+                addScaledRoom5Walls(level);
             } else if (levelString.contains("ScaledRoom6.png")) {
-                //addScaledRoom6Walls(level);
+                addScaledRoom6Walls(level);
             } else if (levelString.contains("ScaledRoom7.png")) {
-                //addScaledRoom7Walls(level);
+                addScaledRoom7Walls(level);
             } else if (levelString.contains("ScaledRoom8.png")) {
-                //addScaledRoom8Walls(level);
+                addScaledRoom8Walls(level);
             } else if (levelString.contains("ScaledRoom9.png")) {
-                //addScaledRoom9Walls(level);
+                addScaledRoom9Walls(level);
             } else if (levelString.contains("ScaledRoom14.png")) {
-                //addScaledRoom14Walls(level);
+                addScaledRoom14Walls(level);
             } else if (levelString.contains("ScaledRoom15.png")) {
-                //addScaledRoom15Walls(level);
+                addScaledRoom15Walls(level);
             } else if (levelString.contains("ScaledRoom16.png")) {
-                //addScaledRoom16Walls(level);
+                addScaledRoom16Walls(level);
             } else if (levelString.contains("ScaledRoom17.png")) {
-               // addScaledRoom17Walls(level);
+                addScaledRoom17Walls(level);
             } else if (levelString.contains("ScaledRoom18.png")) {
-               // addScaledRoom18Walls(level);
+                addScaledRoom18Walls(level);
             } else if (levelString.contains("ScaledRoom19.png")) {
-               // addScaledRoom19Walls(level);
+                addScaledRoom19Walls(level);
             } else if (levelString.contains("ScaledRoom20.png")) {
-                //addScaledRoom20Walls(level);
+                addScaledRoom20Walls(level);
             } else if (levelString.contains("ScaledRoom21.png")) {
                 addScaledRoom21Walls(level);
             } else if (levelString.contains("ScaledRoom22.png")) {
-               // addScaledRoom22Walls(level);
+                addScaledRoom22Walls(level);
             } else if (levelString.contains("ScaledRoom23.png")) {
-                //addScaledRoom23Walls(level);
+                addScaledRoom23Walls(level);
             } else if (levelString.contains("ScaledRoom24.png")) {
-                //addScaledRoom24Walls(level);
+                addScaledRoom24Walls(level);
             } else if (levelString.contains("ScaledRoom25.png")) {
-                //addScaledRoom25Walls(level);
+                addScaledRoom25Walls(level);
             } else if (levelString.contains("ScaledRoom26.png")) {
-                //addScaledRoom26Walls(level);
+                addScaledRoom26Walls(level);
             } else if (levelString.contains("ScaledRoom27.png")) {
-                //addScaledRoom27Walls(level);
+                addScaledRoom27Walls(level);
             } else if (levelString.contains("ScaledRoom28.png")) {
-               // addScaledRoom28Walls(level);
+                addScaledRoom28Walls(level);
             } else if (levelString.contains("ScaledRoom29.png")) {
-                //addScaledRoom29Walls(level);
+                addScaledRoom29Walls(level);
             }
 
             levels.add(level);

@@ -131,11 +131,7 @@ public abstract class Character {
         }
 
         // Check for collisions with obstacles
-        Rectangle newHitbox = new Rectangle(
-                this.posX + (width - width / 2) / 2,
-                this.posY + (height - (int)(height * 0.75)) / 2,
-                width / 2,
-                (int)(height * 0.75));
+        Rectangle newHitbox = new Rectangle(this.posX, this.posY, width, height);
 
         if (!level.isPositionClear(newHitbox)) {
             // Revert to the last valid position

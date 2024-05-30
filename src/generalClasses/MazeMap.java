@@ -1,6 +1,7 @@
 package src.generalClasses;
 
 import src.Objects.Door;
+import src.Objects.InvisibleWall;
 
 import java.awt.*;
 import java.io.File;
@@ -112,23 +113,34 @@ public class MazeMap {
         }
     }
 
-    public ArrayList<Level> loadLevels()
-    {
+    public ArrayList<Level> loadLevels() {
         ArrayList<Level> levels = new ArrayList<>();
 
-        for (int i = 0; i < configs.size(); i++)
-        {
+        for (int i = 0; i < configs.size(); i++) {
             String levelString = "resources/Levels/ScaledRoom" + (i + 1) + ".png";
             Level level = new Level();
             Image img = loadImage(levelString);
 
             level.setImage(img);
             level.setDoors(configs.get(i));
+
+
+            if (levelString.contains("Room1")) {
+                // Define the hitboxes for Room1
+                level.addInvisibleWall(new InvisibleWall(50, 50, 100, 10));
+                level.addInvisibleWall(new InvisibleWall(200, 50, 10, 100));
+                level.addInvisibleWall(new InvisibleWall(50, 200, 100, 10));
+                level.addInvisibleWall(new InvisibleWall(50, 50, 10, 100));
+            }
+
+
+
             levels.add(level);
         }
 
         return levels;
     }
+
 
     public void generate(int numLevels)
     {

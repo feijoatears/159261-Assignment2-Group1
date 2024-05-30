@@ -4,10 +4,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 import src.Characters.Enemy;
+import src.Objects.*;
 import src.Objects.Button;
-import src.Objects.DamagingObject;
-import src.Objects.Door;
-import src.Objects.Key;
 
 import static src.GameEngine.loadImage;
 
@@ -17,24 +15,21 @@ public class Level {
     private final ArrayList<Button> buttons = new ArrayList<>();
     private final ArrayList<DamagingObject> obstacles = new ArrayList<>();
     private final ArrayList<Door> doors = new ArrayList<>();
+    private final ArrayList<InvisibleWall> invisibleWalls = new ArrayList<>();  // Properly declare the invisible walls list
 
     private Door topDoor = null,
-                 bottomDoor = null,
-                 leftDoor = null,
-                 rightDoor = null;
+            bottomDoor = null,
+            leftDoor = null,
+            rightDoor = null;
 
     private Image image;
 
-    public void setDoors(ArrayList<String> config)
-    {
-        for (String s : config)
-        {
-            switch (s)
-            {
+    public void setDoors(ArrayList<String> config) {
+        for (String s : config) {
+            switch (s) {
                 case "Up":
                     topDoor = new Door((500 / 2) - 20, 10, 55, 30);
                     topDoor.setImage(loadImage("resources/Objects/DoorTop.png"));
-
                     doors.add(topDoor);
                     break;
                 case "Right":
@@ -54,6 +49,16 @@ public class Level {
                     break;
             }
         }
+    }
+
+    // Add invisible wall to the list
+    public void addInvisibleWall(InvisibleWall wall) {
+        invisibleWalls.add(wall);
+    }
+
+    // Get the list of invisible walls
+    public ArrayList<InvisibleWall> getInvisibleWalls() {
+        return invisibleWalls;
     }
 
     public ArrayList<Enemy> getEnemies() {

@@ -343,7 +343,86 @@ public class MazeMap {
 
             }
 
+            if (levelString.contains("ScaledRoom20.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(175,175, 110, 45));
+                level.addInvisibleWall(new InvisibleWall(70,430, 360, 50));
 
+            }
+
+            if (levelString.contains("ScaledRoom21.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(75,0, 125, 70));
+                level.addInvisibleWall(new InvisibleWall(300,0, 125, 70));
+                level.addInvisibleWall(new InvisibleWall(185,180, 120, 120));
+            }
+
+            if (levelString.contains("ScaledRoom22.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(70,80, 160, 135));
+                level.addInvisibleWall(new InvisibleWall(275,80, 160, 135));
+                level.addInvisibleWall(new InvisibleWall(70,280, 160, 135));
+                level.addInvisibleWall(new InvisibleWall(275,280, 160, 135));
+            }
+
+            if (levelString.contains("ScaledRoom23.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(130, 150, 240, 40));
+                level.addInvisibleWall(new InvisibleWall(130, 75, 240, 40));
+                level.addInvisibleWall(new InvisibleWall(80, 0, 360, 60));
+                level.addInvisibleWall(new InvisibleWall(80, 440, 115, 50));
+                level.addInvisibleWall(new InvisibleWall(305, 440, 115, 50));
+            }
+            if (levelString.contains("ScaledRoom24.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(170, 185, 160, 75));
+            }
+
+            if (levelString.contains("ScaledRoom25.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(75, 360, 125, 50));
+                level.addInvisibleWall(new InvisibleWall(295, 330, 125, 55));
+                level.addInvisibleWall(new InvisibleWall(80, 75, 125, 75));
+                level.addInvisibleWall(new InvisibleWall(345, 0, 50, 100));
+            }
+
+            if(levelString.contains("ScaledRoom26.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(100, 0, 110, 70));
+                level.addInvisibleWall(new InvisibleWall(25,210, 130, 70));
+                level.addInvisibleWall(new InvisibleWall(0, 315, 80,120));
+                level.addInvisibleWall(new InvisibleWall(305, 0, 125, 75));
+                level.addInvisibleWall(new InvisibleWall(425, 325, 70, 75));
+            }
+
+            if(levelString.contains("ScaledRoom27.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(100, 0, 110, 70));
+                level.addInvisibleWall(new InvisibleWall(25,210, 130, 70));
+                level.addInvisibleWall(new InvisibleWall(0, 315, 80,120));
+                level.addInvisibleWall(new InvisibleWall(305, 0, 125, 75));
+                level.addInvisibleWall(new InvisibleWall(425, 325, 70, 75));
+            }
+
+            if(levelString.contains("ScaledRoom28.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(95, 20,80,120));
+                level.addInvisibleWall(new InvisibleWall(180,30, 20 , 35));
+                level.addInvisibleWall(new InvisibleWall(300, 0, 120, 70));
+                level.addInvisibleWall(new InvisibleWall(10, 330, 70, 70));
+                level.addInvisibleWall(new InvisibleWall(70, 430, 80, 65));
+                level.addInvisibleWall(new InvisibleWall(185, 420, 125, 60));
+                level.addInvisibleWall(new InvisibleWall(350, 425, 80, 75));
+            }
+            if(levelString.contains("ScaledRoom29.png"))
+            {
+                level.addInvisibleWall(new InvisibleWall(70, 0,120,70));
+                level.addInvisibleWall(new InvisibleWall(70,420, 80 , 70));
+                level.addInvisibleWall(new InvisibleWall(350, 420, 80, 70));
+                level.addInvisibleWall(new InvisibleWall(200, 430, 100, 55));
+                level.addInvisibleWall(new InvisibleWall(320, 30, 75, 125));
+                level.addInvisibleWall(new InvisibleWall(410, 40, 30, 40));
+            }
 
             levels.add(level);
         }

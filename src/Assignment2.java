@@ -27,8 +27,7 @@ import java.util.*;
 import javax.sound.sampled.Clip;
 
 
-public class Assignment2 extends GameEngine
-{
+public class Assignment2 extends GameEngine {
     private int score = 0;
     static int framerate = 30;
 
@@ -38,7 +37,6 @@ public class Assignment2 extends GameEngine
     private boolean finalDoorSpawned = false;
     private FinalDoor finalDoor = null;
     private Image congratsImage = null;
-
 
 
     private boolean keyCollected = false,
@@ -60,16 +58,15 @@ public class Assignment2 extends GameEngine
 
     static MazeMap map = MazeMap.getInstance();
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         createGame(new Assignment2(), framerate);
     }
-    public void initPlayer()
-    {
+
+    public void initPlayer() {
         player.setLives(3);
 
-       // int spawnPosX = width() / 2 - player.getImage().getWidth(null) / 2;
-     //   int spawnPosY = (int) (height() * 2 / 3.0) - player.getImage().getHeight(null) / 2;
+        // int spawnPosX = width() / 2 - player.getImage().getWidth(null) / 2;
+        //   int spawnPosY = (int) (height() * 2 / 3.0) - player.getImage().getHeight(null) / 2;
 
         int spawnPosY = 250;
         int spawnPosX = 100;
@@ -102,6 +99,7 @@ public class Assignment2 extends GameEngine
             }
         }
     }
+
 
     public void initObjects() {
         Random random = new Random();
@@ -299,17 +297,17 @@ public class Assignment2 extends GameEngine
         } else {
             System.out.println("Final door image loaded successfully");
         }
+        /*
         finalDoor = new FinalDoor(Objects.requireNonNull(doorImage), posX, posY);
         randomRoom.setFinalDoor(finalDoor); // Add the final door to the selected room only
 
+
+         */
         finalDoorSpawned = true;
     }
 
 
-
-
-    public boolean startQuizGame(MathButton mathButton)
-    {
+    public boolean startQuizGame(MathButton mathButton) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(mathButton.getQuizQuestion());
         String answer = scanner.nextLine();
@@ -374,13 +372,15 @@ public class Assignment2 extends GameEngine
      */
     public void handleDoorCollision() {
         final int doorConst = 20; // gap between door and player
+        final int offset = 50; // offset to move player away from the door
+
         for (Door door : map.getCurrentLevel().getDoors()) {
             if (player.checkCollision(door.getHitbox()) && !collisionHandled) {
                 if (door == map.getCurrentLevel().getLeftDoor()) {
                     if (map.getCurrentRoomNum() > 0) {
                         map.moveLeft();
-                        player.setPosX(width() - player.getPosX() - player.getWidth() - doorConst);
-                        player.setPosY(height() - player.getPosY() - player.getHeight());
+                        player.setPosX(width() - player.getWidth() - doorConst - offset);
+                        player.setPosY(player.getPosY());
                         collisionHandled = true;
                         initEnemies();
                     }
@@ -388,8 +388,8 @@ public class Assignment2 extends GameEngine
                 if (door == map.getCurrentLevel().getRightDoor()) {
                     if (map.getCurrentRoomNum() < map.getMap().get(map.getCurrentFloorNum()).size() - 1) {
                         map.moveRight();
-                        player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null) + doorConst);
-                        player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
+                        player.setPosX(doorConst + offset);
+                        player.setPosY(player.getPosY());
                         collisionHandled = true;
                         initEnemies();
                     }
@@ -397,8 +397,8 @@ public class Assignment2 extends GameEngine
                 if (door == map.getCurrentLevel().getTopDoor()) {
                     if (map.getCurrentFloorNum() > 0) {
                         map.moveUp();
-                        player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
-                        player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null) - doorConst);
+                        player.setPosX(player.getPosX());
+                        player.setPosY(height() - player.getHeight() - doorConst - offset);
                         collisionHandled = true;
                         initEnemies();
                     }
@@ -406,8 +406,8 @@ public class Assignment2 extends GameEngine
                 if (door == map.getCurrentLevel().getBottomDoor()) {
                     if (map.getCurrentFloorNum() < map.getMap().size() - 1) {
                         map.moveDown();
-                        player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
-                        player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null) + doorConst);
+                        player.setPosX(player.getPosX());
+                        player.setPosY(doorConst + offset);
                         collisionHandled = true;
                         initEnemies();
                     }

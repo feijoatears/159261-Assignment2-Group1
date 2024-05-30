@@ -25,7 +25,7 @@ public class Player extends Character
 
     private static Timer redCircleTimer;
     private boolean showRedCircle = false;
-    
+
     private final Image heartImage = loadImage("resources/Objects/heart.png");
 
     private final int[] eastFrames = {0, 1},
@@ -79,7 +79,7 @@ public class Player extends Character
         // Check for collisions with invisible walls
         boolean collision = false;
         for (InvisibleWall wall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls()) {
-            if (new Rectangle(nextPosX, nextPosY, width, height).intersects(wall.getHitbox())) {
+            if (new Rectangle(nextPosX, nextPosY, width / 2, (int)(height * 0.75)).intersects(wall.getHitbox())) {
                 collision = true;
                 break;
             }
@@ -105,6 +105,8 @@ public class Player extends Character
                 image = (frames[southFrames[currentFrameIndex]]);
             }
         }
+
+        updateHitbox(); // Update hitbox after movement
     }
 
 
@@ -156,18 +158,16 @@ public class Player extends Character
         lives += 1;
     }
 
-    public synchronized void bounceBack(Direction direction, int steps)
-    {
-        int[][] directionVals =
-        {
+    public synchronized void bounceBack(Direction direction, int steps) {
+        int[][] directionVals = {
                 {0, 1},   // N
                 {0, -1},  // S
                 {1, 0},   // W
                 {-1, 0},  // E
                 {1, 1},   // NW
                 {-1, 1},  // NE
-                {1, -1},   // SW
-                {-1, -1} // SE
+                {1, -1},  // SW
+                {-1, -1}  // SE
         };
         int i = direction.ordinal();
 
@@ -177,24 +177,20 @@ public class Player extends Character
         int interpolatedX = (int) (getPosX() + (targetX - getPosX()) * 1.5);
         int interpolatedY = (int) (getPosY() + (targetY - getPosY()) * 1.5);
 
-        if(interpolatedX < 0)
-        {
+        if (interpolatedX < 0) {
             interpolatedX = 0;
-        }
-        else if(interpolatedX > 450)
-        {
+        } else if (interpolatedX > 450) {
             interpolatedX = 450;
         }
-        if(interpolatedY < 0)
-        {
+        if (interpolatedY < 0) {
             interpolatedY = 0;
-        }
-        else if (interpolatedY > 450)
-        {
+        } else if (interpolatedY > 450) {
             interpolatedY = 450;
         }
         posX = interpolatedX;
         posY = interpolatedY;
+
+        updateHitbox(); // Update hitbox after bouncing back
     }
 
     public void attack(ArrayList<Enemy> enemies) {
@@ -219,89 +215,64 @@ public class Player extends Character
         return false;
     }
 
-    public boolean handleButtonCollision(ArrayList<Button> buttons)
-    {
-        for (Button b : buttons)
-        {
-            if (checkCollision(b.getHitbox()))
-            {
-                if (!b.getIsUsed())
-                {
+    public boolean handleButtonCollision(ArrayList<Button> buttons) {
+        for (Button b : buttons) {
+            if (checkCollision(b.getHitbox())) {
+                if (!b.getIsUsed()) {
                     b.activate();
-                    playAudio(b.getOnSound());
+                    GameEngine.playAudio(b.getOnSound());
                     return true;
                 }
-            }
-            else
-            {
-                if (b.getIsUsed())
-                {
+            } else {
+                if (b.getIsUsed()) {
                     b.deactivate();
-                    playAudio(b.getOffSound());
+                    GameEngine.playAudio(b.getOffSound());
                 }
             }
         }
         return false;
     }
 
-    public void damage(ArrayList<DamagingObject> objects, ArrayList<Enemy> enemies)
-    {
-        for(DamagingObject ob : objects)
-        {
-            if (checkCollision(ob.getHitbox()))
-            {
-                //starts a thread that checks every two seconds if player is on a damaging object
-                //if they are, player loses a life, stop thread if not
-                //adds iFrames so player doesn't immediately die when they touch a damaging object
-
+    public void damage(ArrayList<DamagingObject> objects, ArrayList<Enemy> enemies) {
+        for (DamagingObject ob : objects) {
+            if (checkCollision(ob.getHitbox())) {
                 activateIFrames();
                 bounceBack(direction, 2);
             }
         }
-        for (Enemy e : enemies)
-        {
-            if(checkCollision(e.getHitbox()))
-            {
+        for (Enemy e : enemies) {
+            if (checkCollision(e.getHitbox())) {
                 activateIFrames();
                 bounceBack(direction, 2);
             }
         }
     }
-    public synchronized void activateIFrames()
-    {
-        if(iFrameThread == null || !iFrameThread.isAlive())
-        {
-            iFrameThread = new Thread( () ->
-            {
-                try
-                {
+
+    public synchronized void activateIFrames() {
+        if (iFrameThread == null || !iFrameThread.isAlive()) {
+            iFrameThread = new Thread(() -> {
+                try {
                     lives -= 1;
                     showRedCircle = true;
                     redCircleTimer = new Timer();
-                    redCircleTimer.schedule(new TimerTask()
-                    {
-                        public void run ()
-                        {
+                    redCircleTimer.schedule(new TimerTask() {
+                        public void run() {
                             showRedCircle = false;
                             redCircleTimer.cancel();
                         }
                     }, 100);
                     Thread.sleep(2000);
-                }
-                catch (InterruptedException e)
-                {
-                    //player leaves damaging object hitbox
+                } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             });
             iFrameThread.start();
         }
     }
-    public void showDamagedCircle(Graphics2D g)
-    {
-        if (showRedCircle)
-        {
-            g.setColor(new Color(255,0,0,128));
+
+    public void showDamagedCircle(Graphics2D g) {
+        if (showRedCircle) {
+            g.setColor(new Color(255, 0, 0, 128));
             g.fillOval(posX, posY, width, height);
         }
     }

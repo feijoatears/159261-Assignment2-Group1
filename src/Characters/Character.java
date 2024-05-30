@@ -2,65 +2,48 @@ package src.Characters;
 
 import src.Direction;
 import src.GameEngine;
-import src.generalClasses.*;
+import src.generalClasses.Level;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public abstract class Character
-{
-    protected int posX,
-                  posY,
-                  width,
-                  height,
-                  speed = 5;
-
+public abstract class Character {
+    protected int posX, posY, width, height, speed = 5;
     protected Direction direction;
-
-    protected Image spriteSheet,
-                    image;
-
+    protected Image spriteSheet, image;
     protected Image[] frames = new Image[]{};
-
     protected Rectangle hitbox;
 
     // empty constructor
     public Character() {}
 
-    public Character(int posX, int posY, int speed, Image spriteSheet, int numFrames)
-    {
+    public Character(int posX, int posY, int speed, Image spriteSheet, int numFrames) {
         this.posX = posX;
         this.posY = posY;
         this.speed = speed;
         this.spriteSheet = spriteSheet;
 
-        int frameWidth = spriteSheet.getWidth(null) / numFrames,
-            frameHeight = spriteSheet.getHeight(null);
+        int frameWidth = spriteSheet.getWidth(null) / numFrames;
+        int frameHeight = spriteSheet.getHeight(null);
 
         frames = new Image[numFrames];
-
-        for (int i = 0; i < numFrames; i++)
-        {
-
+        for (int i = 0; i < numFrames; i++) {
             frames[i] = subImage(spriteSheet, i * frameWidth, 0 , frameWidth, frameHeight);
         }
         image = (frames[0]);
 
-        this.width = 20;
-        this.height = image.getHeight(null);
-        this.hitbox = new Rectangle(width, height);
+        this.width = frameWidth;
+        this.height = frameHeight;
+        this.hitbox = new Rectangle(posX, posY, width / 2, (int)(height * 0.75)); // Smaller hitbox
     }
 
-    private Image subImage(Image source, int x, int y, int w, int h)
-    {
-        if(source == null)
-        {
+    private Image subImage(Image source, int x, int y, int w, int h) {
+        if (source == null) {
             System.out.println("Error: cannot extract a subImage from a null image.\n");
             return null;
         }
 
-        BufferedImage buffered = (BufferedImage)source;
-
+        BufferedImage buffered = (BufferedImage) source;
         return buffered.getSubimage(x, y, w, h);
     }
 
@@ -70,6 +53,7 @@ public abstract class Character
     }
     public void setPosX(int posX) {
         this.posX = posX;
+        updateHitbox();
     }
 
     // Getters and setters for posY
@@ -78,37 +62,55 @@ public abstract class Character
     }
     public void setPosY(int posY) {
         this.posY = posY;
+        updateHitbox();
     }
 
-    public void setWidth(int width) { this.width = width; }
-    public int getWidth() { return width; }
+    public void setWidth(int width) {
+        this.width = width;
+    }
+    public int getWidth() {
+        return width;
+    }
 
-    public void setHeight(int height) { this.height = height; }
-    public int getHeight() { return height; }
+    public void setHeight(int height) {
+        this.height = height;
+    }
+    public int getHeight() {
+        return height;
+    }
 
     // Getters and setters for direction
     public Direction getDirection() {
         return direction;
     }
-    public void setDirection(Direction direction) {this.direction = direction;}
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
 
-    public void setImage(String path) { this.image = GameEngine.loadImage(path); }
-    public Image getImage()
-    {
+    public void setImage(String path) {
+        this.image = GameEngine.loadImage(path);
+    }
+    public Image getImage() {
         return image;
     }
 
-    public int getSpeed()
-    {
+    public int getSpeed() {
         return speed;
     }
-    public void setSpeed(int speed)
-    {
+    public void setSpeed(int speed) {
         this.speed = speed;
     }
 
-    public void setHitbox(Rectangle hitbox) { this.hitbox = hitbox; }
-    public Rectangle getHitbox() { return hitbox; }
+    public void setHitbox(Rectangle hitbox) {
+        this.hitbox = hitbox;
+    }
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+
+    public void updateHitbox() {
+        this.hitbox.setBounds(posX + (width - width / 2) / 2, posY + (height - (int)(height * 0.75)) / 2, width / 2, (int)(height * 0.75));
+    }
 
     public void handleWallCollision(Level level) {
         // Store the previous position
@@ -129,17 +131,14 @@ public abstract class Character
         }
 
         // Check for collisions with obstacles
-        Rectangle newHitbox = new Rectangle(this.posX + 15, this.posY, this.width, this.height);
-        if (!level.isPositionClear(newHitbox))
-        {
+        Rectangle newHitbox = new Rectangle(this.posX + (width - width / 2) / 2, this.posY + (height - (int)(height * 0.75)) / 2, width / 2, (int)(height * 0.75));
+        if (!level.isPositionClear(newHitbox)) {
             // Revert to the last valid position
             this.posX = previousPosX;
             this.posY = previousPosY;
         }
 
         // Update the hitbox position
-        this.hitbox.x = newHitbox.x;
-        this.hitbox.y = newHitbox.y;
+        updateHitbox();
     }
-
 }

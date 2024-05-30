@@ -323,10 +323,10 @@ public class MazeMap {
     }
 
     private void addScaledRoom22Walls(Level level) {
-        level.addInvisibleWall(new InvisibleWall(70, 80, 160, 135));
-        level.addInvisibleWall(new InvisibleWall(275, 80, 160, 135));
-        level.addInvisibleWall(new InvisibleWall(70, 280, 160, 135));
-        level.addInvisibleWall(new InvisibleWall(275, 280, 160, 135));
+        level.addInvisibleWall(new InvisibleWall(70, 80, 140, 135));
+        level.addInvisibleWall(new InvisibleWall(275, 80, 140, 135));
+        level.addInvisibleWall(new InvisibleWall(70, 280, 140, 135));
+        level.addInvisibleWall(new InvisibleWall(275, 280, 140, 135));
     }
 
     private void addScaledRoom23Walls(Level level) {
@@ -350,7 +350,7 @@ public class MazeMap {
 
     private void addScaledRoom26Walls(Level level) {
         level.addInvisibleWall(new InvisibleWall(100, 0, 110, 70));
-        level.addInvisibleWall(new InvisibleWall(25, 210, 130, 70));
+       // level.addInvisibleWall(new InvisibleWall(25, 210, 130, 70));
         level.addInvisibleWall(new InvisibleWall(0, 315, 80, 120));
         level.addInvisibleWall(new InvisibleWall(305, 0, 125, 75));
         level.addInvisibleWall(new InvisibleWall(425, 325, 70, 75));

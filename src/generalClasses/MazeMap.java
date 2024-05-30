@@ -355,6 +355,9 @@ public class MazeMap {
                 level.addInvisibleWall(new InvisibleWall(75,0, 125, 70));
                 level.addInvisibleWall(new InvisibleWall(300,0, 125, 70));
                 level.addInvisibleWall(new InvisibleWall(185,180, 120, 120));
+
+
+                level.addInvisibleWall(new InvisibleWall(75,430, 345, 70));
             }
 
             if (levelString.contains("ScaledRoom22.png"))

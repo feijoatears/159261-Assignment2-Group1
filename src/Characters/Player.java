@@ -78,37 +78,83 @@ public class Player extends Character
         nextPosY += directionVals[i][1] * speed;
 
 
-        boolean collision = false;
+        boolean left = false,
+                right = false,
+                up = false,
+                down = false,
+                collision = false;
+
         for(InvisibleWall iWall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls())
         {
-            if(new Rectangle(nextPosX, nextPosY, width, height).intersects(iWall.getHitbox()))
+            Rectangle newHitbox = new Rectangle(nextPosX, nextPosY, width, height);
+            if(newHitbox.intersects(iWall.getHitbox()))
             {
-                collision = true;
+                if(newHitbox.x > iWall.getHitbox().x)
+                {
+                    left = true;
+                }
+                else if(newHitbox.x < iWall.getHitbox().x)
+                {
+                    right = true;
+                }
+                if(newHitbox.y > iWall.getHitbox().y)
+                {
+                    up = true;
+                }
+                else if(newHitbox.y < iWall.getHitbox().y)
+                {
+                    down = true;
+                }
+
+
+                if(i == 0 || i == 1)
+                {
+                    if(up)
+                    {
+                        nextPosY = iWall.getPosY() + iWall.getHeight();
+                    }
+                    if(down)
+                    {
+                        nextPosY = iWall.getPosY() - height;
+                    }
+                }
+                else
+                {
+                    if(left)
+                    {
+                        nextPosX = iWall.getPosX() + iWall.getWidth();
+                    }
+                    if (right)
+                    {
+                        nextPosX = iWall.getPosX() - width;
+                    }
+                }
+
                 break;
             }
         }
 
-        if(!collision)
-        {
-            posX = nextPosX;
-            posY = nextPosY;
-            if (direction == Direction.East) {
-                currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
-                image = (frames[eastFrames[currentFrameIndex]]);
-            } else if (direction == Direction.West) {
-                currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
-                image = (frames[westFrames[currentFrameIndex]]);
-            } else if (direction == Direction.North ||
-                    direction == Direction.Northeast ||
-                    direction == Direction.Northwest) {
-                currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
-                image = (frames[northFrames[currentFrameIndex]]);
-            } else {
-                currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
-                image = (frames[southFrames[currentFrameIndex]]);
-            }
-
+        if (direction == Direction.East) {
+            currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
+            image = (frames[eastFrames[currentFrameIndex]]);
+        } else if (direction == Direction.West) {
+            currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
+            image = (frames[westFrames[currentFrameIndex]]);
+        } else if (direction == Direction.North ||
+                direction == Direction.Northeast ||
+                direction == Direction.Northwest) {
+            currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
+            image = (frames[northFrames[currentFrameIndex]]);
+        } else {
+            currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
+            image = (frames[southFrames[currentFrameIndex]]);
         }
+
+        posX = nextPosX;
+        posY = nextPosY;
+
+
+
         updateHitbox();
     }
 

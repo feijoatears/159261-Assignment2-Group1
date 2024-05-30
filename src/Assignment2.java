@@ -44,6 +44,8 @@ public class Assignment2 extends GameEngine {
             inStartMenu = true,
             showMap = true,
             showButtonPopup = false,
+            gameOver = false,
+            showHelpScreen = false,
             test1;
 
     public static Player player = Player.getInstance();
@@ -191,13 +193,14 @@ public class Assignment2 extends GameEngine {
             return;
         }
 
-        if (inStartMenu || showHelpScreen) {
+        if (inStartMenu || showHelpScreen|| gameOver) {
             return;
         }
 
         // Restart if player has no lives
         if (player.getLives() <= 0) {
-            init();
+            gameOver(mGraphics)
+            return;
         }
 
         Level currentLevel = map.getCurrentLevel(); // Ensure currentLevel is set
@@ -347,7 +350,11 @@ public class Assignment2 extends GameEngine {
             displayHelpScreen(mGraphics);
             return;
         }
-
+        if(gameOver){
+            gameOver(mGraphics);
+            return;
+        }
+        
         if (test1) {
             showTests(currentLevel);
         }
@@ -575,6 +582,17 @@ public class Assignment2 extends GameEngine {
         g.drawString("avoid enemies and obstacles, and reach the exit door.", 50, 210);
         g.drawString("Press Q to return to main menu", 50, 300);
     }
+    private void gameOver(Graphics g) {
+        changeColor(Color.BLACK);
+        g.fillRect(0,0,width(),height());
+
+        Image titleImage = loadImage("resources/Sprites/died.png");
+
+        g.drawImage(titleImage, 0,50, width(),height()/4,null);
+        changeColor(Color.WHITE);
+        g.drawString("Press Q to return to the main menu", width()/2 -110, height()/2 +10);
+        gameOver = true;
+    }
     Direction lastDirection = null;
 
     /**
@@ -587,6 +605,7 @@ public class Assignment2 extends GameEngine {
     {
         if (inStartMenu && event.getKeyCode() == KeyEvent.VK_ENTER) {
             inStartMenu = false;
+            init();
             return;
         }
         if(event.getKeyCode() == KeyEvent.VK_R)
@@ -607,6 +626,13 @@ public class Assignment2 extends GameEngine {
             showHelpScreen = false;
             inStartMenu = true;
         }
+        if(event.getKeyCode() == KeyEvent.VK_Q && gameOver)
+        {
+            showHelpScreen = false;
+            gameOver = false;
+            inStartMenu = true;
+        }
+        
         if (event.getKeyCode() == KeyEvent.VK_SPACE){
             test1 = true;
         } else if (event.getKeyCode() == KeyEvent.VK_ENTER){

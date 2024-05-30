@@ -7,6 +7,8 @@ import src.generalClasses.Level;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static src.GameEngine.loadImage;
+
 public abstract class Character {
     protected int posX, posY, width, height, speed = 5;
     protected Direction direction;
@@ -21,20 +23,18 @@ public abstract class Character {
         this.posX = posX;
         this.posY = posY;
         this.speed = speed;
-        this.spriteSheet = spriteSheet;
 
-        int frameWidth = spriteSheet.getWidth(null) / numFrames;
-        int frameHeight = spriteSheet.getHeight(null);
 
         frames = new Image[numFrames];
         for (int i = 0; i < numFrames; i++) {
-            frames[i] = subImage(spriteSheet, i * frameWidth, 0 , frameWidth, frameHeight);
+            frames[i] = loadImage("resources/Sprites/humanFrame"+ (i+1) + ".png");
         }
         image = (frames[0]);
-
-        this.width = frameWidth;
-        this.height = frameHeight;
-        this.hitbox = new Rectangle(posX, posY, width / 2, (int)(height * 0.75)); // Smaller hitbox
+        this.image = loadImage("resources/Sprites/humanFrame1.png");
+        assert image != null;
+        this.width = image.getWidth(null);
+        this.height = image.getHeight(null);
+        this.hitbox = new Rectangle(posX, posY, width, height); // Smaller hitbox
     }
 
     private Image subImage(Image source, int x, int y, int w, int h) {
@@ -88,7 +88,7 @@ public abstract class Character {
     }
 
     public void setImage(String path) {
-        this.image = GameEngine.loadImage(path);
+        this.image = loadImage(path);
     }
     public Image getImage() {
         return image;
@@ -109,7 +109,7 @@ public abstract class Character {
     }
 
     public void updateHitbox() {
-        this.hitbox.setBounds(posX + (width - width / 2) / 2, posY + (height - (int)(height * 0.75)) / 2, width / 2, (int)(height * 0.75));
+        this.hitbox = new Rectangle(posX, posY, width, height);
     }
 
     public void handleWallCollision(Level level) {
@@ -131,7 +131,12 @@ public abstract class Character {
         }
 
         // Check for collisions with obstacles
-        Rectangle newHitbox = new Rectangle(this.posX + (width - width / 2) / 2, this.posY + (height - (int)(height * 0.75)) / 2, width / 2, (int)(height * 0.75));
+        Rectangle newHitbox = new Rectangle(
+                this.posX + (width - width / 2) / 2,
+                this.posY + (height - (int)(height * 0.75)) / 2,
+                width / 2,
+                (int)(height * 0.75));
+
         if (!level.isPositionClear(newHitbox)) {
             // Revert to the last valid position
             this.posX = previousPosX;

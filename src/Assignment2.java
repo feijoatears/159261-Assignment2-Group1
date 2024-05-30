@@ -763,7 +763,7 @@ public class Assignment2 extends GameEngine {
         mGraphics.setComposite(opaque);
 
         changeColor(blue);
-        //drawSolidRectangle(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
+        drawSolidRectangle(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
         changeColor(orange);
         drawSolidRectangle(player.getHitbox().x, player.getHitbox().y, player.getHitbox().width, player.getHitbox().height);
 

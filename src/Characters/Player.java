@@ -58,10 +58,11 @@ public class Player extends Character
     }
 
     public void move() {
-        int nextPosX = posX;
-        int nextPosY = posY;
+        int nextPosX = posX,
+            nextPosY = posY;
 
-        int[][] directionVals = {
+        int[][] directionVals =
+        {
                 {0, -1},  // N
                 {0, 1},   // S
                 {-1, 0},  // W
@@ -76,19 +77,21 @@ public class Player extends Character
         nextPosX += directionVals[i][0] * speed;
         nextPosY += directionVals[i][1] * speed;
 
-        // Check for collisions with invisible walls
+
         boolean collision = false;
-        for (InvisibleWall wall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls()) {
-            if (new Rectangle(nextPosX, nextPosY, width / 2, (int)(height * 0.75)).intersects(wall.getHitbox())) {
+        for(InvisibleWall iWall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls())
+        {
+            if(new Rectangle(nextPosX, nextPosY, width, height).intersects(iWall.getHitbox()))
+            {
                 collision = true;
                 break;
             }
         }
 
-        if (!collision) {
+        if(!collision)
+        {
             posX = nextPosX;
             posY = nextPosY;
-
             if (direction == Direction.East) {
                 currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
                 image = (frames[eastFrames[currentFrameIndex]]);
@@ -104,16 +107,15 @@ public class Player extends Character
                 currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
                 image = (frames[southFrames[currentFrameIndex]]);
             }
-        }
 
-        updateHitbox(); // Update hitbox after movement
+        }
+        updateHitbox();
     }
 
 
     public boolean checkCollision(Rectangle other)
     {
-        Rectangle playerRect = new Rectangle(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-        return playerRect.intersects(other);
+        return this.hitbox.intersects(other);
     }
 
     // Method to check if a specific key is present

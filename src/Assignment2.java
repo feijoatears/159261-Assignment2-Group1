@@ -99,7 +99,7 @@ public class Assignment2 extends GameEngine
     {
         setWindowSize(500, 500);
 
-        map.generate(20);// Generate a maze with 20 rooms
+        map.generate(100);// dimensions will be divided by 10 in x && y
         map.getMap().getFirst().getFirst();
         map.setStart(0,0);
         setVisible(true);
@@ -312,7 +312,7 @@ public class Assignment2 extends GameEngine
                 }
 
 
-                drawSolidCircle(45 + (20 * j), 35 + (20 * i), 3);
+                drawSolidCircle(40 + (8 * j), 40 + (8 * i), 3);
                 changeColor(white);
             }
         }

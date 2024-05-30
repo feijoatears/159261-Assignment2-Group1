@@ -146,11 +146,12 @@ public class MazeMap {
     {
         map = new ArrayList<>();
 
-        //hardcoded but can be changed
-        for(int x = 0; x < 5; x++)
+        int dimensions = numLevels / 10;
+
+        for(int x = 0; x < dimensions; x++)
         {
             ArrayList<Level> floor = new ArrayList<>();
-            for(int y = 0; y < 4; y++)
+            for(int y = 0; y < dimensions; y++)
             {
                 Level current = null;
                 boolean validLevel;
@@ -199,9 +200,9 @@ public class MazeMap {
                     //if any rooms are inaccessible, regenerate the map
                     generate(numLevels);
                 }
-
             }
         }
+
         //randomise player start
         setStart(new Random().nextInt(map.size()), new Random().nextInt(map.getLast().size()));
     }

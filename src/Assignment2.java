@@ -202,6 +202,7 @@ public class Assignment2 extends GameEngine
     /**
      * Paints the game components on the screen.
      */
+    @Override
     public void paintComponent() {
         Image levelImage = map.getCurrentLevel().getImage();
         if (levelImage == null) {
@@ -220,10 +221,11 @@ public class Assignment2 extends GameEngine
         } else if (showHelpScreen) {
             displayHelpScreen(mGraphics);
             return;
-        }    
+        }
 
-        /*if (test1) {
+        if (test1) {
             showTests();
+            drawInvisibleWalls(mGraphics);  // Draw invisible walls in debug mode
         }
 
         if (!key.getIsUsed()) {
@@ -233,7 +235,7 @@ public class Assignment2 extends GameEngine
             } else {
                 drawImage(keyImage, key.getPosX(), key.getPosY());
             }
-        }*/
+        }
 
         if (showButtonPopup && activeButton != null) {
             activeButton.showPopup(mGraphics, width(), height());
@@ -241,6 +243,7 @@ public class Assignment2 extends GameEngine
 
         collisionHandled = false;
     }
+
 
 
     /**
@@ -588,7 +591,12 @@ public class Assignment2 extends GameEngine
         return d;
     }
 
-
+    public void drawInvisibleWalls(Graphics2D g) {
+        for (InvisibleWall wall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls()) {
+            g.setColor(Color.RED);
+            g.drawRect(wall.getPosX(), wall.getPosY(), wall.getWidth(), wall.getHeight());
+        }
+    }
     public void showTests()
     {
         changeColor(red);

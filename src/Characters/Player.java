@@ -4,7 +4,9 @@ import src.Direction;
 import src.GameEngine;
 import src.Objects.Button;
 import src.Objects.DamagingObject;
+import src.Objects.InvisibleWall;
 import src.Objects.Key;
+import src.generalClasses.MazeMap;
 
 
 import java.awt.*;
@@ -55,51 +57,56 @@ public class Player extends Character
         return instance;
     }
 
-    public void move()
-    {
-        hitbox = new Rectangle(getPosX(), getPosY(), getImage().getWidth(null), getImage().getHeight(null));
+    public void move() {
+        int nextPosX = posX;
+        int nextPosY = posY;
 
-        //array of vectors for player movement, easier to read than switch
-        //i.e. east = index 3({1,0}), evaluates to nextPosX += 1 * speed, nextPosY += 0 * speed;
-        int[][] directionVals =
-        {
-            {0, -1},  // N
-            {0, 1},   // S
-            {-1, 0},  // W
-            {1, 0},   // E
-            {-1, -1}, // NW
-            {1, -1},  // NE
-            {-1, 1},  // SW
-            {1, 1}    // SE
+        int[][] directionVals = {
+                {0, -1},  // N
+                {0, 1},   // S
+                {-1, 0},  // W
+                {1, 0},   // E
+                {-1, -1}, // NW
+                {1, -1},  // NE
+                {-1, 1},  // SW
+                {1, 1}    // SE
         };
         int i = this.getDirection().ordinal();
 
-        posX += directionVals[i][0] * speed;
-        posY += directionVals[i][1] * speed;
+        nextPosX += directionVals[i][0] * speed;
+        nextPosY += directionVals[i][1] * speed;
 
-        if (direction == Direction.East)
-        {
-            currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
-            image = (frames[eastFrames[currentFrameIndex]]);
+        // Check for collisions with invisible walls
+        boolean collision = false;
+        for (InvisibleWall wall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls()) {
+            if (new Rectangle(nextPosX, nextPosY, width, height).intersects(wall.getHitbox())) {
+                collision = true;
+                break;
+            }
         }
-        else if (direction == Direction.West)
-        {
-            currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
-            image = (frames[westFrames[currentFrameIndex]]);
-        }
-        else if (direction == Direction.North ||
-                direction == Direction.Northeast ||
-                direction == Direction.Northwest)
-        {
-            currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
-            image = (frames[northFrames[currentFrameIndex]]);
-        }
-        else
-        {
-            currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
-            image = (frames[southFrames[currentFrameIndex]]);
+
+        if (!collision) {
+            posX = nextPosX;
+            posY = nextPosY;
+
+            if (direction == Direction.East) {
+                currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
+                image = (frames[eastFrames[currentFrameIndex]]);
+            } else if (direction == Direction.West) {
+                currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
+                image = (frames[westFrames[currentFrameIndex]]);
+            } else if (direction == Direction.North ||
+                    direction == Direction.Northeast ||
+                    direction == Direction.Northwest) {
+                currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
+                image = (frames[northFrames[currentFrameIndex]]);
+            } else {
+                currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
+                image = (frames[southFrames[currentFrameIndex]]);
+            }
         }
     }
+
 
     public boolean checkCollision(Rectangle other)
     {

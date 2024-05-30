@@ -134,6 +134,16 @@ public class MazeMap {
             }
 
 
+            if (levelString.contains("Room2")) {
+                // Define the hitboxes for Room1
+                level.addInvisibleWall(new InvisibleWall(50, 50, 100, 10));
+                level.addInvisibleWall(new InvisibleWall(200, 50, 10, 100));
+                level.addInvisibleWall(new InvisibleWall(50, 200, 100, 10));
+                level.addInvisibleWall(new InvisibleWall(50, 50, 10, 100));
+            }
+
+
+
 
             levels.add(level);
         }

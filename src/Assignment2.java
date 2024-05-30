@@ -97,7 +97,7 @@ public class Assignment2 extends GameEngine
                     // Randomly generate position within the room
                     int posX = random.nextInt(windowWidth);
                     int posY = random.nextInt(windowHeight);
-                   // room.getEnemies().add(new Vampire(posX, posY, 2, 1));
+                    //room.getEnemies().add(new Vampire(posX, posY, 2, 1));
                 }
             }
         }
@@ -114,13 +114,44 @@ public class Assignment2 extends GameEngine
         int randomRoomIndex = random.nextInt(randomFloor.size());
         Level randomRoom = randomFloor.get(randomRoomIndex);
 
-        // Set the key's position in the random room
-        int posX = random.nextInt(width() - 100) + 50;
-        int posY = random.nextInt(height() - 100) + 50;
+        boolean validPosition = false;
+        int posX = 0, posY = 0;
+
+        while (!validPosition) {
+            // Generate a random position
+            posX = random.nextInt(width() - 100) + 50;
+            posY = random.nextInt(height() - 100) + 50;
+
+            // Check if the position is valid (not overlapping with obstacles, walls, etc.)
+            validPosition = true;
+            Rectangle keyHitbox = new Rectangle(posX, posY, 32, 32); // Assuming key size is 32x32
+
+            // Check collision with invisible walls
+            for (InvisibleWall wall : randomRoom.getInvisibleWalls()) {
+                if (wall.getHitbox().intersects(keyHitbox)) {
+                    validPosition = false;
+                    break;
+                }
+            }
+
+            // Check collision with obstacles
+            if (validPosition) {
+                for (DamagingObject obstacle : randomRoom.getObstacles()) {
+                    if (obstacle.getHitbox().intersects(keyHitbox)) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+            }
+
+            // Add other checks as needed (e.g., buttons, doors)
+        }
+
+        // Create the key at the valid position
         key = new Key(posX, posY);
         randomRoom.getKeys().add(key); // Add the key to the selected room only
 
-        // Initialize objects for the current level (assuming current level is initially set)
+        // Initialize objects for the current level
         map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>() {{
             add(loadAudio("resources/Sounds/buttonOn.wav"));
             add(loadAudio("resources/Sounds/buttonOff.wav"));
@@ -128,6 +159,7 @@ public class Assignment2 extends GameEngine
 
         map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
     }
+
 
     /**
      * Initializes the game, loads images and sounds, and sets up the initial game state.
@@ -218,17 +250,63 @@ public class Assignment2 extends GameEngine
 
     private void spawnFinalDoor() {
         Random random = new Random();
-        int x = random.nextInt(width() - 100) + 50;
-        int y = random.nextInt(height() - 100) + 50;
+
+        // Select a random floor
+        int randomFloorIndex = random.nextInt(map.getMap().size());
+        ArrayList<Level> randomFloor = map.getMap().get(randomFloorIndex);
+
+        // Select a random room within that floor
+        int randomRoomIndex = random.nextInt(randomFloor.size());
+        Level randomRoom = randomFloor.get(randomRoomIndex);
+
+        boolean validPosition = false;
+        int posX = 0, posY = 0;
+
+        while (!validPosition) {
+            // Generate a random position
+            posX = random.nextInt(width() - 100) + 50;
+            posY = random.nextInt(height() - 100) + 50;
+
+            // Check if the position is valid (not overlapping with obstacles, walls, etc.)
+            validPosition = true;
+            Rectangle doorHitbox = new Rectangle(posX, posY, 32, 32); // Assuming door size is 32x32
+
+            // Check collision with invisible walls
+            for (InvisibleWall wall : randomRoom.getInvisibleWalls()) {
+                if (wall.getHitbox().intersects(doorHitbox)) {
+                    validPosition = false;
+                    break;
+                }
+            }
+
+            // Check collision with obstacles
+            if (validPosition) {
+                for (DamagingObject obstacle : randomRoom.getObstacles()) {
+                    if (obstacle.getHitbox().intersects(doorHitbox)) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+            }
+
+            // Add other checks as needed (e.g., buttons, doors)
+        }
+
+        // Create the final door at the valid position
         Image doorImage = loadImage("resources/Objects/DEBUGWALL.png");
         if (doorImage == null) {
             System.err.println("Error: Final door image is null");
         } else {
             System.out.println("Final door image loaded successfully");
         }
-        finalDoor = new FinalDoor(Objects.requireNonNull(doorImage), x, y);
+        finalDoor = new FinalDoor(Objects.requireNonNull(doorImage), posX, posY);
+        randomRoom.setFinalDoor(finalDoor); // Add the final door to the selected room only
+
         finalDoorSpawned = true;
     }
+
+
+
 
     public boolean startQuizGame(MathButton mathButton)
     {
@@ -276,15 +354,20 @@ public class Assignment2 extends GameEngine
             showTests(currentLevel);
         }
 
-        if (finalDoorSpawned && finalDoor != null) {
-            Image doorImage = finalDoor.getImage();
+        FinalDoor currentFinalDoor = currentLevel.getFinalDoor();
+        if (finalDoorSpawned && currentFinalDoor != null) {
+            Image doorImage = currentFinalDoor.getImage();
             if (doorImage == null) {
                 System.err.println("Error: final door image is null");
+            } else {
+                System.out.println("Drawing final door at position: (" + currentFinalDoor.getPosX() + ", " + currentFinalDoor.getPosY() + ")");
+                drawImage(doorImage, currentFinalDoor.getPosX(), currentFinalDoor.getPosY());
             }
         }
 
         collisionHandled = false;
     }
+
 
     /**
      * Handles door collisions and updates the map and player position accordingly.

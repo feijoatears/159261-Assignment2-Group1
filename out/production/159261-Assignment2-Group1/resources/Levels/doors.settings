@@ -58,3 +58,105 @@ Room 11:
     Right,
     Left
 }
+Room 12:
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
+Room 13:
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
+Room 14:
+{
+    Down,
+    Right
+}
+Room 15:
+{
+    Down,
+    Right
+}
+Room 16:
+{
+    Left,
+    Down
+}
+Room 17:
+{
+    Down,
+    Left
+}
+Room 18:
+{
+    Up,
+    Right,
+    Down
+}
+Room 19:
+{
+    Up,
+    Right,
+    Down
+}
+Room 20:
+{
+    Up,
+    Left,
+    Right
+}
+Room 21:
+{
+    Up,
+    Left,
+    Right
+}
+Room 22:
+{
+    Right,
+    Down,
+    Left
+}
+Room 23:
+{
+    Down,
+    Right,
+    Left
+}
+Room 24:
+{
+    Up,
+    Down,
+    Left
+}
+Room 25:
+{
+    Up,
+    Down,
+    Left
+}
+Room 26:
+{
+    Up,
+    Left
+}
+Room 27:
+{
+    Up,
+    Right
+}
+Room 28:
+{
+    Up,
+    Left
+}
+Room 29:
+{
+    Up,
+    Left
+}

@@ -110,8 +110,8 @@ public class MazeMap {
         {
 
         }
-
     }
+
     public ArrayList<Level> loadLevels()
     {
         ArrayList<Level> levels = new ArrayList<>();
@@ -197,7 +197,6 @@ public class MazeMap {
     //recursive depth first search to ensure all rooms are accessible
     public void dfs (int x, int y, Set<Point> visited)
     {
-        System.out.println("["+x+"]["+y+"]");
         Point point = new Point(x, y);
         if (visited.contains(point))
         {

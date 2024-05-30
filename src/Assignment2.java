@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.*;
 import javax.sound.sampled.Clip;
 
@@ -80,8 +81,6 @@ public class Assignment2 extends GameEngine
     {
         key = new Key(250, 250);
 
-
-
         map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>()
         {{
             add(loadAudio("resources/Sounds/buttonOn.wav"));
@@ -101,6 +100,8 @@ public class Assignment2 extends GameEngine
         setWindowSize(500, 500);
 
         map.generate(20);// Generate a maze with 20 rooms
+        map.getMap().getFirst().getFirst();
+        map.setStart(0,0);
         setVisible(true);
 
         if (volumeControl.getBackgroundMusic() != null)
@@ -144,22 +145,26 @@ public class Assignment2 extends GameEngine
             keyCollected = player.handleKeyCollision(key);
 
             // Check if the player interacts with a button
-            if (showButtonPopup && activeButton != null) {
-                if (activeButton instanceof MathButton) {
+            if (showButtonPopup && activeButton != null)
+            {
+                if (activeButton instanceof MathButton)
+                {
                     MathButton mathButton = (MathButton) activeButton;
                     boolean quizCompleted = startQuizGame(mathButton);
-                    if (quizCompleted) {
+                    if (quizCompleted)
+                    {
                         key.setPosX(200);
                         key.setPosY(200);
                         keyCollected = true;
                         System.out.println("Quiz completed! Key has spawned.");
-                    } else {
+                    }
+                    else
+                    {
                         System.out.println("Quiz failed. Try again.");
                     }
                 }
             }
         }
-
 
         // Update enemy movement and interactions
         for (Enemy enemy : map.getCurrentLevel().getEnemies())
@@ -180,9 +185,8 @@ public class Assignment2 extends GameEngine
         player.damage(map.getCurrentLevel().getObstacles(), map.getCurrentLevel().getEnemies());
     }
 
-
-
-    public boolean startQuizGame(MathButton mathButton) {
+    public boolean startQuizGame(MathButton mathButton)
+    {
         Scanner scanner = new Scanner(System.in);
         System.out.println(mathButton.getQuizQuestion());
         String answer = scanner.nextLine();
@@ -218,7 +222,7 @@ public class Assignment2 extends GameEngine
             return;
         }    
 
-        if (test1) {
+        /*if (test1) {
             showTests();
         }
 
@@ -229,7 +233,7 @@ public class Assignment2 extends GameEngine
             } else {
                 drawImage(keyImage, key.getPosX(), key.getPosY());
             }
-        }
+        }*/
 
         if (showButtonPopup && activeButton != null) {
             activeButton.showPopup(mGraphics, width(), height());
@@ -283,9 +287,6 @@ public class Assignment2 extends GameEngine
             }
         }
     }
-
-
-
 
     /**
      * Draws the minimap on the screen.

@@ -105,7 +105,7 @@ public class Player extends Character
                 {
                     down = true;
                 }
-
+                //TODO: diagonal movement is bugged
 
                 if(i == 0 || i == 1)
                 {

@@ -4,12 +4,11 @@ import java.awt.*;
 
 import static src.GameEngine.loadImage;
 
-public class Key extends Object
-{
+public class Key extends Object {
     private int id;
+    private boolean isUsed;
 
-    public Key(int posX, int posY)
-    {
+    public Key(int posX, int posY) {
         super(posX, posY, loadImage("resources/Objects/newKey.png"));
         this.isInteractable = true;
         this.isUsed = false;
@@ -20,13 +19,20 @@ public class Key extends Object
         return playerRect.intersects(keyRect);
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
+
+    public boolean getIsUsed() {
+        return isUsed;
+    }
+
+    public void setIsUsed(boolean isUsed) {
+        this.isUsed = isUsed;
+    }
 }
+

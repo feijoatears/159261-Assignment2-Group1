@@ -33,7 +33,14 @@ public class Assignment2 extends GameEngine
     static int framerate = 30;
 
     private boolean showHelpScreen = false;
-    
+
+
+    private boolean finalDoorSpawned = false;
+    private FinalDoor finalDoor = null;
+    private Image congratsImage = null;
+
+
+
     private boolean keyCollected = false,
             collisionHandled = false,
             inStartMenu = true,
@@ -72,52 +79,75 @@ public class Assignment2 extends GameEngine
 
         player.setSpeed(20);
     }
+
+
     public void initEnemies() {
-        map.getCurrentLevel().getEnemies().clear();
+        Random random = new Random();
 
-        //map.getCurrentLevel().getEnemies().add(new Skeleton(50, 50, 3, 2)); // Add Skeleton at specified position
+        int windowWidth = width(); // Assuming width() gives the width of the game window
+        int windowHeight = height(); // Assuming height() gives the height of the game window
 
+        for (ArrayList<Level> floor : map.getMap()) {
+            for (Level room : floor) {
+                // Clear existing enemies in the current room
+                room.getEnemies().clear();
 
-       // map.getCurrentLevel().getEnemies().add(new Vampire(50, 50, 2, 1));
+                // Randomly decide whether to add an enemy
+                if (random.nextBoolean()) {
+                    // Randomly generate position within the room
+                    int posX = random.nextInt(windowWidth);
+                    int posY = random.nextInt(windowHeight);
+                   // room.getEnemies().add(new Vampire(posX, posY, 2, 1));
+                }
+            }
+        }
     }
-    public void initObjects()
-    {
-        key = new Key(250, 250);
 
-        map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>()
-        {{
+    public void initObjects() {
+        Random random = new Random();
+
+        // Select a random floor
+        int randomFloorIndex = random.nextInt(map.getMap().size());
+        ArrayList<Level> randomFloor = map.getMap().get(randomFloorIndex);
+
+        // Select a random room within that floor
+        int randomRoomIndex = random.nextInt(randomFloor.size());
+        Level randomRoom = randomFloor.get(randomRoomIndex);
+
+        // Set the key's position in the random room
+        int posX = random.nextInt(width() - 100) + 50;
+        int posY = random.nextInt(height() - 100) + 50;
+        key = new Key(posX, posY);
+        randomRoom.getKeys().add(key); // Add the key to the selected room only
+
+        // Initialize objects for the current level (assuming current level is initially set)
+        map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>() {{
             add(loadAudio("resources/Sounds/buttonOn.wav"));
             add(loadAudio("resources/Sounds/buttonOff.wav"));
-        }}
-        ));
+        }}));
 
         map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
     }
 
-
     /**
      * Initializes the game, loads images and sounds, and sets up the initial game state.
      */
-    public void init()
-    {
+    public void init() {
         setWindowSize(500, 500);
 
-        map.generate(100);// dimensions will be divided by 10 in x && y
-        map.getMap().getFirst().getFirst();
-        map.setStart(0,0);
-        setVisible(true);
+        map.generate(100); // Generate the map
+        map.setStart(0, 0); // Set the starting level
+        map.setCurrentFloorAndRoom(0, 0); // Ensure the current level is set correctly
 
-        if (volumeControl.getBackgroundMusic() != null)
-        {
+        if (volumeControl.getBackgroundMusic() != null) {
             volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
         }
 
         initPlayer();
         initEnemies();
         initObjects();
-    }
 
-    private void setVisible(boolean b) {
+        congratsImage = loadImage("resources/Sprites/kick.png");
     }
 
     /**
@@ -125,8 +155,7 @@ public class Assignment2 extends GameEngine
      *
      * @param dt The time delta since the last update.
      */
-    public void update(double dt)
-    {
+    public void update(double dt) {
         if (collisionHandled) {
             collisionHandled = false;
             return;
@@ -137,55 +166,68 @@ public class Assignment2 extends GameEngine
         }
 
         // Restart if player has no lives
-        if (player.getLives() <= 0)
-        {
+        if (player.getLives() <= 0) {
             init();
+        }
+
+        Level currentLevel = map.getCurrentLevel(); // Ensure currentLevel is set
+
+        if (currentLevel == null) {
+            System.err.println("Error: currentLevel is null");
+            return; // Safeguard to prevent further null reference issues
         }
 
         if (player.isMoving()) {
             player.move();
-            showButtonPopup = player.handleButtonCollision(map.getCurrentLevel().getButtons());
-            keyCollected = player.handleKeyCollision(key);
+            showButtonPopup = player.handleButtonCollision(currentLevel.getButtons());
 
-            // Check if the player interacts with a button
-            if (showButtonPopup && activeButton != null)
-            {
-                if (activeButton instanceof MathButton)
-                {
-                    MathButton mathButton = (MathButton) activeButton;
-                    boolean quizCompleted = startQuizGame(mathButton);
-                    if (quizCompleted)
-                    {
-                        key.setPosX(200);
-                        key.setPosY(200);
-                        keyCollected = true;
-                        System.out.println("Quiz completed! Key has spawned.");
-                    }
-                    else
-                    {
-                        System.out.println("Quiz failed. Try again.");
-                    }
+            // Check key collision only in the current room
+            Iterator<Key> keyIterator = currentLevel.getKeys().iterator();
+            while (keyIterator.hasNext()) {
+                Key key = keyIterator.next();
+                if (player.handleKeyCollision(key)) {
+                    keyIterator.remove(); // Remove the key from the level
+                    keyCollected = true;
+                    break;
                 }
             }
         }
 
         // Update enemy movement and interactions
-        for (Enemy enemy : map.getCurrentLevel().getEnemies())
-        {
-            enemy.chasePlayer(player);
+        for (Enemy enemy : currentLevel.getEnemies()) {
+            enemy.chasePlayer(player, currentLevel);
+            enemy.handleWallCollision(currentLevel);
         }
 
-        if(keyCollected)
-        {
-            updateScore(100); // Add 100 points for collecting the key
-            if (volumeControl.getKeyCollectedSound()!= null) {
+        if (keyCollected) {
+            //updateScore(100); // Add 100 points for collecting the key
+            if (volumeControl.getKeyCollectedSound() != null) {
                 volumeControl.getKeyCollectedSound().start();
+            }
+
+            if (!finalDoorSpawned) {
+                spawnFinalDoor();
             }
         }
 
         handleDoorCollision();
-        player.handleWallCollision();
-        player.damage(map.getCurrentLevel().getObstacles(), map.getCurrentLevel().getEnemies());
+        player.handleWallCollision(currentLevel); // Pass the current level here
+        player.damage(currentLevel.getObstacles(), currentLevel.getEnemies());
+    }
+
+
+    private void spawnFinalDoor() {
+        Random random = new Random();
+        int x = random.nextInt(width() - 100) + 50;
+        int y = random.nextInt(height() - 100) + 50;
+        Image doorImage = loadImage("resources/Objects/DEBUGWALL.png");
+        if (doorImage == null) {
+            System.err.println("Error: Final door image is null");
+        } else {
+            System.out.println("Final door image loaded successfully");
+        }
+        finalDoor = new FinalDoor(Objects.requireNonNull(doorImage), x, y);
+        finalDoorSpawned = true;
     }
 
     public boolean startQuizGame(MathButton mathButton)
@@ -207,16 +249,20 @@ public class Assignment2 extends GameEngine
      */
     @Override
     public void paintComponent() {
-        Image levelImage = map.getCurrentLevel().getImage();
+        Level currentLevel = map.getCurrentLevel();
+        Image levelImage = currentLevel.getImage();
         if (levelImage == null) {
             System.err.println("Error: current level image is null");
         } else {
             drawImage(levelImage, 0, 0, width(), height());
         }
 
-        drawMapObjects();
-        drawCharacters();
+        drawMapObjects(currentLevel); // Pass current level to draw objects
+        drawCharacters(currentLevel); // Pass current level to draw characters
         drawMap();
+
+        mGraphics.setColor(Color.WHITE);
+        mGraphics.drawString(map.getCurrentLocation(), 10, 20);
 
         if (inStartMenu) {
             displayStartMenu(mGraphics);
@@ -227,27 +273,18 @@ public class Assignment2 extends GameEngine
         }
 
         if (test1) {
-            showTests();
-
+            showTests(currentLevel);
         }
 
-        if (!key.getIsUsed()) {
-            Image keyImage = key.getImage();
-            if (keyImage == null) {
-                System.err.println("Error: key image is null");
-            } else {
-                drawImage(keyImage, key.getPosX(), key.getPosY());
+        if (finalDoorSpawned && finalDoor != null) {
+            Image doorImage = finalDoor.getImage();
+            if (doorImage == null) {
+                System.err.println("Error: final door image is null");
             }
-        }
-
-        if (showButtonPopup && activeButton != null) {
-            activeButton.showPopup(mGraphics, width(), height());
         }
 
         collisionHandled = false;
     }
-
-
 
     /**
      * Handles door collisions and updates the map and player position accordingly.
@@ -262,7 +299,7 @@ public class Assignment2 extends GameEngine
                         player.setPosX(width() - player.getPosX() - player.getWidth() - doorConst);
                         player.setPosY(height() - player.getPosY() - player.getHeight());
                         collisionHandled = true;
-
+                        initEnemies();
                     }
                 }
                 if (door == map.getCurrentLevel().getRightDoor()) {
@@ -271,7 +308,7 @@ public class Assignment2 extends GameEngine
                         player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null) + doorConst);
                         player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null));
                         collisionHandled = true;
-
+                        initEnemies();
                     }
                 }
                 if (door == map.getCurrentLevel().getTopDoor()) {
@@ -280,6 +317,7 @@ public class Assignment2 extends GameEngine
                         player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
                         player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null) - doorConst);
                         collisionHandled = true;
+                        initEnemies();
                     }
                 }
                 if (door == map.getCurrentLevel().getBottomDoor()) {
@@ -288,11 +326,37 @@ public class Assignment2 extends GameEngine
                         player.setPosX(width() - player.getPosX() - player.getImage().getWidth(null));
                         player.setPosY(height() - player.getPosY() - player.getImage().getHeight(null) + doorConst);
                         collisionHandled = true;
+                        initEnemies();
                     }
                 }
             }
         }
+
+        if (finalDoorSpawned && finalDoor != null && player.checkCollision(finalDoor.getHitbox())) {
+            showCongratulatoryMessage();
+        }
     }
+
+    private void showCongratulatoryMessage() {
+        // Clear the screen and draw the congratulatory image
+        mGraphics.setColor(Color.BLACK);
+        mGraphics.fillRect(0, 0, width(), height());
+        if (congratsImage != null) {
+            mGraphics.drawImage(congratsImage, width() / 2 - congratsImage.getWidth(null) / 2, height() / 2 - congratsImage.getHeight(null) / 2, null);
+        }
+        mFrame.repaint();
+
+        // Introduce a small delay before closing the game
+        try {
+            Thread.sleep(3000); // Wait for 3 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // End the game
+        System.exit(0);
+    }
+
 
     /**
      * Draws the minimap on the screen.
@@ -323,8 +387,8 @@ public class Assignment2 extends GameEngine
             }
         }
     }
-    public void drawMapObjects() {
-        for (Button b : map.getCurrentLevel().getButtons()) {
+    public void drawMapObjects(Level currentLevel) {
+        for (Button b : currentLevel.getButtons()) {
             Image buttonImage = b.getCurrentImage();
             if (buttonImage == null) {
                 System.err.println("Error: button image is null");
@@ -332,7 +396,7 @@ public class Assignment2 extends GameEngine
                 drawImage(buttonImage, b.getPosX(), b.getPosY());
             }
         }
-        for (DamagingObject o : map.getCurrentLevel().getObstacles()) {
+        for (DamagingObject o : currentLevel.getObstacles()) {
             Image obstacleImage = o.getImage();
             if (obstacleImage == null) {
                 System.err.println("Error: obstacle image is null");
@@ -348,7 +412,7 @@ public class Assignment2 extends GameEngine
                 drawImage(heartImage, 20 * i, 0);
             }
         }
-        for (Door d : map.getCurrentLevel().getDoors()) {
+        for (Door d : currentLevel.getDoors()) {
             Image doorImage = d.getImage();
             if (doorImage == null) {
                 System.err.println("Error: door image is null for door at position (" + d.getPosX() + ", " + d.getPosY() + ")");
@@ -356,11 +420,20 @@ public class Assignment2 extends GameEngine
                 drawImage(doorImage, d.getPosX(), d.getPosY());
             }
         }
+        for (Key k : currentLevel.getKeys()) {
+            Image keyImage = k.getImage();
+            if (keyImage == null) {
+                System.err.println("Error: key image is null");
+            } else {
+                drawImage(keyImage, k.getPosX(), k.getPosY());
+            }
+        }
     }
 
 
 
-    public void drawCharacters() {
+
+    public void drawCharacters(Level currentLevel) {
         Image playerImage = player.getImage();
         if (playerImage == null) {
             System.err.println("Error: player image is null");
@@ -368,7 +441,7 @@ public class Assignment2 extends GameEngine
             drawImage(playerImage, player.getPosX(), player.getPosY());
         }
 
-        for (Enemy enemy : map.getCurrentLevel().getEnemies()) {
+        for (Enemy enemy : currentLevel.getEnemies()) {
             Image enemyImage = enemy.getImage();
             if (enemyImage == null) {
                 System.err.println("Error: enemy image is null");
@@ -378,15 +451,16 @@ public class Assignment2 extends GameEngine
         }
     }
 
+
     /**
      * Updates the score.
      *
      * @param points The points to add to the score.
      */
-    public void updateScore(int points) {
-        score += points;
-        System.out.println("Score: " + score);
-    }
+//    public void updateScore(int points) {
+//        score += points;
+//        System.out.println("Score: " + score);
+//    }
 
     /**
      * Displays the start menu.
@@ -595,7 +669,7 @@ public class Assignment2 extends GameEngine
     }
 
 
-    public void showTests() {
+    public void showTests(Level currentLevel) {
         changeColor(red);
         float opacity = 0.5f; // 50% opacity
         AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
@@ -603,13 +677,13 @@ public class Assignment2 extends GameEngine
 
         drawSolidRectangle(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
 
-        for (Door d: map.getCurrentLevel().getDoors()) {
+        for (Door d : currentLevel.getDoors()) {
             drawSolidRectangle(d.getPosX(), d.getPosY(), d.getWidth(), d.getHeight());
         }
-        for (Enemy e : map.getCurrentLevel().getEnemies()) {
+        for (Enemy e : currentLevel.getEnemies()) {
             drawSolidRectangle(e.getPosX(), e.getPosY(), e.getWidth(), e.getHeight());
         }
-        for (InvisibleWall wall : map.getCurrentLevel().getInvisibleWalls()) {
+        for (InvisibleWall wall : currentLevel.getInvisibleWalls()) {
             drawSolidRectangle(wall.getPosX(), wall.getPosY(), wall.getWidth(), wall.getHeight());
         }
         // ORANGE FOR BOUNDS
@@ -620,5 +694,6 @@ public class Assignment2 extends GameEngine
         drawSolidRectangle(width() - 10, 0, 10, height());
         mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
+
 
 }

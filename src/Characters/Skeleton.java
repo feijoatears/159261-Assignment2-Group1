@@ -1,5 +1,7 @@
 package src.Characters;
 
+import src.generalClasses.Level;
+
 import static src.GameEngine.loadImage;
 
 import java.awt.*;
@@ -11,8 +13,8 @@ public class Skeleton extends Enemy {
     }
 
     @Override
-    public void chasePlayer(Player player) {
+    public void chasePlayer(Player player, Level level) {
         // Implement the chase behavior specific to the Skeleton if we want to
-        super.chasePlayer(player);
+        super.chasePlayer(player, level);
     }
 }

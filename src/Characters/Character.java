@@ -2,7 +2,7 @@ package src.Characters;
 
 import src.Direction;
 import src.GameEngine;
-
+import src.generalClasses.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -110,24 +110,34 @@ public abstract class Character
     public void setHitbox(Rectangle hitbox) { this.hitbox = hitbox; }
     public Rectangle getHitbox() { return hitbox; }
 
-    public void handleWallCollision()
-    {
+    public void handleWallCollision(Level level) {
+        // Store the previous position
+        int previousPosX = this.posX;
+        int previousPosY = this.posY;
 
-        //makes inside area of map valid
+        // Adjust position if outside valid area
         Rectangle validPosition = new Rectangle(0, 0, 450, 450);
-        if (this.posX > validPosition.width)
-        {
+        if (this.posX > validPosition.width) {
             this.posX = validPosition.width;
-        } else if (this.posX < 0)
-        {
+        } else if (this.posX < 0) {
             this.posX = 0;
         }
-        if (this.posY > validPosition.height)
-        {
+        if (this.posY > validPosition.height) {
             this.posY = validPosition.height;
-        } else if (this.posY < 0)
-        {
+        } else if (this.posY < 0) {
             this.posY = 0;
         }
+
+        // Check for collisions with obstacles
+        Rectangle newHitbox = new Rectangle(this.posX, this.posY, this.width, this.height);
+        if (!level.isPositionClear(newHitbox)) {
+            // Revert to the last valid position
+            this.posX = previousPosX;
+            this.posY = previousPosY;
+        }
+
+        // Update the hitbox position
+        this.hitbox.setLocation(this.posX, this.posY);
     }
+
 }

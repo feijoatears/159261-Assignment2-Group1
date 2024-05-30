@@ -17,6 +17,7 @@ public class Level {
     private final ArrayList<Door> doors = new ArrayList<>();
     private final ArrayList<InvisibleWall> invisibleWalls = new ArrayList<>();  // Properly declare the invisible walls list
 
+    private String name;
     private Door topDoor = null,
             bottomDoor = null,
             leftDoor = null,
@@ -51,6 +52,21 @@ public class Level {
         }
     }
 
+    public boolean isPositionClear(Rectangle rect) {
+        for (InvisibleWall wall : getInvisibleWalls()) {
+            if (wall.getHitbox().intersects(rect)) {
+                return false;
+            }
+        }
+        for (DamagingObject obstacle : getObstacles()) {
+            if (obstacle.getHitbox().intersects(rect)) {
+                return false;
+            }
+        }
+        // Add checks for other types of obstacles if necessary
+        return true;
+    }
+
     // Add invisible wall to the list
     public void addInvisibleWall(InvisibleWall wall) {
         invisibleWalls.add(wall);
@@ -67,6 +83,14 @@ public class Level {
 
     public ArrayList<Key> getKeys() {
         return keys;
+    }
+
+    public void addKey(Key key) {
+        keys.add(key);
+    }
+
+    public void removeKey(Key key) {
+        keys.remove(key);
     }
 
     public ArrayList<Button> getButtons() {
@@ -120,4 +144,13 @@ public class Level {
     public void setBottomDoor(Door bottomDoor) {
         this.bottomDoor = bottomDoor;
     }
+
+    public Level(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }

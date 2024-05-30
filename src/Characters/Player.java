@@ -209,17 +209,16 @@ public class Player extends Character
         }
     }
 
-    public boolean handleKeyCollision(Key key)
-    {
-        if (key.checkCollision(hitbox) && !key.getIsUsed())
-        {
-            collectKey(0); // for keyindex 0
-            key.setUsed(true);
+    public boolean handleKeyCollision(Key key) {
+        if (key.checkCollision(hitbox) && !key.getIsUsed()) {
+            collectKey(0); // for key index 0
+            key.setIsUsed(true);
             System.out.println("Key collected!");
             return true;
         }
         return false;
     }
+
     public boolean handleButtonCollision(ArrayList<Button> buttons)
     {
         for (Button b : buttons)

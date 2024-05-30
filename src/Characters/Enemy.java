@@ -1,7 +1,11 @@
 package src.Characters;
-
+import src.Objects.*;
+import src.Characters.*;
+import src.generalClasses.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
+
 
 public abstract class Enemy extends Character
 {
@@ -22,9 +26,7 @@ public abstract class Enemy extends Character
     public void setDamage(int damage) { this.damage = damage; }
     public int getDamage() { return damage; }
 
-    public void chasePlayer(Player player)
-    {
-
+    public void chasePlayer(Player player, Level level) {
         int targetX = player.getPosX();
         int targetY = player.getPosY();
 
@@ -38,49 +40,41 @@ public abstract class Enemy extends Character
             return;
         }
 
-        //issue w/ enemy moving back and forth sporadically, was due to being unable to access odd coordinates
-        if(Math.abs(posX - player.getPosX()) <= 5)
-        {
+        // Issue w/ enemy moving back and forth sporadically, was due to being unable to access odd coordinates
+        if (Math.abs(posX - player.getPosX()) <= 5) {
             posX = player.posX;
         }
-        if(Math.abs(posY - player.getPosY()) <= 5)
-        {
+        if (Math.abs(posY - player.getPosY()) <= 5) {
             posY = player.posY;
         }
 
-        if (posX < player.getPosX())
-        {
+        if (posX < player.getPosX()) {
             posX += speed;
             currentFrameIndex = (currentFrameIndex + 1) % eastFrames.length;
-            image = (frames[eastFrames[currentFrameIndex]]);
-        }
-        else if (posX > player.getPosX())
-        {
+            image = frames[eastFrames[currentFrameIndex]];
+        } else if (posX > player.getPosX()) {
             posX -= speed;
             currentFrameIndex = (currentFrameIndex + 1) % westFrames.length;
-            image = (frames[westFrames[currentFrameIndex]]);
+            image = frames[westFrames[currentFrameIndex]];
         }
 
-        if (posY < player.getPosY())
-        {
-            if(posX == player.getPosX())
-            {
+        if (posY < player.getPosY()) {
+            if (posX == player.getPosX()) {
                 currentFrameIndex = (currentFrameIndex + 1) % southFrames.length;
-                image = (frames[southFrames[currentFrameIndex]]);
+                image = frames[southFrames[currentFrameIndex]];
             }
             posY += speed;
-        }
-        else if (posY > player.getPosY())
-        {
-            if(posX == player.getPosX())
-            {
+        } else if (posY > player.getPosY()) {
+            if (posX == player.getPosX()) {
                 currentFrameIndex = (currentFrameIndex + 1) % northFrames.length;
-                image = (frames[northFrames[currentFrameIndex]]);
+                image = frames[northFrames[currentFrameIndex]];
             }
             posY -= speed;
         }
 
         this.hitbox = new Rectangle(posX, posY, width, height);
-        handleWallCollision();
+        handleWallCollision(level);
     }
+
+
 }

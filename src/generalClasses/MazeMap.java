@@ -187,6 +187,7 @@ public class MazeMap {
                     //if any rooms are inaccessible, regenerate the map
                     generate(numLevels);
                 }
+
             }
         }
         //randomise player start
@@ -196,6 +197,7 @@ public class MazeMap {
     //recursive depth first search to ensure all rooms are accessible
     public void dfs (int x, int y, Set<Point> visited)
     {
+        System.out.println("["+x+"]["+y+"]");
         Point point = new Point(x, y);
         if (visited.contains(point))
         {
@@ -206,7 +208,7 @@ public class MazeMap {
         //up
         if (x > 0)
         {
-            if(map.get(x - 1).get(y).getTopDoor() != null)
+            if(map.get(x).get(y).getTopDoor() != null)
             {
                 dfs(x - 1, y, visited);
             }
@@ -214,7 +216,7 @@ public class MazeMap {
         //down
         if (x + 1 < map.size())
         {
-            if(map.get(x + 1).get(y).getBottomDoor() != null)
+            if(map.get(x).get(y).getBottomDoor() != null)
             {
                 dfs(x + 1, y, visited);
             }
@@ -222,7 +224,7 @@ public class MazeMap {
         //left
         if (y > 0)
         {
-            if(map.get(x).get(y - 1).getLeftDoor() != null)
+            if(map.get(x).get(y).getLeftDoor() != null)
             {
                 dfs(x, y - 1, visited);
             }
@@ -230,7 +232,7 @@ public class MazeMap {
         //right
         if (y + 1 < map.get(x).size())
         {
-            if(map.get(x).get(y + 1).getTopDoor() != null)
+            if(map.get(x).get(y).getTopDoor() != null)
             {
                 dfs(x, y + 1, visited);
             }

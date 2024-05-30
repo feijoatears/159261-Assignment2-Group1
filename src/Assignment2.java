@@ -31,8 +31,6 @@ public class Assignment2 extends GameEngine {
     private int score = 0;
     static int framerate = 30;
 
-    private boolean showHelpScreen = false;
-
 
     private boolean finalDoorSpawned = false;
     private FinalDoor finalDoor = null;

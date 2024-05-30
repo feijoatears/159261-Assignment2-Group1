@@ -216,16 +216,132 @@ public class MazeMap {
             }
 
 
+            if (levelString.contains("ScaledRoom8.png")) {
 
-            if (levelString.contains("ScaledRoom12.png")) {
-                level.addInvisibleWall(new InvisibleWall(100, 50, 300, 10));
-                level.addInvisibleWall(new InvisibleWall(150, 150, 10, 100));
-                level.addInvisibleWall(new InvisibleWall(250, 250, 200, 10));
-                level.addInvisibleWall(new InvisibleWall(300, 350, 10, 150));
+
+                // right
+                level.addInvisibleWall(new InvisibleWall(440, 115, 20, 60)); // top right bonk
+                level.addInvisibleWall(new InvisibleWall(440, 310, 20, 60)); // bot right bonk
+
+
+                // left
+                level.addInvisibleWall(new InvisibleWall(35, 115, 20, 60)); // top left bonk
+                level.addInvisibleWall(new InvisibleWall(35, 310, 20, 60)); // bot left bonk
+
+
+                level.addInvisibleWall(new InvisibleWall(140, 185, 50, 125)); // left couch
+                level.addInvisibleWall(new InvisibleWall(310, 185, 50, 125)); // right
+
+                level.addInvisibleWall(new InvisibleWall(225, 125, 50, 50)); // top chair
+               // level.addInvisibleWall(new InvisibleWall(220, 210, 60, 70));
+
+
+
+            }
+
+
+            if (levelString.contains("ScaledRoom9.png")) {
+
+
+                level.addInvisibleWall(new InvisibleWall(260, 350, 90, 100)); // bed
+                level.addInvisibleWall(new InvisibleWall(214, 416, 180, 40)); // tables
+
+                level.addInvisibleWall(new InvisibleWall(95, 20, 80, 30)); // top left box
+                level.addInvisibleWall(new InvisibleWall(95, 430, 80, 30)); // bot left box
+
+
+                level.addInvisibleWall(new InvisibleWall(315, 20, 110, 43)); // top right lib
+            }
+
+
+/**
+ *
+ *
+ *
+ *              ROOMS 10 - 13 ARE EMPTY AND THUS SHOULD BE BOSS/PUZZLE ROOMS
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+
+
+            if (levelString.contains("ScaledRoom14.png")) {
+
+
+                level.addInvisibleWall(new InvisibleWall(210, 30, 90, 120)); // bed
+                level.addInvisibleWall(new InvisibleWall(160, 40, 180, 30)); // drawer
+
+
+                level.addInvisibleWall(new InvisibleWall(95, 430, 80, 30)); // bot left box
+                level.addInvisibleWall(new InvisibleWall(325, 430, 80, 30)); // bot right box
+
+                level.addInvisibleWall(new InvisibleWall(75, 40, 15, 15)); // top left plant
+                level.addInvisibleWall(new InvisibleWall(405, 40, 15, 15)); // top right plant
             }
 
 
 
+            if (levelString.contains("ScaledRoom15.png")) {
+
+
+                level.addInvisibleWall(new InvisibleWall(115, 30, 90, 120)); // bed
+                level.addInvisibleWall(new InvisibleWall(80, 40, 330, 30)); // drawer base
+
+                level.addInvisibleWall(new InvisibleWall(290, 70, 120, 10)); // drawer depth
+
+
+                level.addInvisibleWall(new InvisibleWall(90, 430, 80, 30)); // bot left box
+
+            }
+
+
+            if (levelString.contains("ScaledRoom16.png")) {
+
+
+                level.addInvisibleWall(new InvisibleWall(115, 30, 90, 120)); // bed
+
+                level.addInvisibleWall(new InvisibleWall(80, 20, 80, 60)); // top left box
+                level.addInvisibleWall(new InvisibleWall(95, 430, 80, 30)); // bot left box
+                level.addInvisibleWall(new InvisibleWall(335, 435, 80, 30)); // bot right box
+                level.addInvisibleWall(new InvisibleWall(335, 40, 65, 40)); // top right box
+            }
+
+
+            if (levelString.contains("ScaledRoom17.png")) {
+
+
+                level.addInvisibleWall(new InvisibleWall(335, 30, 80, 120)); // bed
+
+                level.addInvisibleWall(new InvisibleWall(70, 20, 80, 60)); // top left box
+                level.addInvisibleWall(new InvisibleWall(75, 440, 125, 45)); // bot left box
+                level.addInvisibleWall(new InvisibleWall(300, 440, 125, 45)); // bot right box
+                level.addInvisibleWall(new InvisibleWall(240, 40, 65, 40)); // top right box
+                level.addInvisibleWall(new InvisibleWall(185, 40, 15, 15)); // plant
+            }
+
+            if (levelString.contains("ScaledRoom18.png")) {
+
+
+                level.addInvisibleWall(new InvisibleWall(0, 75, 60, 345)); // bed
+
+                level.addInvisibleWall(new InvisibleWall(70, 20, 80, 60)); // left wall
+
+                level.addInvisibleWall(new InvisibleWall(320, 70, 75, 30)); // top right box
+            }
+
+            if (levelString.contains("ScaledRoom19.png")) {
+
+
+                level.addInvisibleWall(new InvisibleWall(30, 200, 40, 100)); // firepit
+
+                level.addInvisibleWall(new InvisibleWall(150, 195, 30, 100)); // left wall
+
+
+            }
 
 
 

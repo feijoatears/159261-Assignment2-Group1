@@ -61,8 +61,11 @@ public class Assignment2 extends GameEngine
     {
         player.setLives(3);
 
-        int spawnPosX = width() / 2 - player.getImage().getWidth(null) / 2;
-        int spawnPosY = (int) (height() * 2 / 3.0) - player.getImage().getHeight(null) / 2;
+       // int spawnPosX = width() / 2 - player.getImage().getWidth(null) / 2;
+     //   int spawnPosY = (int) (height() * 2 / 3.0) - player.getImage().getHeight(null) / 2;
+
+        int spawnPosY = 250;
+        int spawnPosX = 100;
 
         player.setPosX(spawnPosX);
         player.setPosY(spawnPosY);
@@ -225,7 +228,7 @@ public class Assignment2 extends GameEngine
 
         if (test1) {
             showTests();
-            drawInvisibleWalls(mGraphics);  // Draw invisible walls in debug mode
+
         }
 
         if (!key.getIsUsed()) {
@@ -591,13 +594,7 @@ public class Assignment2 extends GameEngine
         return d;
     }
 
-    public void drawInvisibleWalls(Graphics2D g) {
-        for (InvisibleWall wall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls()) {
-           // g.setColor(Color.RED);
-           // drawSolidRectangle(wall.getPosX(), wall.getPosY(), wall.getWidth(), wall.getHeight());
 
-        }
-    }
     public void showTests() {
         changeColor(red);
         float opacity = 0.5f; // 50% opacity

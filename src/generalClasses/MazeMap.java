@@ -124,32 +124,22 @@ public class MazeMap {
             level.setImage(img);
             level.setDoors(configs.get(i));
 
-
+            // Add invisible walls for Room1 as an example
             if (levelString.contains("Room1")) {
-                // Define the hitboxes for Room1
                 level.addInvisibleWall(new InvisibleWall(50, 50, 100, 10));
                 level.addInvisibleWall(new InvisibleWall(200, 50, 10, 100));
                 level.addInvisibleWall(new InvisibleWall(50, 200, 100, 10));
                 level.addInvisibleWall(new InvisibleWall(50, 50, 10, 100));
             }
 
-
-            if (levelString.contains("Room2")) {
-                // Define the hitboxes for Room1
-                level.addInvisibleWall(new InvisibleWall(50, 50, 100, 10));
-                level.addInvisibleWall(new InvisibleWall(200, 50, 10, 100));
-                level.addInvisibleWall(new InvisibleWall(50, 200, 100, 10));
-                level.addInvisibleWall(new InvisibleWall(50, 50, 10, 100));
-            }
-
-
-
+            // Repeat for other room types if needed
 
             levels.add(level);
         }
 
         return levels;
     }
+
 
 
     public void generate(int numLevels)

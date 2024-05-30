@@ -593,12 +593,12 @@ public class Assignment2 extends GameEngine
 
     public void drawInvisibleWalls(Graphics2D g) {
         for (InvisibleWall wall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls()) {
-            g.setColor(Color.RED);
-            g.drawRect(wall.getPosX(), wall.getPosY(), wall.getWidth(), wall.getHeight());
+           // g.setColor(Color.RED);
+           // drawSolidRectangle(wall.getPosX(), wall.getPosY(), wall.getWidth(), wall.getHeight());
+
         }
     }
-    public void showTests()
-    {
+    public void showTests() {
         changeColor(red);
         float opacity = 0.5f; // 50% opacity
         AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
@@ -606,16 +606,15 @@ public class Assignment2 extends GameEngine
 
         drawSolidRectangle(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
 
-        for(Door d: map.getCurrentLevel().getDoors())
-        {
-            drawSolidRectangle(d.getPosX(), d.getPosY(), d.getWidth(),d.getHeight());
+        for (Door d: map.getCurrentLevel().getDoors()) {
+            drawSolidRectangle(d.getPosX(), d.getPosY(), d.getWidth(), d.getHeight());
         }
-        for(Enemy e : map.getCurrentLevel().getEnemies())
-        {
-            drawSolidRectangle(e.getPosX(),e.getPosY(),e.getWidth(),e.getHeight());
+        for (Enemy e : map.getCurrentLevel().getEnemies()) {
+            drawSolidRectangle(e.getPosX(), e.getPosY(), e.getWidth(), e.getHeight());
         }
-        //drawSolidRectangle(map.getCurrentLevel().getObstacles().getFirst().getPosX(), map.getCurrentLevel().getObstacles().getFirst().getPosY(), map.getCurrentLevel().getObstacles().getFirst().getWidth(), map.getCurrentLevel().getObstacles().getFirst().getHeight());
-
+        for (InvisibleWall wall : map.getCurrentLevel().getInvisibleWalls()) {
+            drawSolidRectangle(wall.getPosX(), wall.getPosY(), wall.getWidth(), wall.getHeight());
+        }
         // ORANGE FOR BOUNDS
         changeColor(Color.GREEN);
         changeColor(orange);
@@ -624,4 +623,5 @@ public class Assignment2 extends GameEngine
         drawSolidRectangle(width() - 10, 0, 10, height());
         mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
+
 }

@@ -25,6 +25,8 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.util.*;
 import javax.sound.sampled.Clip;
+import javax.swing.*;
+import javax.swing.Timer;
 
 
 public class Assignment2 extends GameEngine {
@@ -59,8 +61,11 @@ public class Assignment2 extends GameEngine {
 
     static MazeMap map = MazeMap.getInstance();
 
+
+    private TimerPopUp timerPopUp;
     public static void main(String[] args) {
         createGame(new Assignment2(), framerate);
+
     }
 
     public void initPlayer() {
@@ -169,7 +174,10 @@ public class Assignment2 extends GameEngine {
     public void init() {
         setWindowSize(500, 500);
 
-        map.generate(16); // Generate the map
+
+
+        // TESTING NOTE, CHANGE numLevels TO '1' TO DEBUG FOR KEY AND FINISH FASTER (it spawns correctly just takes ages to find bc well 100 rooms)
+        map.generate(100); // Generate the map
         map.setStart(0, 0); // Set the starting level
         map.setCurrentFloorAndRoom(0, 0); // Ensure the current level is set correctly
 
@@ -177,11 +185,15 @@ public class Assignment2 extends GameEngine {
             volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
         }
 
+
+
         initPlayer();
         initEnemies();
         initObjects();
 
         congratsImage = loadImage("resources/Sprites/kick.png");
+
+        timerPopUp = new TimerPopUp();
     }
 
     /**
@@ -412,6 +424,11 @@ public class Assignment2 extends GameEngine {
         }
 
         congratsImage = loadImage("resources/Sprites/kick.png");
+
+        if (timerPopUp != null) {
+            timerPopUp.dispose();
+        }
+        timerPopUp = new TimerPopUp();
     }
 
 
@@ -938,5 +955,44 @@ public class Assignment2 extends GameEngine {
         mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
 
+
+
+
+    public class TimerPopUp {
+        private JFrame frame;
+        private JLabel timerLabel;
+        private int elapsedTime = 0; // Time in seconds
+
+        public TimerPopUp() {
+            frame = new JFrame("Timer");
+            frame.setSize(200, 100);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+
+            timerLabel = new JLabel("Time: 0 s", SwingConstants.CENTER);
+            timerLabel.setFont(new Font("Arial", Font.BOLD, 24));
+
+            frame.add(timerLabel);
+            frame.setVisible(true);
+
+            startTimer();
+        }
+
+
+        private void startTimer() {
+            Timer timer = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    elapsedTime++;
+                    timerLabel.setText("Time: " + elapsedTime + " s");
+                }
+            });
+            timer.start();
+        }
+
+        public void dispose() {
+            frame.dispose();
+        }
+    }
 
 }

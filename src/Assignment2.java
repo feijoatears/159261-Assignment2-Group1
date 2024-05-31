@@ -262,14 +262,41 @@ public class Assignment2 extends GameEngine {
         int randomRoomIndex = random.nextInt(randomFloor.size());
         Level randomRoom = randomFloor.get(randomRoomIndex);
 
+
+        int direction = random.nextInt(4);
+
         boolean validPosition = false;
         int posX = 0, posY = 0;
 
         while (!validPosition) {
+
+// use switch for direction, NESW
+            switch (direction) {
+                case 0: // North
+                    posX = (width() / 2) - 16; // Assuming door width is 32
+                    posY = 0;
+                    break;
+                case 1: // East
+                    posX = width() - 32; // Assuming door width is 32
+                    posY = (height() / 2) - 16; // Assuming door height is 32
+                    break;
+                case 2: // South
+                    posX = (width() / 2) - 16; // Assuming door width is 32
+                    posY = height() - 32; // Assuming door height is 32
+                    break;
+                case 3: // West
+                    posX = 0;
+                    posY = (height() / 2) - 16; // Assuming door height is 32
+                    break;
+            }
+            /*
             // Generate a random position
             posX = random.nextInt(width() - 100) + 50;
             posY = random.nextInt(height() - 100) + 50;
 
+
+
+             */
             // Check if the position is valid (not overlapping with obstacles, walls, etc.)
             validPosition = true;
             Rectangle doorHitbox = new Rectangle(posX, posY, 32, 32); // Assuming door size is 32x32
@@ -311,6 +338,7 @@ public class Assignment2 extends GameEngine {
 
         finalDoorSpawned = true;
     }
+
 
     private void gameTrueEnd(Graphics g) {
         g.setColor(Color.BLACK);

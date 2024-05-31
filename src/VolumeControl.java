@@ -4,7 +4,7 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.Clip;
 
 public class VolumeControl {
-    private FloatControl volumeControl;
+    private static FloatControl volumeControl;
 
     public VolumeControl(Clip clip) {
         if (clip != null && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
@@ -12,7 +12,7 @@ public class VolumeControl {
         }
     }
 
-    public void setVolume(float volume) {
+    public static void setVolume(float volume) {
         if (volumeControl != null) {
             float min = volumeControl.getMinimum();
             float max = volumeControl.getMaximum();

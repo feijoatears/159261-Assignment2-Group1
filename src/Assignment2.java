@@ -63,6 +63,9 @@ public class Assignment2 extends GameEngine {
 
 
     private TimerPopUp timerPopUp;
+    private JSlider volumeSlider;
+    private boolean showVolumeSlider = false;
+
     public static void main(String[] args) {
         createGame(new Assignment2(), framerate);
 
@@ -194,6 +197,7 @@ public class Assignment2 extends GameEngine {
         congratsImage = loadImage("resources/Sprites/kick.png");
 
         timerPopUp = new TimerPopUp();
+
     }
 
     /**
@@ -715,6 +719,8 @@ public class Assignment2 extends GameEngine {
         g.drawString("Navigate through the maze, collect keys,", 50, 190);
         g.drawString("avoid enemies and obstacles, and reach the exit door.", 50, 210);
         g.drawString("Press Q to return to main menu", 50, 300);
+        g.drawString("Press V to toggle volume control", 50, 320);
+        g.drawString("Press T to toggle timer", 50, 340);
     }
     private void gameOver(Graphics g) {
         changeColor(Color.BLACK);
@@ -779,13 +785,10 @@ public class Assignment2 extends GameEngine {
             test1 = true;
         } else if (event.getKeyCode() == KeyEvent.VK_ENTER){
             test1 = false;
-            keyCollected = false;
+            //keyCollected = false;
         }
 
-        if (event.getKeyCode() == KeyEvent.VK_G){
-            mGraphics.clearRect(0, 0, width(), height());
-            System.out.println();
-        }
+
 
         // ========================================================
         // GAMBLE TIME
@@ -809,6 +812,20 @@ public class Assignment2 extends GameEngine {
         {
             volumeControl.setBackgroundMusic();
         }
+        if (event.getKeyCode() == KeyEvent.VK_V) {
+            showVolumeSlider = !showVolumeSlider;
+        }
+
+        if (event.getKeyCode() == KeyEvent.VK_T) {
+            if (timerPopUp != null) {
+                if (timerPopUp.timer.isRunning()) {
+                    timerPopUp.stopTimer();
+                } else {
+                    timerPopUp.startTimer();
+                }
+            }
+        }
+
         // ========================================================
 
         //max of 2 key presses allowed
@@ -958,9 +975,12 @@ public class Assignment2 extends GameEngine {
 
 
 
+
+
     public class TimerPopUp {
         private JFrame frame;
         private JLabel timerLabel;
+        private Timer timer;
         private int elapsedTime = 0; // Time in seconds
 
         public TimerPopUp() {
@@ -975,24 +995,27 @@ public class Assignment2 extends GameEngine {
             frame.add(timerLabel);
             frame.setVisible(true);
 
-            startTimer();
+            createTimer();
         }
 
-
-        private void startTimer() {
-            Timer timer = new Timer(1000, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    elapsedTime++;
-                    timerLabel.setText("Time: " + elapsedTime + " s");
-                }
+        private void createTimer() {
+            timer = new Timer(1000, e -> {
+                elapsedTime++;
+                timerLabel.setText("Time: " + elapsedTime + " s");
             });
+        }
+
+        public void startTimer() {
             timer.start();
+        }
+
+        public void stopTimer() {
+            timer.stop();
         }
 
         public void dispose() {
             frame.dispose();
         }
     }
-
+        
 }

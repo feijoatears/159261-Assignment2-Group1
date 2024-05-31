@@ -7,8 +7,10 @@ import src.Objects.DamagingObject;
 import src.Objects.InvisibleWall;
 import src.Objects.Key;
 import src.generalClasses.MazeMap;
+import src.generalClasses.VolumeControl;
 
 
+import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -251,6 +253,14 @@ public class Player extends Character
                 break;
             }
         }
+        Clip attackSound = VolumeControl.getInstance().getAttackSound();
+        if (attackSound != null) {
+            if (attackSound.isRunning()) {
+                attackSound.stop();
+            }
+            attackSound.setFramePosition(0);
+            attackSound.start();
+        }
     }
 
     public boolean handleKeyCollision(Key key) {
@@ -258,6 +268,18 @@ public class Player extends Character
             collectKey(0); // for key index 0
             key.setIsUsed(true);
             System.out.println("Key collected!");
+            if (VolumeControl.getInstance().getKeyCollectedSound() != null) {
+                VolumeControl.getInstance().getKeyCollectedSound().start();
+            }
+            // Delayed wow sound
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (VolumeControl.getInstance().getWowSound() != null) {
+                        VolumeControl.getInstance().getWowSound().start();
+                    }
+                }
+            }, 500); // Delay of 500 milliseconds
             return true;
         }
         return false;
@@ -309,6 +331,11 @@ public class Player extends Character
                             redCircleTimer.cancel();
                         }
                     }, 100);
+                    if (VolumeControl.getInstance().getDamageSound() != null) {
+                        VolumeControl.getInstance().getDamageSound().stop(); // Stop the clip if it's already playing
+                        VolumeControl.getInstance().getDamageSound().setFramePosition(0); // Rewind to the beginning
+                        VolumeControl.getInstance().getDamageSound().start(); // Play the clip
+                    }
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -323,5 +350,15 @@ public class Player extends Character
             g.setColor(new Color(255, 0, 0, 128));
             g.fillOval(posX, posY, width, height);
         }
+    }
+
+    public void reset() {
+        // Reset player's state
+        setLives(3);
+        setPosX(100);
+        setPosY(250);
+        setSpeed(20);
+        setMoving(false);
+        // Reset other player-specific variables if needed
     }
 }

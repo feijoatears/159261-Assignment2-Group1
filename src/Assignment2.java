@@ -16,7 +16,7 @@ import src.Objects.MathButton;
 import src.generalClasses.*;
 import src.generalClasses.VolumeControl;
 import src.Characters.Skeleton;
-
+import src.Characters.Player;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +31,7 @@ public class Assignment2 extends GameEngine {
     private int score = 0;
     static int framerate = 30;
 
-
+    private boolean gamePaused = false;
     private boolean finalDoorSpawned = false;
     private FinalDoor finalDoor = null;
     private Image congratsImage = null;
@@ -44,7 +44,8 @@ public class Assignment2 extends GameEngine {
             showButtonPopup = false,
             gameOver = false,
             showHelpScreen = false,
-            test1;
+            test1,
+            trueEnd = false; // Add this line
 
     public static Player player = Player.getInstance();
 
@@ -94,7 +95,7 @@ public class Assignment2 extends GameEngine {
                     // Randomly generate position within the room
                     int posX = random.nextInt(windowWidth);
                     int posY = random.nextInt(windowHeight);
-                    //room.getEnemies().add(new Vampire(posX, posY, 2, 1));
+                    room.getEnemies().add(new Vampire(posX, posY, 2, 1));
                 }
             }
         }
@@ -145,9 +146,12 @@ public class Assignment2 extends GameEngine {
             // Add other checks as needed (e.g., buttons, doors)
         }
 
-        // Create the key at the valid position
-        key = new Key(posX, posY);
-        randomRoom.getKeys().add(key); // Add the key to the selected room only
+        // Check if a key already exists in the level
+        if (randomRoom.getKeys().isEmpty()) {
+            // Create the key at the valid position
+            key = new Key(posX, posY);
+            randomRoom.getKeys().add(key); // Add the key to the selected room only
+        }
 
         // Initialize objects for the current level
         map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>() {{
@@ -165,7 +169,7 @@ public class Assignment2 extends GameEngine {
     public void init() {
         setWindowSize(500, 500);
 
-        map.generate(100); // Generate the map
+        map.generate(16); // Generate the map
         map.setStart(0, 0); // Set the starting level
         map.setCurrentFloorAndRoom(0, 0); // Ensure the current level is set correctly
 
@@ -191,7 +195,7 @@ public class Assignment2 extends GameEngine {
             return;
         }
 
-        if (inStartMenu || showHelpScreen|| gameOver) {
+        if (inStartMenu || showHelpScreen || gameOver || gamePaused) {
             return;
         }
 
@@ -246,7 +250,7 @@ public class Assignment2 extends GameEngine {
         player.damage(currentLevel.getObstacles(), currentLevel.getEnemies());
     }
 
-
+   //fianldoor stuff
     private void spawnFinalDoor() {
         Random random = new Random();
 
@@ -298,15 +302,91 @@ public class Assignment2 extends GameEngine {
         } else {
             System.out.println("Final door image loaded successfully");
         }
-        /*
+
         finalDoor = new FinalDoor(Objects.requireNonNull(doorImage), posX, posY);
         randomRoom.setFinalDoor(finalDoor); // Add the final door to the selected room only
 
 
-         */
+
         finalDoorSpawned = true;
     }
 
+    private void gameTrueEnd(Graphics g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, width(), height());
+
+        if (congratsImage != null) {
+            int newWidth = width() ;
+            int newHeight = height() ;
+            int xPos = (width() - newWidth) ;
+            int yPos = (height() - newHeight) ;
+            g.drawImage(congratsImage, xPos, yPos, newWidth, newHeight, null);
+        }
+
+        g.setColor(Color.WHITE);
+        g.drawString("Press Q to return to the main menu", width() / 2 - 110, height() / 2 + 245);
+
+        gamePaused = true; // Pause the game when displaying the end screen
+    }
+
+
+
+    private void resetGame() {
+        score = 0;
+        finalDoorSpawned = false;
+        finalDoor = null;
+        congratsImage = null;
+
+        keyCollected = false;
+        collisionHandled = false;
+        inStartMenu = true;
+        showMap = true;
+        showButtonPopup = false;
+        gameOver = false;
+        showHelpScreen = false;
+        test1 = false;
+        trueEnd = false;
+
+        keyPresses.clear();
+        key = null;
+        activeButton = null;
+
+        // Reinitialize the player
+        player.reset(); //  reset method in the Player class to reset its state
+        initPlayer();
+
+        // Reinitialize the map
+        map = MazeMap.getInstance();
+        map.generate(16); // Generate the map
+        map.setStart(0, 0); // Set the starting level
+        map.setCurrentFloorAndRoom(0, 0); // Ensure the current level is set correctly
+
+        // Clear existing keys, enemies, and objects
+        for (ArrayList<Level> floor : map.getMap()) {
+            for (Level room : floor) {
+                room.getKeys().clear();
+                room.getEnemies().clear();
+                room.getButtons().clear();
+                room.getObstacles().clear();
+            }
+        }
+
+        // Reinitialize enemies and objects
+        initEnemies();
+        initObjects();
+
+        // Reinitialize volume control
+        volumeControl.reset(); // Reset sounds
+
+        if (volumeControl.getBackgroundMusic() != null) {
+            volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
+        }
+
+        congratsImage = loadImage("resources/Sprites/kick.png");
+    }
+
+
+    //finaldoor stuff
 
     public boolean startQuizGame(MathButton mathButton) {
         Scanner scanner = new Scanner(System.in);
@@ -348,11 +428,15 @@ public class Assignment2 extends GameEngine {
             displayHelpScreen(mGraphics);
             return;
         }
-        if(gameOver){
+        if (gameOver) {
             gameOver(mGraphics);
             return;
         }
-        
+        if (trueEnd) {
+            gameTrueEnd(mGraphics);
+            return;
+        }
+
         if (test1) {
             showTests(currentLevel);
         }
@@ -368,8 +452,11 @@ public class Assignment2 extends GameEngine {
             }
         }
 
+        player.showDamagedCircle(mGraphics);
+
         collisionHandled = false;
     }
+
 
 
     /**
@@ -421,29 +508,13 @@ public class Assignment2 extends GameEngine {
         }
 
         if (finalDoorSpawned && finalDoor != null && player.checkCollision(finalDoor.getHitbox())) {
-            showCongratulatoryMessage();
+            trueEnd = true;
+            gameTrueEnd(mGraphics);
         }
     }
 
-    private void showCongratulatoryMessage() {
-        // Clear the screen and draw the congratulatory image
-        mGraphics.setColor(Color.BLACK);
-        mGraphics.fillRect(0, 0, width(), height());
-        if (congratsImage != null) {
-            mGraphics.drawImage(congratsImage, width() / 2 - congratsImage.getWidth(null) / 2, height() / 2 - congratsImage.getHeight(null) / 2, null);
-        }
-        mFrame.repaint();
 
-        // Introduce a small delay before closing the game
-        try {
-            Thread.sleep(3000); // Wait for 3 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        // End the game
-        System.exit(0);
-    }
 
 
     /**
@@ -560,13 +631,13 @@ public class Assignment2 extends GameEngine {
         g.fillRect(0, 0, width(), height());
 
         Image titleImage = loadImage("resources/Sprites/title.png");
-        
+
         g.drawImage(titleImage, 125,50, width()/2,height()/3,null);
-        
+
 
         g.setColor(Color.WHITE);
         g.drawString("Press ENTER to Start", width() / 2-65, height() / 2);
-        g.drawString("Press H for Help", width()/2-55, height()/2+20);     
+        g.drawString("Press H for Help", width()/2-55, height()/2+20);
     }
     public void displayHelpScreen(Graphics g){
         g.setColor(Color.BLACK);
@@ -574,7 +645,7 @@ public class Assignment2 extends GameEngine {
 
         g.setColor(Color.WHITE);
         g.drawString("Controls:", 50,50);
-        g.drawString("W (Up), A (Left), S (Down), D (Right)", 50, 70);
+        g.drawString("W (Up), A (Left), S (Down), D (Right), F (Attack)", 50, 70);
         g.drawString("Game Objective:", 50, 170);
         g.drawString("Navigate through the maze, collect keys,", 50, 190);
         g.drawString("avoid enemies and obstacles, and reach the exit door.", 50, 210);
@@ -619,7 +690,7 @@ public class Assignment2 extends GameEngine {
             showHelpScreen = true;
             inStartMenu = false;
         }
-         if(event.getKeyCode() == KeyEvent.VK_Q && showHelpScreen)
+        if(event.getKeyCode() == KeyEvent.VK_Q && showHelpScreen)
         {
             showHelpScreen = false;
             inStartMenu = true;
@@ -628,9 +699,17 @@ public class Assignment2 extends GameEngine {
         {
             showHelpScreen = false;
             gameOver = false;
-            inStartMenu = true;
+            resetGame();
+            return;
         }
-        
+        if(event.getKeyCode() == KeyEvent.VK_Q && trueEnd)
+        {
+            trueEnd = false;
+            resetGame();
+            gamePaused = false; // Unpause the game when returning to the main menu
+            return;
+        }
+
         if (event.getKeyCode() == KeyEvent.VK_SPACE){
             test1 = true;
         } else if (event.getKeyCode() == KeyEvent.VK_ENTER){
@@ -655,7 +734,6 @@ public class Assignment2 extends GameEngine {
             activeButton.rigSlotMachine();
             mFrame.repaint();
         }
-
 
         // Handle attack key
         if (event.getKeyCode() == KeyEvent.VK_F) {
@@ -697,6 +775,8 @@ public class Assignment2 extends GameEngine {
         Direction lastDirection = handleDirection();
         player.setDirection(lastDirection);
     }
+
+
 
     /*
      * TODO:

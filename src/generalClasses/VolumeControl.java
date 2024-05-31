@@ -7,15 +7,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-
 public class VolumeControl
 {
     private static VolumeControl instance;
     // Load sound files
     private final Clip keyCollectedSound = loadSound("resources/Sounds/Key.wav");
+    private final Clip attackSound = loadSound("resources/Sounds/Attack.wav");
+    private final Clip damageSound = loadSound("resources/Sounds/damage.wav");
+    private final Clip wowSound = loadSound("resources/Sounds/wow.wav");
 
     // undo when needed too loud for rn
-    private final Clip backgroundMusic =  loadSound("asasasgasg/Sounds/C.wav");
+    private final Clip backgroundMusic =  loadSound("aggagresources/Sounds/C.wav");
     //Control Sound
     private final src.VolumeControl backgroundVolumeControl = new src.VolumeControl(backgroundMusic);
 
@@ -34,11 +36,7 @@ public class VolumeControl
         volumeSlider.addChangeListener(e -> {
             int value = volumeSlider.getValue();
             float volume = value / 100f;
-
-
-
-
-           backgroundVolumeControl.setVolume(volume);
+            backgroundVolumeControl.setVolume(volume);
         });
 
         JFrame frame = new JFrame("Volume Control");
@@ -73,12 +71,52 @@ public class VolumeControl
         return keyCollectedSound;
     }
 
+    public Clip getAttackSound()
+    {
+        return attackSound;
+    }
+
+    public Clip getDamageSound()
+    {
+        return damageSound;
+    }
+
+    public Clip getWowSound()
+    {
+        return wowSound;
+    }
+
     public Clip getBackgroundMusic()
     {
         return backgroundMusic;
     }
+
     public void setBackgroundMusic()
     {
         instance = null;
     };
+
+    public void reset() {
+        // Reset volume control state
+        if (backgroundMusic != null) {
+            backgroundMusic.stop();
+            backgroundMusic.setFramePosition(0);
+        }
+        if (keyCollectedSound != null) {
+            keyCollectedSound.stop();
+            keyCollectedSound.setFramePosition(0);
+        }
+        if (attackSound != null) {
+            attackSound.stop();
+            attackSound.setFramePosition(0);
+        }
+        if (damageSound != null) {
+            damageSound.stop();
+            damageSound.setFramePosition(0);
+        }
+        if (wowSound != null) {
+            wowSound.stop();
+            wowSound.setFramePosition(0);
+        }
+    }
 }

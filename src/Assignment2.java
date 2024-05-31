@@ -296,12 +296,13 @@ public class Assignment2 extends GameEngine {
         }
 
         // Create the final door at the valid position
-        Image doorImage = loadImage("resources/Objects/DEBUGWALL.png");
+        Image doorImage = loadImage("resources/Objects/finalWallGold.png");
         if (doorImage == null) {
             System.err.println("Error: Final door image is null");
         } else {
             System.out.println("Final door image loaded successfully");
         }
+
 
         finalDoor = new FinalDoor(Objects.requireNonNull(doorImage), posX, posY);
         randomRoom.setFinalDoor(finalDoor); // Add the final door to the selected room only
@@ -447,6 +448,25 @@ public class Assignment2 extends GameEngine {
             if (doorImage == null) {
                 System.err.println("Error: final door image is null");
             } else {
+
+
+
+                // for gold highlight
+                changeColor(yellow);
+                float opacity = 0.2f; // 50% opacity
+                AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                mGraphics.setComposite(opaque);
+
+                drawSolidRectangle(currentFinalDoor.getPosX() - 5, currentFinalDoor.getPosY() - 5, 50, 40);
+
+                opacity = 0.1f;
+                opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                mGraphics.setComposite(opaque);
+                drawSolidRectangle(currentFinalDoor.getPosX() - 10, currentFinalDoor.getPosY() - 10, 60, 50);
+
+                opacity = 1f;
+                opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                mGraphics.setComposite(opaque);
                 System.out.println("Drawing final door at position: (" + currentFinalDoor.getPosX() + ", " + currentFinalDoor.getPosY() + ")");
                 drawImage(doorImage, currentFinalDoor.getPosX(), currentFinalDoor.getPosY());
             }

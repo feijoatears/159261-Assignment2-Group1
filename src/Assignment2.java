@@ -170,14 +170,18 @@ public class Assignment2 extends GameEngine {
      */
     public void init() {
         setWindowSize(500, 500);
+        Random random = new Random();
 
+        int spX = random.nextInt(5) + 3, spY = random.nextInt(5) + 3;
 
 
         // TESTING NOTE, CHANGE numLevels TO '1' TO DEBUG FOR KEY AND FINISH FASTER (it spawns correctly just takes ages to find bc well 100 rooms)
         map.generate(100); // Generate the map
-        map.setStart(0, 0); // Set the starting level
-        map.setCurrentFloorAndRoom(0, 0); // Ensure the current level is set correctly
+        map.setStart(spX, spY); // Set the starting level
+        map.setCurrentFloorAndRoom(spX, spY); // Ensure the current level is set correctly
 
+
+        System.out.println(random.nextInt(3) + 3);
         if (volumeControl.getBackgroundMusic() != null) {
             volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
         }

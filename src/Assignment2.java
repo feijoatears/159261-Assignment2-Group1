@@ -322,7 +322,7 @@ public class Assignment2 extends GameEngine {
             drawMap();
 
             changeColor(white);
-            drawText(width() - 110, 20, map.getCurrentLocation(), "Cinzel", 12);
+            drawText(width() - 125, 20, map.getCurrentLocation(), "Cinzel", 12);
             if (test1)
             {
                 showTests(currentLevel);

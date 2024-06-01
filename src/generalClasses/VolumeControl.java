@@ -3,40 +3,40 @@ package src.generalClasses;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-public class VolumeControl
-{
+public class VolumeControl {
     private static VolumeControl instance;
+    private static FloatControl volumeControl;
+
     // Load sound files
     private final Clip keyCollectedSound = loadSound("resources/Sounds/Key.wav");
     private final Clip attackSound = loadSound("resources/Sounds/Attack.wav");
     private final Clip damageSound = loadSound("resources/Sounds/damage.wav");
     private final Clip wowSound = loadSound("resources/Sounds/wow.wav");
+    private final Clip backgroundMusic = loadSound("aaaaresources/Sounds/C.wav");
 
-    // undo when needed too loud for rn
-    private final Clip backgroundMusic =  loadSound("aggagresources/Sounds/C.wav");
-    //Control Sound
-    private final src.VolumeControl backgroundVolumeControl = new src.VolumeControl(backgroundMusic);
-
-    public static VolumeControl getInstance()
-    {
-        if(instance == null)
-        {
+    public static VolumeControl getInstance() {
+        if (instance == null) {
             instance = new VolumeControl();
         }
         return instance;
     }
 
-    private VolumeControl()
-    {
+    private VolumeControl() {
+        // Initialize volume control for background music
+        if (backgroundMusic != null && backgroundMusic.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            volumeControl = (FloatControl) backgroundMusic.getControl(FloatControl.Type.MASTER_GAIN);
+        }
+
         JSlider volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
         volumeSlider.addChangeListener(e -> {
             int value = volumeSlider.getValue();
             float volume = value / 100f;
-            backgroundVolumeControl.setVolume(volume);
+            setVolume(volume);
         });
 
         JFrame frame = new JFrame("Volume Control");
@@ -47,13 +47,21 @@ public class VolumeControl
         frame.setVisible(true);
     }
 
+    public static void setVolume(float volume) {
+        if (volumeControl != null) {
+            float min = volumeControl.getMinimum();
+            float max = volumeControl.getMaximum();
+            float value = min + (volume * (max - min));
+            volumeControl.setValue(value);
+        }
+    }
+
     /**
      * Loads a sound file.
      *
      * @param filepath The path to the sound file.
      * @return The loaded Clip object.
      */
-    //.mp3 files do not work, .wav does
     public Clip loadSound(String filepath) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filepath));
@@ -66,35 +74,29 @@ public class VolumeControl
         }
     }
 
-    public Clip getKeyCollectedSound()
-    {
+    public Clip getKeyCollectedSound() {
         return keyCollectedSound;
     }
 
-    public Clip getAttackSound()
-    {
+    public Clip getAttackSound() {
         return attackSound;
     }
 
-    public Clip getDamageSound()
-    {
+    public Clip getDamageSound() {
         return damageSound;
     }
 
-    public Clip getWowSound()
-    {
+    public Clip getWowSound() {
         return wowSound;
     }
 
-    public Clip getBackgroundMusic()
-    {
+    public Clip getBackgroundMusic() {
         return backgroundMusic;
     }
 
-    public void setBackgroundMusic()
-    {
+    public void setBackgroundMusic() {
         instance = null;
-    };
+    }
 
     public void reset() {
         // Reset volume control state

@@ -16,7 +16,6 @@ public class Level {
     private final ArrayList<DamagingObject> obstacles = new ArrayList<>();
     private final ArrayList<Door> doors = new ArrayList<>();
     private final ArrayList<InvisibleWall> invisibleWalls = new ArrayList<>();  // Properly declare the invisible walls list
-    private FinalDoor finalDoor;
     private String name;
     private Door topDoor = null,
             bottomDoor = null,
@@ -153,11 +152,6 @@ public class Level {
         return name;
     }
 
-    public void setFinalDoor(FinalDoor finalDoor) {
-        this.finalDoor = finalDoor;
-    }
-    public FinalDoor getFinalDoor() {
-        return finalDoor;
-    }
+
 
 }

@@ -10,20 +10,14 @@ package src;
  */
 
 import src.Characters.*;
-import src.Characters.Character;
 import src.Objects.*;
 import src.Objects.Button;
 import src.Objects.MathButton;
 import src.generalClasses.*;
 import src.generalClasses.VolumeControl;
-import src.Characters.Skeleton;
 import src.Characters.Player;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.lang.reflect.Array;
 import java.util.*;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
@@ -36,7 +30,6 @@ public class Assignment2 extends GameEngine {
 
     private boolean gamePaused = false;
     private boolean finalDoorSpawned = false;
-    private FinalDoor finalDoor = null;
     private Image congratsImage = null;
 
 
@@ -257,9 +250,7 @@ public class Assignment2 extends GameEngine {
                 volumeControl.getKeyCollectedSound().start();
             }
 
-            if (!finalDoorSpawned) {
-                spawnFinalDoor();
-            }
+
         }
 
         handleDoorCollision();
@@ -269,95 +260,6 @@ public class Assignment2 extends GameEngine {
         player.attackUpdate(dt);
 
 
-    }
-
-   //fianldoor stuff
-    private void spawnFinalDoor() {
-        Random random = new Random();
-
-        // Select a random floor
-        int randomFloorIndex = random.nextInt(map.getMap().size());
-        ArrayList<Level> randomFloor = map.getMap().get(randomFloorIndex);
-
-        // Select a random room within that floor
-        int randomRoomIndex = random.nextInt(randomFloor.size());
-        Level randomRoom = randomFloor.get(randomRoomIndex);
-
-
-        int direction = random.nextInt(4);
-
-        boolean validPosition = false;
-        int posX = 0, posY = 0;
-
-        while (!validPosition) {
-
-            // use switch for direction, NESW
-            switch (direction) {
-                case 0: // North
-                    posX = (width() / 2) - 16; // Assuming door width is 32
-                    posY = 16;
-                    break;
-                case 1: // East
-                    posX = width() - 48; // Assuming door width is 32
-                    posY = (height() / 2) - 16; // Assuming door height is 32
-                    break;
-                case 2: // South
-                    posX = (width() / 2) - 16; // Assuming door width is 32
-                    posY = height() - 48; // Assuming door height is 32
-                    break;
-                case 3: // West
-                    posX = 16;
-                    posY = (height() / 2) - 16; // Assuming door height is 32
-                    break;
-            }
-            /*
-            // Generate a random position
-            posX = random.nextInt(width() - 100) + 50;
-            posY = random.nextInt(height() - 100) + 50;
-
-
-
-             */
-            // Check if the position is valid (not overlapping with obstacles, walls, etc.)
-            validPosition = true;
-            Rectangle doorHitbox = new Rectangle(posX, posY, 32, 32); // Assuming door size is 32x32
-
-            // Check collision with invisible walls
-            for (InvisibleWall wall : randomRoom.getInvisibleWalls()) {
-                if (wall.getHitbox().intersects(doorHitbox)) {
-                    validPosition = false;
-                    break;
-                }
-            }
-
-            // Check collision with obstacles
-            if (validPosition) {
-                for (DamagingObject obstacle : randomRoom.getObstacles()) {
-                    if (obstacle.getHitbox().intersects(doorHitbox)) {
-                        validPosition = false;
-                        break;
-                    }
-                }
-            }
-
-            // Add other checks as needed (e.g., buttons, doors)
-        }
-
-        // Create the final door at the valid position
-        Image doorImage = loadImage("resources/Objects/finalWallGold.png");
-        if (doorImage == null) {
-            System.err.println("Error: Final door image is null");
-        } else {
-            System.out.println("Final door image loaded successfully");
-        }
-
-
-        finalDoor = new FinalDoor(Objects.requireNonNull(doorImage), posX, posY);
-        randomRoom.setFinalDoor(finalDoor); // Add the final door to the selected room only
-
-
-
-        finalDoorSpawned = true;
     }
 
 
@@ -383,8 +285,6 @@ public class Assignment2 extends GameEngine {
 
     private void resetGame() {
         score = 0;
-        finalDoorSpawned = false;
-        finalDoor = null;
         congratsImage = null;
 
         keyCollected = false;
@@ -496,35 +396,7 @@ public class Assignment2 extends GameEngine {
             showTests(currentLevel);
         }
 
-        FinalDoor currentFinalDoor = currentLevel.getFinalDoor();
-        if (finalDoorSpawned && currentFinalDoor != null) {
-            Image doorImage = currentFinalDoor.getImage();
-            if (doorImage == null) {
-                System.err.println("Error: final door image is null");
-            } else {
 
-
-
-                // for gold highlight
-                changeColor(yellow);
-                float opacity = 0.2f; // 50% opacity
-                AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-                mGraphics.setComposite(opaque);
-
-                drawSolidRectangle(currentFinalDoor.getPosX() - 5, currentFinalDoor.getPosY() - 5, 50, 40);
-
-                opacity = 0.1f;
-                opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-                mGraphics.setComposite(opaque);
-                drawSolidRectangle(currentFinalDoor.getPosX() - 10, currentFinalDoor.getPosY() - 10, 60, 50);
-
-                opacity = 1f;
-                opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-                mGraphics.setComposite(opaque);
-                System.out.println("Drawing final door at position: (" + currentFinalDoor.getPosX() + ", " + currentFinalDoor.getPosY() + ")");
-                drawImage(doorImage, currentFinalDoor.getPosX(), currentFinalDoor.getPosY());
-            }
-        }
 
         player.showDamagedCircle(mGraphics);
 
@@ -581,10 +453,7 @@ public class Assignment2 extends GameEngine {
             }
         }
 
-        if (finalDoorSpawned && finalDoor != null && player.checkCollision(finalDoor.getHitbox())) {
-            trueEnd = true;
-            gameTrueEnd(mGraphics);
-        }
+
     }
 
 

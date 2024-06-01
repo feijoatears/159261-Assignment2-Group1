@@ -421,20 +421,52 @@ public class MazeMap {
             map.add(floor);
         }
         // check to see if all floors are able to be visited from every other room
-        for (int i = 0; i < map.size(); i++) {
-            for (int j = 0; j < map.getLast().size(); j++) {
-                // make new adjacency list for room coordinates
-                Set<Point> visited = new HashSet<>();
-                dfs(i, j, visited);
-                if (visited.size() < map.size() * map.getLast().size()) {
-                    // if any rooms are inaccessible, regenerate the map
-                    generate(numLevels);
+        try
+        {
+            for (int i = 0; i < map.size(); i++) {
+                for (int j = 0; j < map.getLast().size(); j++) {
+                    // make new adjacency list for room coordinates
+                    Set<Point> visited = new HashSet<>();
+                    dfs(i, j, visited);
+                    if (visited.size() < map.size() * map.getLast().size()) {
+                        // if any rooms are inaccessible, regenerate the map
+                        generate(numLevels);
+                    }
                 }
             }
+        }
+        catch (StackOverflowError e)
+        {
+            generate(numLevels);
         }
 
         // randomise player start
         setStart(new Random().nextInt(map.size()), new Random().nextInt(map.getLast().size()));
+
+
+        //create final door
+
+        int finalDoorPosY = new Random().nextInt(map.getLast().size()),
+            finalDoorPosX;
+
+        if (finalDoorPosY == 0 || finalDoorPosY == map.getLast().size() - 1)
+        {
+            finalDoorPosX = new Random().nextInt(map.size());
+        }
+        else
+        {
+            finalDoorPosX = new Random().nextBoolean() ? 0 : map.size() - 1;
+        }
+
+        Level finalDoorLevel = map.get(finalDoorPosX).get(finalDoorPosY);
+        System.out.println(finalDoorPosX + " " + finalDoorPosY);
+
+        if(finalDoorLevel.getTopDoor() != null && finalDoorPosX == 0)
+        {
+            System.out.println("top door");
+        }
+        else{System.out.println("no top door");}
+
     }
 
     // recursive depth first search to ensure all rooms are accessible

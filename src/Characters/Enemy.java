@@ -75,6 +75,32 @@ public abstract class Enemy extends Character
         this.hitbox = new Rectangle(posX, posY, width, height);
         handleWallCollision(level);
     }
+    public void handleIWallCollision(Level l)
+    {
+        for(InvisibleWall iWall : l.getInvisibleWalls())
+        {
+            if(hitbox.intersects(iWall.getHitbox()))
+            {
+                System.out.println();
 
-
+                if(Math.abs(posX - (iWall.getHitbox().x + iWall.getHitbox().width)) <= 10)
+                {
+                    posX = (iWall.getHitbox().x + iWall.getHitbox().width);
+                }
+                if(Math.abs(posX + width - (iWall.getHitbox().x)) <= 10)
+                {
+                    posX = (iWall.getHitbox().x - width);
+                }
+                if(Math.abs(posY - (iWall.getHitbox().y + iWall.getHitbox().height)) <= 10)
+                {
+                    posY = (iWall.getHitbox().y + iWall.getHitbox().height);
+                }
+                if(Math.abs(posY + height - (iWall.getHitbox().y)) <= 10)
+                {
+                    posY = (iWall.getHitbox().y - height);
+                }
+                break;
+            }
+        }
+    }
 }

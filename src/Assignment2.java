@@ -10,6 +10,7 @@ package src;
  */
 
 import src.Characters.*;
+import src.Characters.Character;
 import src.Objects.*;
 import src.Objects.Button;
 import src.Objects.MathButton;
@@ -248,8 +249,8 @@ public class Assignment2 extends GameEngine {
         for (Enemy enemy : currentLevel.getEnemies()) {
             enemy.chasePlayer(player, currentLevel);
             enemy.handleWallCollision(currentLevel);
+            enemy.handleIWallCollision(currentLevel);
         }
-
         if (keyCollected) {
             //updateScore(100); // Add 100 points for collecting the key
             if (volumeControl.getKeyCollectedSound() != null) {

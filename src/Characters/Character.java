@@ -2,6 +2,7 @@ package src.Characters;
 
 import src.Direction;
 import src.GameEngine;
+import src.Objects.InvisibleWall;
 import src.generalClasses.Level;
 
 import java.awt.*;
@@ -133,6 +134,7 @@ public abstract class Character {
         // Check for collisions with obstacles
         Rectangle newHitbox = new Rectangle(this.posX, this.posY, this.hitbox.width, hitbox.height);
 
+
         if (!level.isPositionClear(newHitbox)) {
             // Revert to the last valid position
             this.posX = previousPosX;
@@ -142,4 +144,5 @@ public abstract class Character {
         // Update the hitbox position
         updateHitbox();
     }
+
 }

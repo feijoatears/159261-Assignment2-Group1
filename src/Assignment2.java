@@ -290,18 +290,18 @@ public class Assignment2 extends GameEngine {
             switch (direction) {
                 case 0: // North
                     posX = (width() / 2) - 16; // Assuming door width is 32
-                    posY = 0;
+                    posY = 16;
                     break;
                 case 1: // East
-                    posX = width() - 32; // Assuming door width is 32
+                    posX = width() - 48; // Assuming door width is 32
                     posY = (height() / 2) - 16; // Assuming door height is 32
                     break;
                 case 2: // South
                     posX = (width() / 2) - 16; // Assuming door width is 32
-                    posY = height() - 32; // Assuming door height is 32
+                    posY = height() - 48; // Assuming door height is 32
                     break;
                 case 3: // West
-                    posX = 0;
+                    posX = 16;
                     posY = (height() / 2) - 16; // Assuming door height is 32
                     break;
             }

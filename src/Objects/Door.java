@@ -2,6 +2,8 @@ package src.Objects;
 
 import java.awt.*;
 
+import static src.GameEngine.loadImage;
+
 public class Door extends Object
 {
     private boolean isFinalDoor = false;
@@ -13,6 +15,7 @@ public class Door extends Object
 
     public void setFinalDoor()
     {
+        this.image = loadImage("resources/Objects/finalWallGold.png");
         isFinalDoor = true;
     }
     public boolean getIsFinalDoor()

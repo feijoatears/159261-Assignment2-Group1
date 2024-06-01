@@ -15,6 +15,7 @@ public class MazeMap {
     private final ArrayList<Level> levels;
     private final ArrayList<ArrayList<String>> configs = new ArrayList<>();
     private int currentFloor, currentRoom;
+    boolean finalDoorSpawned = false;
 
     public static MazeMap getInstance() {
         if (instance == null) {
@@ -385,8 +386,9 @@ public class MazeMap {
 
     public void generate(int numLevels) {
         map = new ArrayList<>();
-
         int dimensions = numLevels / 10;
+
+        finalDoorSpawned = false;
 
         for (int x = 0; x < dimensions; x++) {
             ArrayList<Level> floor = new ArrayList<>();
@@ -446,6 +448,7 @@ public class MazeMap {
 
         //create final door
 
+
         int finalDoorPosY = new Random().nextInt(map.getLast().size()),
             finalDoorPosX;
 
@@ -461,14 +464,36 @@ public class MazeMap {
         Level finalDoorLevel = map.get(finalDoorPosX).get(finalDoorPosY);
         System.out.println(finalDoorPosX + " " + finalDoorPosY);
 
-        if(finalDoorLevel.getTopDoor() != null && finalDoorPosX == 0)
+        if(finalDoorPosX == 0)
         {
-            System.out.println("top door");
+            if(finalDoorPosY == 0)
+            {
+                if(finalDoorLevel.getLeftDoor() != null)
+                {
+                    finalDoorLevel.getLeftDoor().setFinalDoor();
+                }
+            }
+            else if(finalDoorPosY == map.getLast().size() - 1)
+            {
+                if(finalDoorLevel.getRightDoor() != null)
+                {
+                    finalDoorLevel.getRightDoor().setFinalDoor();
+                }
+            }
+            else if(finalDoorLevel.getTopDoor() != null)
+            {
+                finalDoorLevel.getTopDoor().setFinalDoor();
+            }
+            else {
+                generate(numLevels);
+            }
         }
-        else{System.out.println("no top door");}
+        if(finalDoorPosX == map.size() - 1)
+        {
 
+        }
     }
-
+    public
     // recursive depth first search to ensure all rooms are accessible
     public void dfs(int x, int y, Set<Point> visited) {
         Point point = new Point(x, y);

@@ -41,7 +41,7 @@ public class Player extends Character
 
     private static Thread iFrameThread;
 
-    public boolean[] hasKey = new boolean[10];
+    public boolean hasKey = false;
     private boolean isMoving = false;
 
 
@@ -182,18 +182,19 @@ public class Player extends Character
     }
 
     // Method to check if a specific key is present
-    public boolean hasKey(int keyNum) {
-        if (keyNum >= 0 && keyNum < hasKey.length) {
-            return hasKey[keyNum];
-        }
-        return false;
+    public boolean hasKey()
+    {
+        return hasKey;
     }
 
     // Method to set a key as collected
-    public void collectKey(int keyNum) {
-        if (keyNum >= 0 && keyNum < hasKey.length) {
-            hasKey[keyNum] = true;
-        }
+    public void collectKey()
+    {
+        hasKey = true;
+    }
+    public void discardKey()
+    {
+        hasKey = false;
     }
 
     public boolean isMoving()
@@ -285,19 +286,24 @@ public class Player extends Character
         lastFrameTime = System.currentTimeMillis();
     }
 
-    public boolean handleKeyCollision(Key key) {
-        if (key.checkCollision(hitbox) && !key.getIsUsed()) {
-            collectKey(0); // for key index 0
-            key.setIsUsed(true);
+    public boolean handleKeyCollision(Key key)
+    {
+        if (key.checkCollision(hitbox))
+        {
+            hasKey = true;
             System.out.println("Key collected!");
-            if (VolumeControl.getInstance().getKeyCollectedSound() != null) {
+            if (VolumeControl.getInstance().getKeyCollectedSound() != null)
+            {
                 VolumeControl.getInstance().getKeyCollectedSound().start();
             }
             // Delayed wow sound
-            new Timer().schedule(new TimerTask() {
+            new Timer().schedule(new TimerTask()
+            {
                 @Override
-                public void run() {
-                    if (VolumeControl.getInstance().getWowSound() != null) {
+                public void run()
+                {
+                    if (VolumeControl.getInstance().getWowSound() != null)
+                    {
                         VolumeControl.getInstance().getWowSound().start();
                     }
                 }

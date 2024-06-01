@@ -32,9 +32,9 @@ public class MazeMap {
 
     }
 
-    public String getCurrentLocation() {
-        Level currentLevel = map.get(currentFloor).get(currentRoom);
-        return "Floor: " + currentFloor + " Room: " + currentRoom + " Level: " + currentLevel.getName();
+    public String getCurrentLocation()
+    {
+        return "Floor: " + (currentFloor + 1) + " Room: " + (currentRoom + 1);
     }
 
     public void addFloor(ArrayList<Level> levels) {
@@ -47,7 +47,7 @@ public class MazeMap {
 
     public void addLevel(boolean isAtFront, int floorIndex, Level level) {
         if (isAtFront) {
-            map.get(floorIndex).add(0, level);
+            map.get(floorIndex).addFirst(level);
             return;
         }
         map.get(floorIndex).add(level);

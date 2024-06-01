@@ -18,6 +18,8 @@ import src.generalClasses.VolumeControl;
 import src.Characters.Player;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
@@ -25,11 +27,9 @@ import javax.swing.Timer;
 
 
 public class Assignment2 extends GameEngine {
-    private int score = 0;
     static int framerate = 30;
 
     private boolean gamePaused = false;
-    private boolean finalDoorSpawned = false;
     private Image congratsImage = null;
 
 
@@ -40,8 +40,7 @@ public class Assignment2 extends GameEngine {
             showButtonPopup = false,
             gameOver = false,
             showHelpScreen = false,
-            test1,
-            trueEnd = false; // Add this line
+            test1;
 
     public static Player player = Player.getInstance();
 
@@ -59,6 +58,8 @@ public class Assignment2 extends GameEngine {
     private TimerPopUp timerPopUp;
     private JSlider volumeSlider;
     private boolean showVolumeSlider = false;
+
+    private Font cinzel = null;
 
     public static void main(String[] args) {
         createGame(new Assignment2(), framerate);
@@ -93,10 +94,13 @@ public class Assignment2 extends GameEngine {
                 room.getEnemies().clear();
 
                 // Randomly decide whether to add an enemy
-                if (random.nextBoolean()) {
+                if (random.nextBoolean())
+                {
                     // Randomly generate position within the room
                     int posX = random.nextInt(windowWidth);
                     int posY = random.nextInt(windowHeight);
+
+
                     room.getEnemies().add(new Vampire(posX, posY, 2, 1));
                 }
             }
@@ -145,16 +149,19 @@ public class Assignment2 extends GameEngine {
                 }
             }
 
-            // Add other checks as needed (e.g., buttons, doors)
+
+
         }
 
         // Check if a key already exists in the level
-        if (randomRoom.getKeys().isEmpty()) {
+        if (randomRoom.getKeys().isEmpty())
+        {
             // Create the key at the valid position
             key = new Key(posX, posY);
             randomRoom.getKeys().add(key); // Add the key to the selected room only
         }
 
+        System.out.println(randomFloorIndex + " " + randomRoomIndex);
         // Initialize objects for the current level
         map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>() {{
             add(loadAudio("resources/Sounds/buttonOn.wav"));
@@ -172,15 +179,27 @@ public class Assignment2 extends GameEngine {
         setWindowSize(500, 500);
         Random random = new Random();
 
-        int spX = random.nextInt(5) + 3, spY = random.nextInt(5) + 3;
+        //load font
+        if(cinzel == null)
+        {
+            try
+            {
+                InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/Cinzel-Regular.ttf");
+                assert is != null;
+                cinzel = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(14f);
 
-        spX = 0; spY = 0;
+            }
+            catch (Exception e)
+            {
+                System.out.println("Couldn't load font");
+            }
+        }
 
         // TESTING NOTE, CHANGE numLevels TO '1' TO DEBUG FOR KEY AND FINISH FASTER (it spawns correctly just takes ages to find bc well 100 rooms)
         map.generate(100); // Generate the map
-        map.setStart(spX, spY); // Set the starting level
-        map.setCurrentFloorAndRoom(spX, spY); // Ensure the current level is set correctly
-
+        map.setStart(random.nextInt(5) + 3, random.nextInt(5) + 3); // Set the starting level
+        map.setCurrentFloorAndRoom(random.nextInt(5) + 3, random.nextInt(5) + 3); // Ensure the current level is set correctly
+        player.discardKey();
 
         //System.out.println(random.nextInt(3) + 3);
         if (volumeControl.getBackgroundMusic() != null) {
@@ -216,7 +235,7 @@ public class Assignment2 extends GameEngine {
 
         // Restart if player has no lives
         if (player.getLives() <= 0) {
-            gameOver(mGraphics);
+            gameOver();
             return;
         }
 
@@ -289,9 +308,6 @@ public class Assignment2 extends GameEngine {
 
 
     private void resetGame() {
-        score = 0;
-        congratsImage = null;
-
         keyCollected = false;
         collisionHandled = false;
         inStartMenu = true;
@@ -300,7 +316,6 @@ public class Assignment2 extends GameEngine {
         gameOver = false;
         showHelpScreen = false;
         test1 = false;
-        trueEnd = false;
 
         keyPresses.clear();
         key = null;
@@ -345,10 +360,7 @@ public class Assignment2 extends GameEngine {
         timerPopUp = new TimerPopUp();
     }
 
-
-    //finaldoor stuff
-
-    public boolean startQuizGame(MathButton mathButton) {
+   /* public boolean startQuizGame(MathButton mathButton) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(mathButton.getQuizQuestion());
         String answer = scanner.nextLine();
@@ -359,7 +371,7 @@ public class Assignment2 extends GameEngine {
             System.out.println("Incorrect. The correct answer was: " + mathButton.getQuizAnswer());
         }
         return isCorrect;
-    }
+    }*/
 
     /**
      * Paints the game components on the screen.
@@ -378,30 +390,26 @@ public class Assignment2 extends GameEngine {
         drawCharacters(currentLevel); // Pass current level to draw characters
         drawMap();
 
-        mGraphics.setColor(Color.WHITE);
-        mGraphics.drawString(map.getCurrentLocation(), 10, 20);
+        changeColor(white);
+        drawText(width() - 110, 20, map.getCurrentLocation(), "Cinzel", 12);
 
         if (inStartMenu) {
-            displayStartMenu(mGraphics);
+            displayStartMenu();
             return;
         } else if (showHelpScreen) {
-            displayHelpScreen(mGraphics);
+            displayHelpScreen();
             return;
         }
-        if (gameOver) {
-            gameOver(mGraphics);
+        if (gameOver)
+        {
+            gameOver();
             return;
         }
-        if (trueEnd) {
-            gameTrueEnd(mGraphics);
-            return;
-        }
+
 
         if (test1) {
             showTests(currentLevel);
         }
-
-
 
         player.showDamagedCircle(mGraphics);
 
@@ -417,42 +425,52 @@ public class Assignment2 extends GameEngine {
         final int doorConst = 20; // gap between door and player
         final int offset = 50; // offset to move player away from the door
 
-        for (Door door : map.getCurrentLevel().getDoors()) {
-            if (player.checkCollision(door.getHitbox()) && !collisionHandled) {
-                if (door == map.getCurrentLevel().getLeftDoor()) {
-                    if (map.getCurrentRoomNum() > 0) {
-                        map.moveLeft();
-                        player.setPosX(width() - player.getWidth() - doorConst - offset);
-                        player.setPosY(player.getPosY());
-                        collisionHandled = true;
-                        initEnemies();
-                    }
+        for (Door door : map.getCurrentLevel().getDoors())
+        {
+            if (player.checkCollision(door.getHitbox()) && !collisionHandled)
+            {
+                if(door.getIsFinalDoor() && player.hasKey())
+                {
+
                 }
-                if (door == map.getCurrentLevel().getRightDoor()) {
-                    if (map.getCurrentRoomNum() < map.getMap().get(map.getCurrentFloorNum()).size() - 1) {
-                        map.moveRight();
-                        player.setPosX(doorConst + offset);
-                        player.setPosY(player.getPosY());
-                        collisionHandled = true;
-                        initEnemies();
+                else
+                {
+                    if (door == map.getCurrentLevel().getLeftDoor())
+                    {
+                        if (map.getCurrentRoomNum() > 0) {
+                            map.moveLeft();
+                            player.setPosX(width() - player.getWidth() - doorConst - offset);
+                            player.setPosY(player.getPosY());
+                            collisionHandled = true;
+                            initEnemies();
+                        }
                     }
-                }
-                if (door == map.getCurrentLevel().getTopDoor()) {
-                    if (map.getCurrentFloorNum() > 0) {
-                        map.moveUp();
-                        player.setPosX(player.getPosX());
-                        player.setPosY(height() - player.getHeight() - doorConst - offset);
-                        collisionHandled = true;
-                        initEnemies();
+                    if (door == map.getCurrentLevel().getRightDoor()) {
+                        if (map.getCurrentRoomNum() < map.getMap().get(map.getCurrentFloorNum()).size() - 1) {
+                            map.moveRight();
+                            player.setPosX(doorConst + offset);
+                            player.setPosY(player.getPosY());
+                            collisionHandled = true;
+                            initEnemies();
+                        }
                     }
-                }
-                if (door == map.getCurrentLevel().getBottomDoor()) {
-                    if (map.getCurrentFloorNum() < map.getMap().size() - 1) {
-                        map.moveDown();
-                        player.setPosX(player.getPosX());
-                        player.setPosY(doorConst + offset);
-                        collisionHandled = true;
-                        initEnemies();
+                    if (door == map.getCurrentLevel().getTopDoor()) {
+                        if (map.getCurrentFloorNum() > 0) {
+                            map.moveUp();
+                            player.setPosX(player.getPosX());
+                            player.setPosY(height() - player.getHeight() - doorConst - offset);
+                            collisionHandled = true;
+                            initEnemies();
+                        }
+                    }
+                    if (door == map.getCurrentLevel().getBottomDoor()) {
+                        if (map.getCurrentFloorNum() < map.getMap().size() - 1) {
+                            map.moveDown();
+                            player.setPosX(player.getPosX());
+                            player.setPosY(doorConst + offset);
+                            collisionHandled = true;
+                            initEnemies();
+                        }
                     }
                 }
             }
@@ -460,10 +478,6 @@ public class Assignment2 extends GameEngine {
 
 
     }
-
-
-
-
 
     /**
      * Draws the minimap on the screen.
@@ -575,54 +589,52 @@ public class Assignment2 extends GameEngine {
 
     /**
      * Displays the start menu.
-     *
-     * @param g The Graphics object to draw on.
      */
-    public void displayStartMenu(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, width(), height());
+    public void displayStartMenu() {
+        changeBackgroundColor(black);
+        clearBackground(width(), height());
 
         Image titleImage = loadImage("resources/Sprites/title.png");
 
-        g.drawImage(titleImage, 125,50, width()/2,height()/3,null);
+        drawImage(titleImage,125, 50, (double) width() /2, (double) height() /3);
 
 
-        g.setColor(Color.WHITE);
-        g.drawString("Press ENTER to Start", width() / 2-65, height() / 2);
-        g.drawString("Press H for Help", width()/2-55, height()/2+20);
+        changeColor(white);
+        drawText(((double) width() / 2) - 65, ((double) height() / 2), "Press ENTER to Start", "Cinzel", 14);
+        drawText(((double) width() / 2) - 55, ((double) height() / 2) + 20, "Press H for Help", "Cinzel", 14);
     }
-    public void displayHelpScreen(Graphics g){
-        g.setColor(Color.BLACK);
-        g.fillRect(0,0,width(),height());
+    public void displayHelpScreen()
+    {
+        changeBackgroundColor(black);
+        clearBackground(width(), height());
 
-        g.setColor(Color.WHITE);
-        g.drawString("Controls:", 50,50);
-        g.drawString("W (Up), A (Left), S (Down), D (Right), F (Attack)", 50, 70);
-        g.drawString("Game Objective:", 50, 170);
-        g.drawString("Navigate through the maze, collect keys,", 50, 190);
-        g.drawString("avoid enemies and obstacles, and reach the exit door.", 50, 210);
-        g.drawString("Press Q to return to main menu", 50, 300);
-        g.drawString("Press V to toggle volume control", 50, 320);
-        g.drawString("Press T to toggle timer", 50, 340);
+        changeColor(white);
+        drawText(50,50, "Controls:", "Cinzel", 14);
+        drawText( 50, 70,"W (Up), A (Left), S (Down), D (Right), F (Attack)", "Cinzel" ,14);
+        drawText(50, 170, "Game Objective:", "Cinzel" ,14);
+        drawText(50, 190, "Navigate through the maze, collect keys,", "Cinzel" ,14);
+        drawText(50, 210, "Avoid enemies and obstacles, and reach the exit door.", "Cinzel" ,14);
+        drawText(50, 300, "Press Q to return to main menu", "Cinzel" ,14);
+        drawText(50, 320, "Press V to toggle volume control", "Cinzel" ,14);
+        drawText(50, 340, "Press T to toggle timer", "Cinzel" ,14);
     }
-    private void gameOver(Graphics g) {
-        changeColor(Color.BLACK);
-        g.fillRect(0,0,width(),height());
+    private void gameOver()
+    {
+        changeBackgroundColor(black);
+        clearBackground(width(), height());
 
         Image titleImage = loadImage("resources/Sprites/died.png");
 
-        g.drawImage(titleImage, 0,50, width(),height()/4,null);
+        drawImage(titleImage, 0, 50, width(), (double) height() / 4);
         changeColor(Color.WHITE);
-        g.drawString("Press Q to return to the main menu", width()/2 -110, height()/2 +10);
+        drawText((double) width() /2 -110, (double) height() /2 + 10, "Press Q to return to the main menu", "Cinzel", 14);
         gameOver = true;
     }
-    Direction lastDirection = null;
 
     /**
      * Handles key press events, including player movement and menu navigation.
-     *
-     * @param event The key event.
      */
+    Direction lastDirection = null;
     @Override
     public void keyPressed(KeyEvent event)
     {
@@ -656,14 +668,10 @@ public class Assignment2 extends GameEngine {
             resetGame();
             return;
         }
-        if(event.getKeyCode() == KeyEvent.VK_Q && trueEnd)
+        if(event.getKeyCode() == KeyEvent.VK_7)
         {
-            trueEnd = false;
-            resetGame();
-            gamePaused = false; // Unpause the game when returning to the main menu
-            return;
+            gameOver = true;
         }
-
         if (event.getKeyCode() == KeyEvent.VK_SPACE){
             test1 = true;
         } else if (event.getKeyCode() == KeyEvent.VK_ENTER){

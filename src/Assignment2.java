@@ -174,6 +174,7 @@ public class Assignment2 extends GameEngine {
 
         int spX = random.nextInt(5) + 3, spY = random.nextInt(5) + 3;
 
+        spX = 0; spY = 0;
 
         // TESTING NOTE, CHANGE numLevels TO '1' TO DEBUG FOR KEY AND FINISH FASTER (it spawns correctly just takes ages to find bc well 100 rooms)
         map.generate(100); // Generate the map

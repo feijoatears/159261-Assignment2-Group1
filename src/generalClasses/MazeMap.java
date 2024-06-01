@@ -510,12 +510,12 @@ public class MazeMap {
                     //top-left corner
                     if(finalLevel.getLeftDoor() != null)
                     {
-                        finalLevel.getLeftDoor().setFinalDoor();
+                        finalLevel.getLeftDoor().setFinalDoor("left");
                         finalDoorSpawned = true;
                     }
                     else if(finalLevel.getTopDoor() != null)
                     {
-                        finalLevel.getTopDoor().setFinalDoor();
+                        finalLevel.getTopDoor().setFinalDoor("up");
                         finalDoorSpawned = true;
                     }
                 }
@@ -524,12 +524,12 @@ public class MazeMap {
                     //top-right corner
                     if(finalLevel.getRightDoor() != null)
                     {
-                        finalLevel.getRightDoor().setFinalDoor();
+                        finalLevel.getRightDoor().setFinalDoor("right");
                         finalDoorSpawned = true;
                     }
                     else if(finalLevel.getTopDoor() != null)
                     {
-                        finalLevel.getTopDoor().setFinalDoor();
+                        finalLevel.getTopDoor().setFinalDoor("up");
                         finalDoorSpawned = true;
                     }
                 }
@@ -538,12 +538,12 @@ public class MazeMap {
                     //bottom-left corner
                     if(finalLevel.getLeftDoor() != null)
                     {
-                        finalLevel.getLeftDoor().setFinalDoor();
+                        finalLevel.getLeftDoor().setFinalDoor("left");
                         finalDoorSpawned = true;
                     }
                     else if(finalLevel.getBottomDoor() != null)
                     {
-                        finalLevel.getBottomDoor().setFinalDoor();
+                        finalLevel.getBottomDoor().setFinalDoor("down");
                         finalDoorSpawned = true;
                     }
                 }
@@ -552,12 +552,12 @@ public class MazeMap {
                     //bottom-right corner
                     if(finalLevel.getRightDoor() != null)
                     {
-                        finalLevel.getRightDoor().setFinalDoor();
+                        finalLevel.getRightDoor().setFinalDoor("right");
                         finalDoorSpawned = true;
                     }
                     else if(finalLevel.getBottomDoor() != null)
                     {
-                        finalLevel.getBottomDoor().setFinalDoor();
+                        finalLevel.getBottomDoor().setFinalDoor("down");
                         finalDoorSpawned = true;
                     }
                 }
@@ -569,7 +569,7 @@ public class MazeMap {
                     //top floor, not a corner
                     if(finalLevel.getTopDoor() != null)
                     {
-                        finalLevel.getTopDoor().setFinalDoor();
+                        finalLevel.getTopDoor().setFinalDoor("up");
                         finalDoorSpawned = true;
                     }
 
@@ -579,7 +579,7 @@ public class MazeMap {
                     //bottom floor, not a corner
                     if(finalLevel.getBottomDoor() != null)
                     {
-                        finalLevel.getBottomDoor().setFinalDoor();
+                        finalLevel.getBottomDoor().setFinalDoor("down");
                         finalDoorSpawned = true;
                     }
                 }

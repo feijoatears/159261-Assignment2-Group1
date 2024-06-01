@@ -13,9 +13,25 @@ public class Door extends Object
         super(x,y,w,h);
     }
 
-    public void setFinalDoor()
+    public void setFinalDoor(String doorType)
     {
-        this.image = loadImage("resources/Objects/finalWallGold.png");
+        if(doorType.equals("up"))
+        {
+            this.image = loadImage("resources/Objects/ExitDoorTop.png");
+        }
+        if(doorType.equals("down"))
+        {
+            this.image = loadImage("resources/Objects/ExitDoorBottom.png");
+        }
+        if(doorType.equals("left"))
+        {
+            this.image = loadImage("resources/Objects/ExitDoorLeft.png");
+        }
+        if(doorType.equals("right"))
+        {
+            this.image = loadImage("resources/Objects/ExitDoorRight.png");
+        }
+
         this.isFinalDoor = true;
     }
     public void removeFinalDoor(String doorType)

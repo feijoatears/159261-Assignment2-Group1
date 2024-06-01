@@ -599,7 +599,7 @@ public class Assignment2 extends GameEngine {
         g.drawString("Controls:", 50,50);
         g.drawString("W (Up), A (Left), S (Down), D (Right), F (Attack)", 50, 70);
         g.drawString("Game Objective:", 50, 170);
-        g.drawString("Navigate through the maze, collect keys,", 50, 190);
+        g.drawString("Navigate through the maze, collect the key,", 50, 190);
         g.drawString("avoid enemies and obstacles, and reach the exit door.", 50, 210);
         g.drawString("Press Q to return to main menu", 50, 300);
         g.drawString("Press V to toggle volume control", 50, 320);

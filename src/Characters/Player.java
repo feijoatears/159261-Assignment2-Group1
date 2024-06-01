@@ -59,7 +59,7 @@ public class Player extends Character
 
     private Player()
     {
-        super(0, 0, 0, loadImage("resources/Sprites/Player-SpriteSheet.png"),10);
+        super(0, 0, 0, "resources/Sprites/humanFrames/humanFrame",10);
         direction = Direction.East;
         attackFrames[0] = loadImage("resources/Sprites/SwordTestFrame1.png");
         attackFrames[1] = loadImage("resources/Sprites/SwordTestFrame2.png");

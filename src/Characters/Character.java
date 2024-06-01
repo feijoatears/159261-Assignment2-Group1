@@ -19,7 +19,7 @@ public abstract class Character {
     // empty constructor
     public Character() {}
 
-    public Character(int posX, int posY, int speed, Image spriteSheet, int numFrames) {
+    public Character(int posX, int posY, int speed, String frameString, int numFrames) {
         this.posX = posX;
         this.posY = posY;
         this.speed = speed;
@@ -27,10 +27,10 @@ public abstract class Character {
 
         frames = new Image[numFrames];
         for (int i = 0; i < numFrames; i++) {
-            frames[i] = loadImage("resources/Sprites/humanFrame"+ (i+1) + ".png");
+            frames[i] = loadImage(frameString + (i+1) + ".png");
         }
-        image = (frames[0]);
-        this.image = loadImage("resources/Sprites/humanFrame1.png");
+        this.image = (frames[0]);
+
         assert image != null;
         this.width = image.getWidth(null);
         this.height = image.getHeight(null);

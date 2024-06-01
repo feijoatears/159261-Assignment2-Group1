@@ -17,9 +17,9 @@ public abstract class Enemy extends Character
                         westFrames = {6, 7},
                         northFrames = {4, 5};
 
-    public Enemy(Image spritesheet, int posX, int posY, int speed, int damage)
+    public Enemy(int posX, int posY, int speed, int damage, String frameString)
     {
-        super(posX, posY, speed, spritesheet, 8);
+        super(posX, posY, speed, frameString, 8);
         this.damage = damage;
     };
 

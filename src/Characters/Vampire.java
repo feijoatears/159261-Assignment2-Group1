@@ -6,6 +6,6 @@ public class Vampire extends Enemy
 {
     public Vampire(int x, int y, int s, int d)
     {
-        super(loadImage("resources/Sprites/Vampire-SpriteSheetFinal.png"), x, y, s, d);
+        super(x, y, s, d, "resources/Sprites/vampireFrames/vampireFrame");
     }
 }

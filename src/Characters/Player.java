@@ -97,58 +97,29 @@ public class Player extends Character
         nextPosY += directionVals[i][1] * speed;
 
 
-        boolean left = false,
-                right = false,
-                up = false,
-                down = false,
-                collision = false;
-
         for(InvisibleWall iWall : MazeMap.getInstance().getCurrentLevel().getInvisibleWalls())
         {
             Rectangle newHitbox = new Rectangle(nextPosX, nextPosY, width, height);
             if(newHitbox.intersects(iWall.getHitbox()))
             {
-                if(newHitbox.x > iWall.getHitbox().x)
-                {
-                    left = true;
-                }
-                else if(newHitbox.x < iWall.getHitbox().x)
-                {
-                    right = true;
-                }
-                if(newHitbox.y > iWall.getHitbox().y)
-                {
-                    up = true;
-                }
-                else if(newHitbox.y < iWall.getHitbox().y)
-                {
-                    down = true;
-                }
-                //TODO: diagonal movement is bugged
+                System.out.println();
 
-                if(i == 0 || i == 1)
+                if(Math.abs(posX - (iWall.getHitbox().x + iWall.getHitbox().width)) <= 10)
                 {
-                    if(up)
-                    {
-                        nextPosY = iWall.getPosY() + iWall.getHeight();
-                    }
-                    if(down)
-                    {
-                        nextPosY = iWall.getPosY() - height;
-                    }
+                    nextPosX = (iWall.getHitbox().x + iWall.getHitbox().width);
                 }
-                else
+                if(Math.abs(posX + width - (iWall.getHitbox().x)) <= 10)
                 {
-                    if(left)
-                    {
-                        nextPosX = iWall.getPosX() + iWall.getWidth();
-                    }
-                    if (right)
-                    {
-                        nextPosX = iWall.getPosX() - width;
-                    }
+                    nextPosX = (iWall.getHitbox().x - width);
                 }
-
+                if(Math.abs(posY - (iWall.getHitbox().y + iWall.getHitbox().height)) <= 10)
+                {
+                    nextPosY = (iWall.getHitbox().y + iWall.getHitbox().height);
+                }
+                if(Math.abs(posY + height - (iWall.getHitbox().y)) <= 10)
+                {
+                    nextPosY = (iWall.getHitbox().y - height);
+                }
                 break;
             }
         }

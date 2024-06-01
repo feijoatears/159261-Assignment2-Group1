@@ -49,6 +49,8 @@ public class Level {
             }
         }
     }
+    //DO NOT REMOVE THIS - stops levels from being referenced in memory
+    //stops doors being shared
     public Level(Level l)
     {
         this.image = l.image;
@@ -80,7 +82,6 @@ public class Level {
             this.doors.add(this.rightDoor);
         }
 
-        // Make copies of collections to avoid sharing references
         this.buttons = new ArrayList<>(l.buttons);
         this.enemies = new ArrayList<>(l.enemies);
         this.obstacles = new ArrayList<>(l.obstacles);

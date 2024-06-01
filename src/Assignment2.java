@@ -18,7 +18,6 @@ import src.generalClasses.VolumeControl;
 import src.Characters.Player;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import javax.sound.sampled.Clip;
@@ -29,18 +28,16 @@ import javax.swing.Timer;
 public class Assignment2 extends GameEngine {
     static int framerate = 30;
 
-    private boolean gamePaused = false;
-    private Image congratsImage = null;
-
-
     private boolean keyCollected = false,
-            collisionHandled = false,
-            inStartMenu = true,
-            showMap = true,
-            showButtonPopup = false,
-            gameOver = false,
-            showHelpScreen = false,
-            test1;
+                    collisionHandled = false,
+                    inStartMenu = true,
+                    showMap = true,
+                    showButtonPopup = false,
+                    gameOver = false,
+                    gameWon = false,
+                    showHelpScreen = false,
+                    settings = false,
+                    test1;
 
     public static Player player = Player.getInstance();
 
@@ -66,21 +63,15 @@ public class Assignment2 extends GameEngine {
 
     }
 
-    public void initPlayer() {
-        player.setLives(3);
-
-        // int spawnPosX = width() / 2 - player.getImage().getWidth(null) / 2;
-        //   int spawnPosY = (int) (height() * 2 / 3.0) - player.getImage().getHeight(null) / 2;
-
+    public void initPlayer()
+    {
         int spawnPosY = 250;
         int spawnPosX = 100;
-
         player.setPosX(spawnPosX);
         player.setPosY(spawnPosY);
-
-        player.setSpeed(20);
+        player.setLives(settingsOptionValues[0]);
+        player.setSpeed(settingsOptionValues[2]);
     }
-
 
     public void initEnemies() {
         Random random = new Random();
@@ -101,14 +92,14 @@ public class Assignment2 extends GameEngine {
                     int posY = random.nextInt(windowHeight);
 
 
-                    room.getEnemies().add(new Vampire(posX, posY, 2, 1));
+                    room.getEnemies().add(new Vampire(posX, posY, settingsOptionValues[3], 1));
                 }
             }
         }
     }
 
-
-    public void initObjects() {
+    public void initObjects()
+    {
         Random random = new Random();
 
         // Select a random floor
@@ -148,11 +139,7 @@ public class Assignment2 extends GameEngine {
                     }
                 }
             }
-
-
-
         }
-
         // Check if a key already exists in the level
         if (randomRoom.getKeys().isEmpty())
         {
@@ -161,7 +148,8 @@ public class Assignment2 extends GameEngine {
             randomRoom.getKeys().add(key); // Add the key to the selected room only
         }
 
-        System.out.println(randomFloorIndex + " " + randomRoomIndex);
+        System.out.println(randomFloorIndex + " " + randomRoomIndex); // for testing, delete later
+
         // Initialize objects for the current level
         map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>() {{
             add(loadAudio("resources/Sounds/buttonOn.wav"));
@@ -175,7 +163,8 @@ public class Assignment2 extends GameEngine {
     /**
      * Initializes the game, loads images and sounds, and sets up the initial game state.
      */
-    public void init() {
+    public void init()
+    {
         setWindowSize(500, 500);
         Random random = new Random();
 
@@ -187,18 +176,16 @@ public class Assignment2 extends GameEngine {
                 InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/Cinzel-Regular.ttf");
                 assert is != null;
                 cinzel = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(14f);
-
             }
             catch (Exception e)
             {
-                System.out.println("Couldn't load font");
+                System.out.println("Couldn't load font: " + e.getMessage());
             }
         }
 
         // TESTING NOTE, CHANGE numLevels TO '1' TO DEBUG FOR KEY AND FINISH FASTER (it spawns correctly just takes ages to find bc well 100 rooms)
-        map.generate(100); // Generate the map
-        map.setStart(random.nextInt(5) + 3, random.nextInt(5) + 3); // Set the starting level
-        map.setCurrentFloorAndRoom(random.nextInt(5) + 3, random.nextInt(5) + 3); // Ensure the current level is set correctly
+        map.generate(settingsOptionValues[1]); // Generate the map
+        map.setStart(random.nextInt(map.getMap().size()),random.nextInt(map.getMap().getLast().size()));
         player.discardKey();
 
         //System.out.println(random.nextInt(3) + 3);
@@ -206,16 +193,11 @@ public class Assignment2 extends GameEngine {
             volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
         }
 
-
-
         initPlayer();
         initEnemies();
         initObjects();
 
-        congratsImage = loadImage("resources/Sprites/kick.png");
-
         timerPopUp = new TimerPopUp();
-
     }
 
     /**
@@ -223,13 +205,16 @@ public class Assignment2 extends GameEngine {
      *
      * @param dt The time delta since the last update.
      */
-    public void update(double dt) {
-        if (collisionHandled) {
-            collisionHandled = false;
+    public void update(double dt)
+    {
+        if(inStartMenu || showHelpScreen || settings || gameOver )
+        {
             return;
         }
 
-        if (inStartMenu || showHelpScreen || gameOver || gamePaused) {
+        if (collisionHandled)
+        {
+            collisionHandled = false;
             return;
         }
 
@@ -268,99 +253,21 @@ public class Assignment2 extends GameEngine {
             enemy.handleWallCollision(currentLevel);
             enemy.handleIWallCollision(currentLevel);
         }
-        if (keyCollected) {
+        if (keyCollected)
+        {
             //updateScore(100); // Add 100 points for collecting the key
             if (volumeControl.getKeyCollectedSound() != null) {
                 volumeControl.getKeyCollectedSound().start();
             }
-
-
         }
 
         handleDoorCollision();
         player.handleWallCollision(currentLevel); // Pass the current level here
         player.damage(currentLevel.getObstacles(), currentLevel.getEnemies());
-
         player.attackUpdate(dt);
-
-
     }
 
-
-    private void gameTrueEnd(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, width(), height());
-
-        if (congratsImage != null) {
-            int newWidth = width() ;
-            int newHeight = height() ;
-            int xPos = (width() - newWidth) ;
-            int yPos = (height() - newHeight) ;
-            g.drawImage(congratsImage, xPos, yPos, newWidth, newHeight, null);
-        }
-
-        g.setColor(Color.WHITE);
-        g.drawString("Press Q to return to the main menu", width() / 2 - 110, height() / 2 + 245);
-
-        gamePaused = true; // Pause the game when displaying the end screen
-    }
-
-
-
-    private void resetGame() {
-        keyCollected = false;
-        collisionHandled = false;
-        inStartMenu = true;
-        showMap = true;
-        showButtonPopup = false;
-        gameOver = false;
-        showHelpScreen = false;
-        test1 = false;
-
-        keyPresses.clear();
-        key = null;
-        activeButton = null;
-
-        // Reinitialize the player
-        player.reset(); //  reset method in the Player class to reset its state
-        initPlayer();
-
-        // Reinitialize the map
-        map = MazeMap.getInstance();
-        map.generate(16); // Generate the map
-        map.setStart(0, 0); // Set the starting level
-        map.setCurrentFloorAndRoom(0, 0); // Ensure the current level is set correctly
-
-        // Clear existing keys, enemies, and objects
-        for (ArrayList<Level> floor : map.getMap()) {
-            for (Level room : floor) {
-                room.getKeys().clear();
-                room.getEnemies().clear();
-                room.getButtons().clear();
-                room.getObstacles().clear();
-            }
-        }
-
-        // Reinitialize enemies and objects
-        initEnemies();
-        initObjects();
-
-        // Reinitialize volume control
-        volumeControl.reset(); // Reset sounds
-
-        if (volumeControl.getBackgroundMusic() != null) {
-            volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
-        }
-
-        congratsImage = loadImage("resources/Sprites/kick.png");
-
-        if (timerPopUp != null) {
-            timerPopUp.dispose();
-        }
-        timerPopUp = new TimerPopUp();
-    }
-
-   /* public boolean startQuizGame(MathButton mathButton) {
+    /* public boolean startQuizGame(MathButton mathButton) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(mathButton.getQuizQuestion());
         String answer = scanner.nextLine();
@@ -377,26 +284,16 @@ public class Assignment2 extends GameEngine {
      * Paints the game components on the screen.
      */
     @Override
-    public void paintComponent() {
-        Level currentLevel = map.getCurrentLevel();
-        Image levelImage = currentLevel.getImage();
-        if (levelImage == null) {
-            System.err.println("Error: current level image is null");
-        } else {
-            drawImage(levelImage, 0, 0, width(), height());
-        }
+    public void paintComponent()
+    {
 
-        drawMapObjects(currentLevel); // Pass current level to draw objects
-        drawCharacters(currentLevel); // Pass current level to draw characters
-        drawMap();
-
-        changeColor(white);
-        drawText(width() - 110, 20, map.getCurrentLocation(), "Cinzel", 12);
-
-        if (inStartMenu) {
+        if (inStartMenu)
+        {
             displayStartMenu();
             return;
-        } else if (showHelpScreen) {
+        }
+        else if (showHelpScreen)
+        {
             displayHelpScreen();
             return;
         }
@@ -405,15 +302,36 @@ public class Assignment2 extends GameEngine {
             gameOver();
             return;
         }
-
-
-        if (test1) {
-            showTests(currentLevel);
+        if(settings)
+        {
+            displaySettings();
+            return;
         }
+        else
+        {
+            Level currentLevel = map.getCurrentLevel();
+            Image levelImage = currentLevel.getImage();
+            if (levelImage == null) {
+                System.err.println("Error: current level image is null");
+            } else {
+                drawImage(levelImage, 0, 0, width(), height());
+            }
 
-        player.showDamagedCircle(mGraphics);
+            drawMapObjects(currentLevel); // Pass current level to draw objects
+            drawCharacters(currentLevel); // Pass current level to draw characters
+            drawMap();
 
-        collisionHandled = false;
+            changeColor(white);
+            drawText(width() - 110, 20, map.getCurrentLocation(), "Cinzel", 12);
+            if (test1)
+            {
+                showTests(currentLevel);
+            }
+
+            player.showDamagedCircle(mGraphics);
+
+            collisionHandled = false;
+        }
     }
 
 
@@ -488,12 +406,13 @@ public class Assignment2 extends GameEngine {
         {
             return;
         }
-        changeColor(white);
 
-        drawRectangle(25, 25, 100, 100);
+        drawRectangle(25, 25, (7.5 * map.getMap().getLast().size()) + 2.5, (7.5 * map.getMap().size()) + 2.5);
         for (int i = 0; i < map.getMap().size(); i++)
         {
+            changeColor(new Color(1, 1, 1, 0.5f));
             ArrayList<Level> floor = map.getMap().get(i);
+
             for (int j = 0; j < map.getMap().get(i).size(); j++)
             {
                 Level room = map.getMap().get(i).get(j);
@@ -501,79 +420,92 @@ public class Assignment2 extends GameEngine {
                 {
                     changeColor(red);
                 }
-
-
-                drawSolidCircle(40 + (8 * j), 40 + (8 * i), 3);
-                changeColor(white);
+                drawSolidRectangle(27.5 + (7.5 * j), 27.5 + (7.5 * i), 5, 5);
+                changeColor(new Color(1, 1, 1, 0.5f));
             }
         }
     }
-    public void drawMapObjects(Level currentLevel) {
-        for (Button b : currentLevel.getButtons()) {
+    public void drawMapObjects(Level currentLevel)
+    {
+        for (Button b : currentLevel.getButtons())
+        {
             Image buttonImage = b.getCurrentImage();
-            if (buttonImage == null) {
+            if (buttonImage == null)
+            {
                 System.err.println("Error: button image is null");
-            } else {
+            }
+            else
+            {
                 drawImage(buttonImage, b.getPosX(), b.getPosY());
             }
         }
-        for (DamagingObject o : currentLevel.getObstacles()) {
+        for (DamagingObject o : currentLevel.getObstacles())
+        {
             Image obstacleImage = o.getImage();
-            if (obstacleImage == null) {
+            if (obstacleImage == null)
+            {
                 System.err.println("Error: obstacle image is null");
-            } else {
+            }
+            else
+            {
                 drawImage(obstacleImage, o.getPosX(), o.getPosY(), 50, 50);
             }
         }
-        for (int i = 0; i < player.getLives(); i++) {
+        for (int i = 0; i < player.getLives(); i++)
+        {
             Image heartImage = player.getHeartImage();
-            if (heartImage == null) {
+            if (heartImage == null)
+            {
                 System.err.println("Error: heart image is null");
-            } else {
+            }
+            else
+            {
                 drawImage(heartImage, 20 * i, 0);
             }
         }
-        for (Door d : currentLevel.getDoors()) {
+        for (Door d : currentLevel.getDoors())
+        {
             Image doorImage = d.getImage();
-            if (doorImage == null) {
+            if (doorImage == null)
+            {
                 System.err.println("Error: door image is null for door at position (" + d.getPosX() + ", " + d.getPosY() + ")");
-            } else {
+            }
+            else
+            {
                 drawImage(doorImage, d.getPosX(), d.getPosY());
             }
         }
-        for (Key k : currentLevel.getKeys()) {
-            Image keyImage = k.getImage();
-            if (keyImage == null) {
-                System.err.println("Error: key image is null");
-            } else {
-                drawImage(keyImage, k.getPosX(), k.getPosY());
-            }
+        for (Key k : currentLevel.getKeys())
+        {
+            drawImage(k.getImage(), k.getPosX(), k.getPosY());
         }
     }
 
-
-
-
-    public void drawCharacters(Level currentLevel) {
+    public void drawCharacters(Level currentLevel)
+    {
         Image playerImage = player.getImage();
-        if (playerImage == null) {
+        if (playerImage == null)
+        {
             System.err.println("Error: player image is null");
-        } else {
+        }
+        else
+        {
             drawImage(playerImage, player.getPosX(), player.getPosY());
         }
 
-        for (Enemy enemy : currentLevel.getEnemies()) {
+        for (Enemy enemy : currentLevel.getEnemies())
+        {
             Image enemyImage = enemy.getImage();
-            if (enemyImage == null) {
+            if (enemyImage == null)
+            {
                 System.err.println("Error: enemy image is null");
-            } else {
+            }
+            else
+            {
                 drawImage(enemyImage, enemy.getPosX(), enemy.getPosY(), enemy.getWidth(), enemy.getHeight());
             }
         }
-
-
         drawImage(player.getImage(), player.getPosX(), player.getPosY());
-
     }
 
 
@@ -590,7 +522,8 @@ public class Assignment2 extends GameEngine {
     /**
      * Displays the start menu.
      */
-    public void displayStartMenu() {
+    public void displayStartMenu()
+    {
         changeBackgroundColor(black);
         clearBackground(width(), height());
 
@@ -598,10 +531,10 @@ public class Assignment2 extends GameEngine {
 
         drawImage(titleImage,125, 50, (double) width() /2, (double) height() /3);
 
-
         changeColor(white);
-        drawText(((double) width() / 2) - 65, ((double) height() / 2), "Press ENTER to Start", "Cinzel", 14);
-        drawText(((double) width() / 2) - 55, ((double) height() / 2) + 20, "Press H for Help", "Cinzel", 14);
+        drawText(((double) width() / 2) - 75, ((double) height() / 2), "Press ENTER to Start", "Cinzel", 14);
+        drawText(((double) width() / 2) - 55, ((double) height() / 2) + 25, "Press H for Help", "Cinzel", 14);
+        drawText(((double) width() / 2) - 130, ((double) height() / 2) + 50, "Press T to change the game settings", "Cinzel", 14);
     }
     public void displayHelpScreen()
     {
@@ -627,8 +560,49 @@ public class Assignment2 extends GameEngine {
 
         drawImage(titleImage, 0, 50, width(), (double) height() / 4);
         changeColor(Color.WHITE);
-        drawText((double) width() /2 -110, (double) height() /2 + 10, "Press Q to return to the main menu", "Cinzel", 14);
+        drawText((double) width() /2 - 130, (double) height() / 2 + 10, "Press Q to return to the main menu", "Cinzel", 14);
         gameOver = true;
+    }
+
+    static private String[] settingsOptionStrings = new String[]
+            {
+                "Number of Lives: ",
+                "Number of Rooms: ",
+                "Player Speed",
+                "Enemy Speed",
+            };
+    static private int[] settingsOptionValues = new int[]
+            {
+                    3,
+                    100,
+                    5,
+                    2
+            };
+    private int optionIndex = 0;
+
+    private void displaySettings()
+    {
+        changeBackgroundColor(black);
+        clearBackground(width(), height());
+        changeColor(white);
+
+        drawText(40, 50, "Settings", "Cinzel", 26);
+
+        for (int i = 0; i < settingsOptionStrings.length; i++)
+        {
+            if(i == optionIndex)
+            {
+                drawBoldText(40, (40 * i) + 100, settingsOptionStrings[i], "Cinzel", 19);
+                drawBoldText(300, (40 * i) + 100, String.valueOf(settingsOptionValues[i]), "Cinzel", 19);
+            }
+            else
+            {
+                drawText(40, (40 * i) + 100, settingsOptionStrings[i], "Cinzel", 18);
+                drawText(300, (40 * i) + 100, String.valueOf(settingsOptionValues[i]), "Cinzel", 19);
+            }
+        }
+
+        drawText(15, height() - 10, "Press Q to return to the main menu", "Cinzel", 12);
     }
 
     /**
@@ -638,48 +612,119 @@ public class Assignment2 extends GameEngine {
     @Override
     public void keyPressed(KeyEvent event)
     {
-        if (inStartMenu && event.getKeyCode() == KeyEvent.VK_ENTER) {
-            inStartMenu = false;
-            init();
-            return;
-        }
-        if(event.getKeyCode() == KeyEvent.VK_R)
+        int keycode = event.getKeyCode();
+        if(keycode == KeyEvent.VK_R)
         {
             init();
         }
-        if(event.getKeyCode() == KeyEvent.VK_M)
+        if(keycode == KeyEvent.VK_M)
         {
             showMap = !showMap;
         }
-        if(inStartMenu && event.getKeyCode() == KeyEvent.VK_H)
+
+        if(inStartMenu)
         {
-            showHelpScreen = true;
-            inStartMenu = false;
+
+            if(keycode == KeyEvent.VK_T)
+            {
+                settings = true;
+                inStartMenu = false;
+            }
+            if(keycode == KeyEvent.VK_ENTER)
+            {
+                init();
+                inStartMenu = false;
+            }
+            if(keycode == KeyEvent.VK_H)
+            {
+                showHelpScreen = true;
+                inStartMenu = false;
+            }
         }
-        if(event.getKeyCode() == KeyEvent.VK_Q && showHelpScreen)
+        if(settings)
         {
-            showHelpScreen = false;
+            if(keycode == KeyEvent.VK_DOWN)
+            {
+                optionIndex = (optionIndex == settingsOptionStrings.length - 1) ? 0 : optionIndex + 1;
+            }
+            if(keycode == KeyEvent.VK_UP)
+            {
+                optionIndex = (optionIndex == 0) ? settingsOptionStrings.length - 1: optionIndex - 1;
+
+            }
+            if(keycode == KeyEvent.VK_ENTER)
+            {
+                if(optionIndex == 0)
+                {
+                    settingsOptionValues[0] = (settingsOptionValues[0] > 2)? 1: settingsOptionValues[0] + 1 ;
+                }
+                if(optionIndex == 1)
+                {
+                    settingsOptionValues[1] = (settingsOptionValues[1] > 95) ? 25 : settingsOptionValues[1] + 5;
+                }
+                if(optionIndex == 2)
+                {
+                    settingsOptionValues[2] = (settingsOptionValues[2] > 19) ? 1 : settingsOptionValues[2] + 1;
+                }
+                if(optionIndex == 3)
+                {
+                    settingsOptionValues[3] = (settingsOptionValues[3] > 19) ? 1 : settingsOptionValues[3] + 1;
+                }
+            }
+        }
+        if(event.getKeyCode() == KeyEvent.VK_Q)
+        {
+            if(showHelpScreen)
+            {
+                showHelpScreen = false;
+            }
+            if(gameOver)
+            {
+                gameOver = false;
+            }
+            if(settings)
+            {
+                settings = false;
+            }
             inStartMenu = true;
         }
-        if(event.getKeyCode() == KeyEvent.VK_Q && gameOver)
-        {
-            showHelpScreen = false;
-            gameOver = false;
-            resetGame();
-            return;
-        }
+
         if(event.getKeyCode() == KeyEvent.VK_7)
         {
             gameOver = true;
         }
-        if (event.getKeyCode() == KeyEvent.VK_SPACE){
-            test1 = true;
-        } else if (event.getKeyCode() == KeyEvent.VK_ENTER){
-            test1 = false;
-            //keyCollected = false;
+
+
+        if (event.getKeyCode() == KeyEvent.VK_F)
+        {
+            player.attack(map.getCurrentLevel().getEnemies());
+            player.startAttackAnimation();
         }
 
+        if (event.getKeyCode() == KeyEvent.VK_V)
+        {
+            showVolumeSlider = !showVolumeSlider;
+        }
 
+        if (event.getKeyCode() == KeyEvent.VK_T)
+        {
+            if (timerPopUp != null)
+            {
+                if (timerPopUp.timer.isRunning())
+                {
+                    timerPopUp.stopTimer();
+                }
+                else
+                {
+                    timerPopUp.startTimer();
+                }
+            }
+        }
+
+        if (event.getKeyCode() == KeyEvent.VK_SPACE)
+        {
+            test1 = !test1;
+        }
 
         // ========================================================
         // GAMBLE TIME
@@ -695,28 +740,8 @@ public class Assignment2 extends GameEngine {
         }
 
         // Handle attack key
-        if (event.getKeyCode() == KeyEvent.VK_F) {
-            player.attack(map.getCurrentLevel().getEnemies());
-            player.startAttackAnimation();
-        }
 
-        if(event.getKeyCode() == KeyEvent.VK_K)
-        {
-            volumeControl.setBackgroundMusic();
-        }
-        if (event.getKeyCode() == KeyEvent.VK_V) {
-            showVolumeSlider = !showVolumeSlider;
-        }
 
-        if (event.getKeyCode() == KeyEvent.VK_T) {
-            if (timerPopUp != null) {
-                if (timerPopUp.timer.isRunning()) {
-                    timerPopUp.stopTimer();
-                } else {
-                    timerPopUp.startTimer();
-                }
-            }
-        }
 
         // ========================================================
 
@@ -754,22 +779,13 @@ public class Assignment2 extends GameEngine {
 
     /*
      * TODO:
-     *
-     * Maze generation algorithm
-     * (Sprite) Animations
-     * AI and Player Movement
-     * Collisions
-     * Interactable items (keys, doors)
      * Menu/Player Options
-     *
      */
 
     /**
      * Handles key release events to stop player movement.
-     *
-     * @param event The key event.
      */
-    @Override
+
     public void keyReleased(KeyEvent event)
     {
         keyPresses.remove(event.getKeyCode());

@@ -70,12 +70,9 @@ public class MazeMap {
         return currentFloor;
     }
 
-    public void setCurrentFloorAndRoom(int floor, int room) {
-        this.currentFloor = floor;
-        this.currentRoom = room;
-    }
 
-    public Level getCurrentLevel() {
+    public Level getCurrentLevel()
+    {
         return map.get(currentFloor).get(currentRoom);
     }
 
@@ -385,22 +382,27 @@ public class MazeMap {
         level.addInvisibleWall(new InvisibleWall(410, 40, 30, 40));
     }
 
-    public void generate(int numLevels) {
+    public void generate(int numLevels)
+    {
         map = new ArrayList<>();
-        int dimensions = numLevels / 10;
+        int floors = (int) Math.sqrt(numLevels),
+            rooms = (int) Math.ceil((double) numLevels / floors);
 
-
-        for (int x = 0; x < dimensions; x++) {
+        for (int x = 0; x < floors; x++)
+        {
             ArrayList<Level> floor = new ArrayList<>();
-            for (int y = 0; y < dimensions; y++) {
+            for (int y = 0; y < rooms; y++)
+            {
                 Level current = null;
                 boolean validLevel;
 
                 // ensures doors link between rooms
-                do {
+                do
+                {
                     validLevel = true;
                     current = new Level(levels.get(new Random().nextInt(levels.size())));
-                    if (x > 0) {
+                    if (x > 0)
+                    {
                         // if upper rooms doors doesn't link with current rooms doors, regen current room
                         Level up = map.get(x - 1).get(y);
                         if ((up.getBottomDoor() == null && current.getTopDoor() != null) ||
@@ -408,7 +410,8 @@ public class MazeMap {
                             validLevel = false;
                         }
                     }
-                    if (y > 0) {
+                    if (y > 0)
+                    {
                         // same with left room
                         Level left = floor.get(y - 1);
                         if ((left.getRightDoor() == null && current.getLeftDoor() != null) ||
@@ -422,6 +425,8 @@ public class MazeMap {
             // if all rooms on the floor link ok, add them to the map
             map.add(floor);
         }
+
+        System.out.println(map.size() + " " + map.getFirst().size() + " - x*y");
         // check to see if all floors are able to be visited from every other room
         try
         {
@@ -439,8 +444,9 @@ public class MazeMap {
                 }
             }
         }
-        catch (StackOverflowError e)
+        catch (Exception e)
         {
+            System.out.println(e);
             generate(numLevels);
         }
 
@@ -450,6 +456,9 @@ public class MazeMap {
         //create final door
         setFinalDoor();
 
+
+        /*
+            FOR TESTING, CAN DELETE
 
         for (int i = 0; i < map.size(); i++) {
             for (int j = 0; j < map.get(i).size(); j++)
@@ -483,8 +492,7 @@ public class MazeMap {
                     }
                 }
             }
-        }
-        System.out.println();
+        }*/
     }
 
     public void setFinalDoor()
@@ -582,7 +590,6 @@ public class MazeMap {
                 }
             }
         }
-        System.out.println("Final level at [" + finalDoorPosX + "][" + finalDoorPosY + "]");
     }
 
 

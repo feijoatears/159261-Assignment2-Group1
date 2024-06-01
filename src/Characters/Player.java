@@ -44,18 +44,12 @@ public class Player extends Character
     public boolean hasKey = false;
     private boolean isMoving = false;
 
-
-
     // NATHANS SHIT ANIMATION FIX IF YOU HAVE TIME:
     private Image[] attackFrames = new Image[4];
     private int currentAttackFrame = 0;
     private boolean isAttacking = false;
     private long lastFrameTime = 0;
     private long frameDuration = 100;
-
-
-
-
 
     private Player()
     {
@@ -141,14 +135,7 @@ public class Player extends Character
         posX = nextPosX;
         posY = nextPosY;
 
-
-
         updateHitbox();
-
-
-
-
-
     }
 
     // In Player class
@@ -205,6 +192,7 @@ public class Player extends Character
     {
         isMoving = moving;
     }
+
 
     //life functions
     public Image getHeartImage()
@@ -378,15 +366,5 @@ public class Player extends Character
             g.setColor(new Color(255, 0, 0, 128));
             g.fillOval(posX, posY, width, height);
         }
-    }
-
-    public void reset() {
-        // Reset player's state
-        setLives(3);
-        setPosX(100);
-        setPosY(250);
-        setSpeed(20);
-        setMoving(false);
-        // Reset other player-specific variables if needed
     }
 }

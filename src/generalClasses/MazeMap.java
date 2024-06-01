@@ -5,6 +5,8 @@ import src.Objects.InvisibleWall;
 
 import java.awt.*;
 import java.io.File;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 import static src.GameEngine.loadImage;
@@ -425,8 +427,10 @@ public class MazeMap {
         // check to see if all floors are able to be visited from every other room
         try
         {
-            for (int i = 0; i < map.size(); i++) {
-                for (int j = 0; j < map.getLast().size(); j++) {
+            for (int i = 0; i < map.size(); i++)
+            {
+                for (int j = 0; j < map.getLast().size(); j++)
+                {
                     // make new adjacency list for room coordinates
                     Set<Point> visited = new HashSet<>();
                     dfs(i, j, visited);
@@ -445,12 +449,44 @@ public class MazeMap {
         // randomise player start
         setStart(new Random().nextInt(map.size()), new Random().nextInt(map.getLast().size()));
 
-
         //create final door
+        setFinalDoor();
+    }
+
+    public void setFinalDoor()
+    {
+        if(finalDoorSpawned)
+        {
+            return;
+        }
+
+        //remove all existing final doors
+        for(ArrayList<Level> floor : map)
+        {
+            for(Level room : floor)
+            {
+                if(room.getTopDoor() != null)
+                {
+                    room.getTopDoor().removeFinalDoor("up");
+                }
+                if(room.getBottomDoor() != null)
+                {
+                    room.getBottomDoor().removeFinalDoor("down");
+                }
+                if(room.getLeftDoor() != null)
+                {
+                    room.getLeftDoor().removeFinalDoor("left");
+                }
+                if(room.getRightDoor() != null)
+                {
+                    room.getRightDoor().removeFinalDoor("right");
+                }
+            }
+        }
 
 
         int finalDoorPosY = new Random().nextInt(map.getLast().size()),
-            finalDoorPosX;
+                finalDoorPosX;
 
         if (finalDoorPosY == 0 || finalDoorPosY == map.getLast().size() - 1)
         {
@@ -461,39 +497,105 @@ public class MazeMap {
             finalDoorPosX = new Random().nextBoolean() ? 0 : map.size() - 1;
         }
 
-        Level finalDoorLevel = map.get(finalDoorPosX).get(finalDoorPosY);
-        System.out.println(finalDoorPosX + " " + finalDoorPosY);
+        Level finalLevel = map.get(finalDoorPosX).get(finalDoorPosY);
 
-        if(finalDoorPosX == 0)
+        //making final door be top or bottom on the x axis cos its already slow to set and i dont wanna risk it
+        if(finalDoorPosX == 0 || finalDoorPosX == map.size() - 1)
         {
-            if(finalDoorPosY == 0)
+            if(finalDoorPosY == 0 || finalDoorPosY == map.getLast().size())
             {
-                if(finalDoorLevel.getLeftDoor() != null)
+                //corner cases
+                if(finalDoorPosX == 0 && finalDoorPosY == 0)
                 {
-                    finalDoorLevel.getLeftDoor().setFinalDoor();
+                    //top-left corner
+                    if(finalLevel.getLeftDoor() != null)
+                    {
+                        finalLevel.getLeftDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+                    else if(finalLevel.getTopDoor() != null)
+                    {
+                        finalLevel.getTopDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+                }
+                if(finalDoorPosX == 0 && finalDoorPosY == map.getLast().size() - 1)
+                {
+                    //top-right corner
+                    if(finalLevel.getRightDoor() != null)
+                    {
+                        finalLevel.getRightDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+                    else if(finalLevel.getTopDoor() != null)
+                    {
+                        finalLevel.getTopDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+                }
+                if(finalDoorPosX == map.getLast().size() && finalDoorPosY == 0)
+                {
+                    //bottom-left corner
+                    if(finalLevel.getLeftDoor() != null)
+                    {
+                        finalLevel.getLeftDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+                    else if(finalLevel.getBottomDoor() != null)
+                    {
+                        finalLevel.getBottomDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+                }
+                if(finalDoorPosX == map.getLast().size() && finalDoorPosY == map.getLast().size())
+                {
+                    //bottom-right corner
+                    if(finalLevel.getRightDoor() != null)
+                    {
+                        finalLevel.getRightDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+                    else if(finalLevel.getBottomDoor() != null)
+                    {
+                        finalLevel.getBottomDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
                 }
             }
-            else if(finalDoorPosY == map.getLast().size() - 1)
+            else
             {
-                if(finalDoorLevel.getRightDoor() != null)
+                if(finalDoorPosX == 0)
                 {
-                    finalDoorLevel.getRightDoor().setFinalDoor();
+                    //top floor, not a corner
+                    if(finalLevel.getTopDoor() != null)
+                    {
+                        finalLevel.getTopDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+
                 }
-            }
-            else if(finalDoorLevel.getTopDoor() != null)
-            {
-                finalDoorLevel.getTopDoor().setFinalDoor();
-            }
-            else {
-                generate(numLevels);
+                if(finalDoorPosX == map.size() - 1)
+                {
+                    //bottom floor, not a corner
+                    if(finalLevel.getBottomDoor() != null)
+                    {
+                        finalLevel.getBottomDoor().setFinalDoor();
+                        finalDoorSpawned = true;
+                    }
+                }
             }
         }
-        if(finalDoorPosX == map.size() - 1)
+        if(!finalDoorSpawned)
         {
-
+            setFinalDoor();
+        }
+        else
+        {
+            System.out.println("final door: [" + finalDoorPosX + "][" + finalDoorPosY + "]");
         }
     }
-    public
+
+
     // recursive depth first search to ensure all rooms are accessible
     public void dfs(int x, int y, Set<Point> visited) {
         Point point = new Point(x, y);

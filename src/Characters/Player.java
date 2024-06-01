@@ -102,8 +102,6 @@ public class Player extends Character
             Rectangle newHitbox = new Rectangle(nextPosX, nextPosY, width, height);
             if(newHitbox.intersects(iWall.getHitbox()))
             {
-                System.out.println();
-
                 if(Math.abs(posX - (iWall.getHitbox().x + iWall.getHitbox().width)) <= 10)
                 {
                     nextPosX = (iWall.getHitbox().x + iWall.getHitbox().width);

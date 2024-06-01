@@ -182,7 +182,7 @@ public class Assignment2 extends GameEngine {
         map.setCurrentFloorAndRoom(spX, spY); // Ensure the current level is set correctly
 
 
-        System.out.println(random.nextInt(3) + 3);
+        //System.out.println(random.nextInt(3) + 3);
         if (volumeControl.getBackgroundMusic() != null) {
             volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
         }

@@ -44,10 +44,27 @@ public class Player extends Character
     public boolean[] hasKey = new boolean[10];
     private boolean isMoving = false;
 
+
+
+    // NATHANS SHIT ANIMATION FIX IF YOU HAVE TIME:
+    private Image[] attackFrames = new Image[4];
+    private int currentAttackFrame = 0;
+    private boolean isAttacking = false;
+    private long lastFrameTime = 0;
+    private long frameDuration = 100;
+
+
+
+
+
     private Player()
     {
         super(0, 0, 0, loadImage("resources/Sprites/Player-SpriteSheet.png"),10);
         direction = Direction.East;
+        attackFrames[0] = loadImage("resources/Sprites/SwordTestFrame1.png");
+        attackFrames[1] = loadImage("resources/Sprites/SwordTestFrame2.png");
+        attackFrames[2] = loadImage("resources/Sprites/SwordTestFrame3.png");
+        attackFrames[3] = loadImage("resources/Sprites/SwordTestFrame4.png");
     }
 
     public static Player getInstance()
@@ -158,9 +175,38 @@ public class Player extends Character
 
 
         updateHitbox();
+
+
+
+
+
+    }
+
+    // In Player class
+    public void attackUpdate(double dt) {
+        if (isAttacking) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastFrameTime > frameDuration) {
+                currentAttackFrame++;
+                if (currentAttackFrame >= attackFrames.length) {
+                    currentAttackFrame = 0;
+                    isAttacking = false; // Animation finished
+                }
+                lastFrameTime = currentTime;
+            }
+        }
+
     }
 
 
+    @Override
+    public Image getImage() {
+        if (isAttacking) {
+            return attackFrames[currentAttackFrame];
+        } else {
+            return super.getImage();
+        }
+    }
     public boolean checkCollision(Rectangle other)
     {
         return this.hitbox.intersects(other);
@@ -241,6 +287,7 @@ public class Player extends Character
         posY = interpolatedY;
 
         updateHitbox(); // Update hitbox after bouncing back
+
     }
 
     public void attack(ArrayList<Enemy> enemies) {
@@ -261,6 +308,12 @@ public class Player extends Character
             attackSound.setFramePosition(0);
             attackSound.start();
         }
+    }
+
+    public void startAttackAnimation() {
+        isAttacking = true;
+        currentAttackFrame = 0;
+        lastFrameTime = System.currentTimeMillis();
     }
 
     public boolean handleKeyCollision(Key key) {

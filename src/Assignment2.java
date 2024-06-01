@@ -264,6 +264,10 @@ public class Assignment2 extends GameEngine {
         handleDoorCollision();
         player.handleWallCollision(currentLevel); // Pass the current level here
         player.damage(currentLevel.getObstacles(), currentLevel.getEnemies());
+
+        player.attackUpdate(dt);
+
+
     }
 
    //fianldoor stuff
@@ -286,7 +290,7 @@ public class Assignment2 extends GameEngine {
 
         while (!validPosition) {
 
-// use switch for direction, NESW
+            // use switch for direction, NESW
             switch (direction) {
                 case 0: // North
                     posX = (width() / 2) - 16; // Assuming door width is 32
@@ -677,6 +681,10 @@ public class Assignment2 extends GameEngine {
                 drawImage(enemyImage, enemy.getPosX(), enemy.getPosY(), enemy.getWidth(), enemy.getHeight());
             }
         }
+
+
+        drawImage(player.getImage(), player.getPosX(), player.getPosY());
+
     }
 
 
@@ -806,6 +814,7 @@ public class Assignment2 extends GameEngine {
         // Handle attack key
         if (event.getKeyCode() == KeyEvent.VK_F) {
             player.attack(map.getCurrentLevel().getEnemies());
+            player.startAttackAnimation();
         }
 
         if(event.getKeyCode() == KeyEvent.VK_K)

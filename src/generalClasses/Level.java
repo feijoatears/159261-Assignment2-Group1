@@ -7,6 +7,7 @@ import java.util.Objects;
 import src.Characters.Enemy;
 import src.Objects.*;
 import src.Objects.Button;
+import src.Objects.Object;
 
 import static src.GameEngine.loadImage;
 
@@ -23,6 +24,7 @@ public class Level {
             leftDoor = null,
             rightDoor = null;
     private Image image;
+    private int hash;
 
     public void setDoors(ArrayList<String> config)
     {
@@ -57,6 +59,7 @@ public class Level {
     //stops doors being shared
     public Level(Level l)
     {
+        this.hash = Objects.hash(l);
         this.image = l.image;
         // Create new instances for mutable objects
         this.topDoor = l.topDoor != null ? new Door((500 / 2) - 20, 10, 55, 30) : null;
@@ -193,6 +196,10 @@ public class Level {
         return name;
     }
 
+    public int getHash()
+    {
+        return hash;
+    }
 
     public void setFinalDoor(String doorType)
     {
@@ -242,21 +249,21 @@ public class Level {
         }
     }
 
-
-
     // Generate a hash for the room based on its properties
-    public int generateRoomHash() {
-        return Objects.hash(
-                name,
-                topDoor != null ? topDoor.hashCode() : 0,
-                bottomDoor != null ? bottomDoor.hashCode() : 0,
-                leftDoor != null ? leftDoor.hashCode() : 0,
-                rightDoor != null ? rightDoor.hashCode() : 0,
-                enemies,
-                keys,
-                buttons,
-                obstacles,
-                invisibleWalls
+    public int generateRoomHash()
+    {
+        return Objects.hash
+        (
+            name,
+            topDoor != null ? topDoor.hashCode() : 0,
+            bottomDoor != null ? bottomDoor.hashCode() : 0,
+            leftDoor != null ? leftDoor.hashCode() : 0,
+            rightDoor != null ? rightDoor.hashCode() : 0,
+            enemies,
+            keys,
+            buttons,
+            obstacles,
+            invisibleWalls
         );
     }
 

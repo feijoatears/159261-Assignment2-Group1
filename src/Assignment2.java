@@ -306,13 +306,6 @@ public class Assignment2 extends GameEngine {
         }
 
         Level currentLevel = map.getCurrentLevel(); // Ensure currentLevel is set
-        int currentLevelHash = currentLevel.generateRoomHash();
-        System.out.println("Updating level: " + currentLevel.getName() + " with hash: " + currentLevelHash);
-
-        if (currentLevel == null) {
-            System.err.println("Error: currentLevel is null");
-            return; // Safeguard to prevent further null reference issues
-        }
 
         if (player.isMoving()) {
             player.move();

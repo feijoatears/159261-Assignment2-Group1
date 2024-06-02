@@ -5,8 +5,6 @@ import src.Objects.InvisibleWall;
 
 import java.awt.*;
 import java.io.File;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 
 import static src.GameEngine.loadImage;
@@ -92,7 +90,8 @@ public class MazeMap {
         currentRoom++;
     }
 
-    public void loadConfigs() {
+    public void loadConfigs()
+    {
         String line = "";
 
         try {
@@ -119,7 +118,8 @@ public class MazeMap {
         }
     }
 
-    public ArrayList<Level> loadLevels() {
+    public ArrayList<Level> loadLevels()
+    {
         ArrayList<Level> levels = new ArrayList<>();
 
         for (int i = 0; i < configs.size(); i++) {
@@ -131,79 +131,9 @@ public class MazeMap {
             level.setDoors(configs.get(i));
 
 
-            int roomHash = level.generateRoomHash();
-            System.out.println("Loaded level: " + level.getName() + " with hash: " + roomHash);
-
-
-
-            // Add invisible walls for each room with precise hitboxes
-            if (levelString.contains("ScaledRoom1.png")) {
-                addScaledRoom1Walls(level);
-            } else if (levelString.contains("ScaledRoom2.png")) {
-                addScaledRoom2Walls(level);
-            } else if (levelString.contains("ScaledRoom3.png")) {
-                addScaledRoom3Walls(level);
-            } else if (levelString.contains("ScaledRoom4.png")) {
-                addScaledRoom4Walls(level);
-            } else if (levelString.contains("ScaledRoom5.png")) {
-                addScaledRoom5Walls(level);
-            } else if (levelString.contains("ScaledRoom6.png")) {
-                addScaledRoom6Walls(level);
-            } else if (levelString.contains("ScaledRoom7.png")) {
-                addScaledRoom7Walls(level);
-            } else if (levelString.contains("ScaledRoom8.png")) {
-                addScaledRoom8Walls(level);
-            } else if (levelString.contains("ScaledRoom9.png")) {
-                addScaledRoom9Walls(level);
-            } else if (levelString.contains("ScaledRoom14.png")) {
-                addScaledRoom14Walls(level);
-            } else if (levelString.contains("ScaledRoom15.png")) {
-                addScaledRoom15Walls(level);
-            } else if (levelString.contains("ScaledRoom16.png")) {
-                addScaledRoom16Walls(level);
-            } else if (levelString.contains("ScaledRoom17.png")) {
-                addScaledRoom17Walls(level);
-            } else if (levelString.contains("ScaledRoom18.png")) {
-                addScaledRoom18Walls(level);
-            } else if (levelString.contains("ScaledRoom19.png")) {
-                addScaledRoom19Walls(level);
-            } else if (levelString.contains("ScaledRoom20.png")) {
-                addScaledRoom20Walls(level);
-            } else if (levelString.contains("ScaledRoom21.png")) {
-                addScaledRoom21Walls(level);
-            } else if (levelString.contains("ScaledRoom22.png")) {
-                addScaledRoom22Walls(level);
-            } else if (levelString.contains("ScaledRoom23.png")) {
-                addScaledRoom23Walls(level);
-            } else if (levelString.contains("ScaledRoom24.png")) {
-                addScaledRoom24Walls(level);
-            } else if (levelString.contains("ScaledRoom25.png")) {
-                addScaledRoom25Walls(level);
-            } else if (levelString.contains("ScaledRoom26.png")) {
-                addScaledRoom26Walls(level);
-            } else if (levelString.contains("ScaledRoom27.png")) {
-                addScaledRoom27Walls(level);
-            } else if (levelString.contains("ScaledRoom28.png")) {
-                addScaledRoom28Walls(level);
-            } else if (levelString.contains("ScaledRoom29.png")) {
-                addScaledRoom29Walls(level);
-            }
-
             levels.add(level);
         }
-
         return levels;
-    }
-
-    private void addScaledRoom1Walls(Level level) {
-        level.addInvisibleWall(new InvisibleWall(110, 20, 110, 43)); // Top left
-        level.addInvisibleWall(new InvisibleWall(280, 20, 110, 43)); // Top right
-        level.addInvisibleWall(new InvisibleWall(6, 110, 43, 110)); // Top mid-left
-        level.addInvisibleWall(new InvisibleWall(434, 110, 43, 110)); // Top mid-right
-        level.addInvisibleWall(new InvisibleWall(6, 290, 43, 110)); // Bottom mid-left
-        level.addInvisibleWall(new InvisibleWall(434, 290, 43, 110)); // Bottom mid-right
-        level.addInvisibleWall(new InvisibleWall(110, 434, 110, 43)); // Bottom left
-        level.addInvisibleWall(new InvisibleWall(280, 434, 110, 43)); // Bottom right
     }
 
     private void addScaledRoom2Walls(Level level) {
@@ -434,10 +364,6 @@ public class MazeMap {
                 } while (!validLevel);
                 floor.add(current);
 
-
-
-                int roomHash = current.generateRoomHash();
-                System.out.println("Generated level: " + current.getName() + " with hash: " + roomHash);
             }
             // if all rooms on the floor link ok, add them to the map
             map.add(floor);
@@ -472,7 +398,7 @@ public class MazeMap {
 
         //create final door
         setFinalDoor();
-
+        setCollisions();
         for (int i = 0; i < map.size(); i++) {
             for (int j = 0; j < map.get(i).size(); j++)
             {
@@ -507,7 +433,59 @@ public class MazeMap {
             }
         }
     }
+    public void setCollisions()
+    {
+        //3D array
+        ArrayList<ArrayList<ArrayList<Integer>>> rooms = new ArrayList<>();
 
+        String line = null;
+        try {
+            Scanner scanner = new Scanner(new File("resources/Levels/collisions.settings"));
+            while (scanner.hasNextLine())
+            {
+                ArrayList<ArrayList<Integer>> roomCollisions = new ArrayList<>();
+
+                line = scanner.nextLine();
+                if (!line.contains("{") && !line.contains("}") && !line.contains("Room") && !line.isEmpty())
+                {
+                    System.out.println(line);
+                    ArrayList<Integer> roomObject = new ArrayList<>();
+                    roomObject.add(Integer.parseInt((line.split(",")[0].trim()))); // position X
+                    roomObject.add(Integer.parseInt((line.split(",")[1].trim()))); // position Y
+                    roomObject.add(Integer.parseInt((line.split(",")[2].trim()))); // width
+                    roomObject.add(Integer.parseInt((line.split(",")[3].trim()))); // height
+                    roomCollisions.add(roomObject);
+                }
+                else
+                {
+                    rooms.add(roomCollisions);
+                }
+            }
+            scanner.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println(rooms.size());
+        for(int i = 0; i < map.size(); i++)
+        {
+            for(int j = 0; j < map.get(i).size(); j++)
+            {
+                if(map.get(i).get(j).getHash() == Objects.hash(levels.getFirst()))
+                {
+                    for(ArrayList<ArrayList<Integer>> rc : rooms)
+                    {
+                        for(ArrayList<Integer> r : rc)
+                        {
+                            //this is so stupidly bad on performance
+                            map.get(i).get(j).addInvisibleWall(new InvisibleWall(r.get(0), r.get(1),r.get(2),r.get(3)));
+                        }
+                    }
+                }
+            }
+        }
+    }
     public void setFinalDoor()
     {
         int finalDoorPosY = new Random().nextInt(map.getFirst().size());

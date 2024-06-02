@@ -81,8 +81,6 @@ public abstract class Enemy extends Character
         {
             if(hitbox.intersects(iWall.getHitbox()))
             {
-                System.out.println();
-
                 if(Math.abs(posX - (iWall.getHitbox().x + iWall.getHitbox().width)) <= 10)
                 {
                     posX = (iWall.getHitbox().x + iWall.getHitbox().width);

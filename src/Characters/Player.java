@@ -41,10 +41,8 @@ public class Player extends Character
 
     private static Thread iFrameThread;
 
-    public boolean[] hasKey = new boolean[10];
+    public boolean hasKey = false;
     private boolean isMoving = false;
-
-
 
     // NATHANS SHIT ANIMATION FIX IF YOU HAVE TIME:
     private Image[] attackFrames = new Image[4];
@@ -52,10 +50,6 @@ public class Player extends Character
     private boolean isAttacking = false;
     private long lastFrameTime = 0;
     private long frameDuration = 100;
-
-
-
-
 
     private Player()
     {
@@ -102,8 +96,6 @@ public class Player extends Character
             Rectangle newHitbox = new Rectangle(nextPosX, nextPosY, width, height);
             if(newHitbox.intersects(iWall.getHitbox()))
             {
-                System.out.println();
-
                 if(Math.abs(posX - (iWall.getHitbox().x + iWall.getHitbox().width)) <= 10)
                 {
                     nextPosX = (iWall.getHitbox().x + iWall.getHitbox().width);
@@ -143,14 +135,7 @@ public class Player extends Character
         posX = nextPosX;
         posY = nextPosY;
 
-
-
         updateHitbox();
-
-
-
-
-
     }
 
     // In Player class
@@ -184,18 +169,19 @@ public class Player extends Character
     }
 
     // Method to check if a specific key is present
-    public boolean hasKey(int keyNum) {
-        if (keyNum >= 0 && keyNum < hasKey.length) {
-            return hasKey[keyNum];
-        }
-        return false;
+    public boolean hasKey()
+    {
+        return hasKey;
     }
 
     // Method to set a key as collected
-    public void collectKey(int keyNum) {
-        if (keyNum >= 0 && keyNum < hasKey.length) {
-            hasKey[keyNum] = true;
-        }
+    public void collectKey()
+    {
+        hasKey = true;
+    }
+    public void discardKey()
+    {
+        hasKey = false;
     }
 
     public boolean isMoving()
@@ -206,6 +192,7 @@ public class Player extends Character
     {
         isMoving = moving;
     }
+
 
     //life functions
     public Image getHeartImage()
@@ -287,19 +274,24 @@ public class Player extends Character
         lastFrameTime = System.currentTimeMillis();
     }
 
-    public boolean handleKeyCollision(Key key) {
-        if (key.checkCollision(hitbox) && !key.getIsUsed()) {
-            collectKey(0); // for key index 0
-            key.setIsUsed(true);
+    public boolean handleKeyCollision(Key key)
+    {
+        if (key.checkCollision(hitbox))
+        {
+            hasKey = true;
             System.out.println("Key collected!");
-            if (VolumeControl.getInstance().getKeyCollectedSound() != null) {
+            if (VolumeControl.getInstance().getKeyCollectedSound() != null)
+            {
                 VolumeControl.getInstance().getKeyCollectedSound().start();
             }
             // Delayed wow sound
-            new Timer().schedule(new TimerTask() {
+            new Timer().schedule(new TimerTask()
+            {
                 @Override
-                public void run() {
-                    if (VolumeControl.getInstance().getWowSound() != null) {
+                public void run()
+                {
+                    if (VolumeControl.getInstance().getWowSound() != null)
+                    {
                         VolumeControl.getInstance().getWowSound().start();
                     }
                 }
@@ -374,15 +366,5 @@ public class Player extends Character
             g.setColor(new Color(255, 0, 0, 128));
             g.fillOval(posX, posY, width, height);
         }
-    }
-
-    public void reset() {
-        // Reset player's state
-        setLives(3);
-        setPosX(100);
-        setPosY(250);
-        setSpeed(20);
-        setMoving(false);
-        // Reset other player-specific variables if needed
     }
 }

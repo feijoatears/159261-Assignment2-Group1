@@ -13,13 +13,13 @@ public class Door extends Object
         super(x,y,w,h);
     }
 
-    public void setFinalDoor()
+    public void setIsFinalDoor(boolean finalDoor)
     {
-        this.image = loadImage("resources/Objects/finalWallGold.png");
-        isFinalDoor = true;
+        isFinalDoor = finalDoor;
     }
+
     public boolean getIsFinalDoor()
     {
-        return isFinalDoor;
+        return this.isFinalDoor;
     }
 }

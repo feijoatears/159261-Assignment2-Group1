@@ -32,7 +32,6 @@ public class Player extends Character
 
     private final int[] eastFrames = {0, 1},
                         southFrames = {2, 3},
-                       damageFrames = {4, 5},
                         westFrames = {8, 9},
                         northFrames = {6, 7};
 

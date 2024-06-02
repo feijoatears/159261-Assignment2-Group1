@@ -212,7 +212,7 @@ public class MazeMap {
         setFinalDoor();
         setCollisions();
 
-        for (int i = 0; i < map.size(); i++) {
+       /* for (int i = 0; i < map.size(); i++) {
             for (int j = 0; j < map.get(i).size(); j++)
             {
                 if(map.get(i).get(j).getTopDoor() != null)
@@ -244,24 +244,22 @@ public class MazeMap {
                     }
                 }
             }
-        }
+        }*/
     }
     public void setCollisions()
     {
         //3D array
         ArrayList<ArrayList<ArrayList<Integer>>> rooms = new ArrayList<>();
-
+        ArrayList<ArrayList<Integer>> roomCollisions = new ArrayList<>();
         String line = null;
-        try {
+        try
+        {
             Scanner scanner = new Scanner(new File("resources/Levels/collisions.settings"));
             while (scanner.hasNextLine())
             {
-                ArrayList<ArrayList<Integer>> roomCollisions = new ArrayList<>();
-
                 line = scanner.nextLine();
                 if (!line.contains("{") && !line.contains("}") && !line.contains("Room") && !line.isEmpty())
                 {
-                    System.out.println(line);
                     ArrayList<Integer> roomObject = new ArrayList<>();
                     roomObject.add(Integer.parseInt((line.split(",")[0].trim()))); // position X
                     roomObject.add(Integer.parseInt((line.split(",")[1].trim()))); // position Y
@@ -271,7 +269,11 @@ public class MazeMap {
                 }
                 else
                 {
-                    rooms.add(roomCollisions);
+                    if(line.contains("}"))
+                    {
+                        rooms.add(roomCollisions);
+                        roomCollisions = new ArrayList<>();
+                    }
                 }
             }
             scanner.close();
@@ -280,19 +282,29 @@ public class MazeMap {
         {
             e.printStackTrace();
         }
-        System.out.println(rooms.size());
+
         for(int i = 0; i < map.size(); i++)
         {
             for(int j = 0; j < map.get(i).size(); j++)
             {
-                if(map.get(i).get(j).getHash() == Objects.hash(levels.getFirst()))
+                for(int k = 0; k < rooms.size(); k++)
                 {
-                    for(ArrayList<ArrayList<Integer>> rc : rooms)
+                    if(map.get(i).get(j).getHash() == Objects.hash(levels.get(k)))
                     {
-                        for(ArrayList<Integer> r : rc)
+                        for (int l = 0; l < rooms.get(k).size(); l++)
                         {
-                            //this is so stupidly bad on performance
-                            map.get(i).get(j).addInvisibleWall(new InvisibleWall(r.get(0), r.get(1),r.get(2),r.get(3)));
+                            for (int m = 0; m < rooms.get(k).get(l).size(); m++)
+                            {
+                                map.get(i).get(j).addInvisibleWall(
+                                        new InvisibleWall
+                                        (
+                                            rooms.get(k).get(l).get(0),
+                                            rooms.get(k).get(l).get(1),
+                                            rooms.get(k).get(l).get(2),
+                                            rooms.get(k).get(l).get(3)
+                                        )
+                                );
+                            }
                         }
                     }
                 }

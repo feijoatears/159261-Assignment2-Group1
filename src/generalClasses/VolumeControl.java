@@ -17,7 +17,7 @@ public class VolumeControl {
     private final Clip attackSound = loadSound("resources/Sounds/Attack.wav");
     private final Clip damageSound = loadSound("resources/Sounds/damage.wav");
     private final Clip wowSound = loadSound("resources/Sounds/wow.wav");
-    private final Clip backgroundMusic = loadSound("aaaaresources/Sounds/C.wav");
+    private final Clip backgroundMusic = loadSound("resources/Sounds/C.wav");
 
     public static VolumeControl getInstance() {
         if (instance == null) {
@@ -31,20 +31,6 @@ public class VolumeControl {
         if (backgroundMusic != null && backgroundMusic.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
             volumeControl = (FloatControl) backgroundMusic.getControl(FloatControl.Type.MASTER_GAIN);
         }
-
-        JSlider volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-        volumeSlider.addChangeListener(e -> {
-            int value = volumeSlider.getValue();
-            float volume = value / 100f;
-            setVolume(volume);
-        });
-
-        JFrame frame = new JFrame("Volume Control");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-        frame.add(volumeSlider, BorderLayout.CENTER);
-        frame.setSize(300, 100);
-        frame.setVisible(true);
     }
 
     public static void setVolume(float volume) {
@@ -53,6 +39,7 @@ public class VolumeControl {
             float max = volumeControl.getMaximum();
             float value = min + (volume * (max - min));
             volumeControl.setValue(value);
+
         }
     }
 

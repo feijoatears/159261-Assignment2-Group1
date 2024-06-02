@@ -211,6 +211,8 @@ public class Assignment2 extends GameEngine {
     public void init()
     {
         setWindowSize(500, 500);
+        // Set the initial volume to 20%
+        VolumeControl.setVolume(0.65f);
         Random random = new Random();
 
         //load font
@@ -242,7 +244,7 @@ public class Assignment2 extends GameEngine {
         initEnemies();
         initObjects();
 
-        timerPopUp = new TimerPopUp();
+
     }
 
     /**
@@ -252,7 +254,7 @@ public class Assignment2 extends GameEngine {
      */
     public void update(double dt)
     {
-        if(inStartMenu || showHelpScreen || settings || gameOver )
+        if(inStartMenu || showHelpScreen || settings || gameOver|| gameWon )
         {
             return;
         }
@@ -325,6 +327,90 @@ public class Assignment2 extends GameEngine {
         return isCorrect;
     }*/
 
+
+    private void showCongratulatoryMessage() {
+        changeBackgroundColor(Color.BLACK);
+        clearBackground(width(), height());
+
+        Image congratsImage = loadImage("resources/Sprites/kick.png");
+
+        if (congratsImage != null) {
+            drawImage(congratsImage, (double) width() / 2 - congratsImage.getWidth(null) / 2, (double) height() / 2 - congratsImage.getHeight(null) / 2);
+        }
+
+        changeColor(Color.WHITE);
+        drawText((double) width() / 2 - 130, (double) height() / 2 + 10, "Press Q to return to the main menu", "Cinzel", 14);
+        gameWon = true;
+    }
+
+    private void reset() {
+        // Reset game state
+        keyCollected = false;
+        collisionHandled = false;
+        inStartMenu = true;
+        showMap = true;
+        showButtonPopup = false;
+        gameOver = false;
+        gameWon = false;
+        showHelpScreen = false;
+        settings = false;
+        test1 = false;
+        keyPresses.clear();
+        player.discardKey();
+        player.reset();
+
+        // Close the timer window if it is open
+        if (timerPopUp != null) {
+            timerPopUp.dispose();
+        }
+
+        // Close the volume slider window if it is open
+        if (volumeSliderPopUp != null) {
+            volumeSliderPopUp.dispose();
+        }
+
+        // Initialize the game
+        init();
+    }
+
+    public void reload() {
+        // Reset game state variables
+        keyCollected = false;
+        collisionHandled = false;
+        inStartMenu = false;
+        showMap = true;
+        showButtonPopup = false;
+        gameOver = false;
+        gameWon = false;
+        showHelpScreen = false;
+        settings = false;
+        test1 = false;
+        keyPresses.clear();
+
+        // Reset the player
+        player.reset();
+        player.discardKey();
+
+        // Reset volume
+        volumeControl.reset();
+
+        // Close the timer window if it is open
+        if (timerPopUp != null) {
+            timerPopUp.dispose();
+        }
+
+        // Close the volume slider window if it is open
+        if (volumeSliderPopUp != null) {
+            volumeSliderPopUp.dispose();
+        }
+
+        // Reinitialize the game
+        init();
+    }
+
+
+
+
     /**
      * Paints the game components on the screen.
      */
@@ -345,6 +431,10 @@ public class Assignment2 extends GameEngine {
         if (gameOver)
         {
             gameOver();
+            return;
+        }
+        if (gameWon) {
+            showCongratulatoryMessage();
             return;
         }
         if(settings)
@@ -394,7 +484,8 @@ public class Assignment2 extends GameEngine {
             {
                 if(door.getIsFinalDoor() && player.hasKey())
                 {
-
+                    showCongratulatoryMessage(); // Show congratulations message and end the game
+                    return;
                 }
                 else
                 {
@@ -660,6 +751,7 @@ public class Assignment2 extends GameEngine {
         int keycode = event.getKeyCode();
         if(keycode == KeyEvent.VK_R)
         {
+            reload();
             init();
         }
         if(keycode == KeyEvent.VK_M)
@@ -746,23 +838,20 @@ public class Assignment2 extends GameEngine {
             player.startAttackAnimation();
         }
 
-        if (event.getKeyCode() == KeyEvent.VK_V)
-        {
-            showVolumeSlider = !showVolumeSlider;
+        if (event.getKeyCode() == KeyEvent.VK_V) {
+            if (volumeSliderPopUp != null && isVolumeSliderWindowOpen) {
+                volumeSliderPopUp.dispose();
+            } else {
+                volumeSliderPopUp = new VolumeSliderPopUp();
+            }
         }
 
-        if (event.getKeyCode() == KeyEvent.VK_T)
-        {
-            if (timerPopUp != null)
-            {
-                if (timerPopUp.timer.isRunning())
-                {
-                    timerPopUp.stopTimer();
-                }
-                else
-                {
-                    timerPopUp.startTimer();
-                }
+
+        if (event.getKeyCode() == KeyEvent.VK_T) {
+            if (timerPopUp != null && isTimerWindowOpen) {
+                timerPopUp.dispose();
+            } else {
+                timerPopUp = new TimerPopUp();
             }
         }
 
@@ -928,19 +1017,30 @@ public class Assignment2 extends GameEngine {
 
 
 
-
-
+    private boolean isTimerWindowOpen = false;
     public class TimerPopUp {
         private JFrame frame;
         private JLabel timerLabel;
         private Timer timer;
-        private int elapsedTime = 0; // Time in seconds
+        private int elapsedTime = 0;
 
         public TimerPopUp() {
+            if (isTimerWindowOpen) return; // Check if the timer window is already open
+
+            isTimerWindowOpen = true; // Set flag to indicate the timer window is open
+
             frame = new JFrame("Timer");
             frame.setSize(200, 100);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setLocationRelativeTo(null);
+
+            frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                    isTimerWindowOpen = false; // Reset flag when window is closed
+                    stopTimer(); // Stop the timer when the window is closed
+                }
+            });
 
             timerLabel = new JLabel("Time: 0 s", SwingConstants.CENTER);
             timerLabel.setFont(new Font("Arial", Font.BOLD, 24));
@@ -949,6 +1049,7 @@ public class Assignment2 extends GameEngine {
             frame.setVisible(true);
 
             createTimer();
+            startTimer(); // Start the timer when the window is opened
         }
 
         private void createTimer() {
@@ -968,7 +1069,56 @@ public class Assignment2 extends GameEngine {
 
         public void dispose() {
             frame.dispose();
+            isTimerWindowOpen = false; // Reset flag when disposing
+            stopTimer(); // Ensure timer is stopped when disposing
         }
     }
-        
+
+    private static boolean isVolumeSliderWindowOpen = false;
+    private VolumeSliderPopUp volumeSliderPopUp;
+
+
+    public class VolumeSliderPopUp {
+        private JFrame frame;
+        private JSlider volumeSlider;
+
+        public VolumeSliderPopUp() {
+            if (Assignment2.isVolumeSliderWindowOpen) return; // Check if the volume slider window is already open
+
+            Assignment2.isVolumeSliderWindowOpen = true; // Set flag to indicate the volume slider window is open
+
+            frame = new JFrame("Volume Control");
+            frame.setSize(300, 100);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+
+            frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                    Assignment2.isVolumeSliderWindowOpen = false; // Reset flag when window is closed
+                }
+            });
+
+            volumeSlider = new JSlider(JSlider.HORIZONTAL, 50, 90, 75);
+            volumeSlider.addChangeListener(e -> {
+                int value = volumeSlider.getValue();
+                float volume = value / 100f;
+                VolumeControl.setVolume(volume);
+            });
+
+
+
+            frame.add(volumeSlider);
+            frame.setVisible(true);
+        }
+
+        public void dispose() {
+            frame.dispose();
+            Assignment2.isVolumeSliderWindowOpen = false; // Reset flag when disposing
+        }
+    }
+
+
+
+
 }

@@ -98,8 +98,10 @@ public class Assignment2 extends GameEngine {
         }
     }
 
-    public void initObjects()
-    {
+
+
+
+    public void initObjects() {
         Random random = new Random();
 
         // Select a random floor
@@ -110,54 +112,97 @@ public class Assignment2 extends GameEngine {
         int randomRoomIndex = random.nextInt(randomFloor.size());
         Level randomRoom = randomFloor.get(randomRoomIndex);
 
-        boolean validPosition = false;
-        int posX = 0, posY = 0;
 
-        while (!validPosition) {
-            // Generate a random position
-            posX = random.nextInt(width() - 100) + 50;
-            posY = random.nextInt(height() - 100) + 50;
+        // specific mid
+        int specificFloorIndex = 5;
+        int specificRoomIndex = 5;
 
-            // Check if the position is valid (not overlapping with obstacles, walls, etc.)
-            validPosition = true;
-            Rectangle keyHitbox = new Rectangle(posX, posY, 32, 32); // Assuming key size is 32x32
+        // Ensure the specific indices are within the map size bounds
+        if (specificFloorIndex < map.getMap().size() && specificRoomIndex < map.getMap().get(specificFloorIndex).size()) {
+            Level specificRoom = map.getMap().get(specificFloorIndex).get(specificRoomIndex);
 
-            // Check collision with invisible walls
-            for (InvisibleWall wall : randomRoom.getInvisibleWalls()) {
-                if (wall.getHitbox().intersects(keyHitbox)) {
-                    validPosition = false;
-                    break;
-                }
-            }
+            specificRoom.getButtons().add(new Button(300, 300, new ArrayList<>() {{
+                add(loadAudio("resources/Sounds/buttonOn.wav"));
+                add(loadAudio("resources/Sounds/buttonOff.wav"));
+            }}));
 
-            // Check collision with obstacles
-            if (validPosition) {
-                for (DamagingObject obstacle : randomRoom.getObstacles()) {
-                    if (obstacle.getHitbox().intersects(keyHitbox)) {
+
+            boolean validPosition = false;
+            boolean validPosition2 = false;
+            int posX = 0, posY = 0;
+
+
+            /**
+             * This is for randomly generating the key and button, for button im making it always spawn in room 5, 5.
+             *
+             */
+            while (!validPosition) {
+                // Generate a random position
+                posX = random.nextInt(width() - 100) + 50;
+                posY = random.nextInt(height() - 100) + 50;
+
+                // Check if the position is valid (not overlapping with obstacles, walls, etc.)
+                validPosition = true;
+                validPosition2 = true;
+                Rectangle keyHitbox = new Rectangle(posX, posY, 32, 32); // Assuming key size is 32x32
+
+                // Check collision with invisible walls
+                for (InvisibleWall wall : randomRoom.getInvisibleWalls()) {
+                    if (wall.getHitbox().intersects(keyHitbox)) {
                         validPosition = false;
                         break;
                     }
                 }
+
+                // Check collision with obstacles
+                if (validPosition) {
+                    for (DamagingObject obstacle : randomRoom.getObstacles()) {
+                        if (obstacle.getHitbox().intersects(keyHitbox)) {
+                            validPosition = false;
+                            break;
+                        }
+                    }
+                }
+
+
+                // check coll with wall2
+                for (InvisibleWall wall : specificRoom.getInvisibleWalls()) {
+                    if (wall.getHitbox().intersects(keyHitbox)) {
+                        validPosition2 = false;
+                        break;
+                    }
+                }
+
+                // Check coll wtih obj2
+                if (validPosition) {
+                    for (DamagingObject obstacle : specificRoom.getObstacles()) {
+                        if (obstacle.getHitbox().intersects(keyHitbox)) {
+                            validPosition2 = false;
+                            break;
+                        }
+                    }
+                }
+
+
             }
+            // Check if a key already exists in the level
+            if (randomRoom.getKeys().isEmpty()) {
+                // Create the key at the valid position
+                key = new Key(posX, posY);
+                randomRoom.getKeys().add(key); // Add the key to the selected room only
+            }
+
+            System.out.println(randomFloorIndex + " " + randomRoomIndex); // for testing, delete later
+
+            // Initialize objects for the current level
+
+            map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
+
+           // map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
         }
-        // Check if a key already exists in the level
-        if (randomRoom.getKeys().isEmpty())
-        {
-            // Create the key at the valid position
-            key = new Key(posX, posY);
-            randomRoom.getKeys().add(key); // Add the key to the selected room only
-        }
-
-        System.out.println(randomFloorIndex + " " + randomRoomIndex); // for testing, delete later
-
-        // Initialize objects for the current level
-        map.getCurrentLevel().getButtons().add(new Button(300, 300, new ArrayList<>() {{
-            add(loadAudio("resources/Sounds/buttonOn.wav"));
-            add(loadAudio("resources/Sounds/buttonOff.wav"));
-        }}));
-
-        map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
     }
+
+
 
 
     /**

@@ -130,6 +130,12 @@ public class MazeMap {
             level.setImage(img);
             level.setDoors(configs.get(i));
 
+
+            int roomHash = level.generateRoomHash();
+            System.out.println("Loaded level: " + level.getName() + " with hash: " + roomHash);
+
+
+
             // Add invisible walls for each room with precise hitboxes
             if (levelString.contains("ScaledRoom1.png")) {
                 addScaledRoom1Walls(level);
@@ -427,6 +433,11 @@ public class MazeMap {
                     }
                 } while (!validLevel);
                 floor.add(current);
+
+
+
+                int roomHash = current.generateRoomHash();
+                System.out.println("Generated level: " + current.getName() + " with hash: " + roomHash);
             }
             // if all rooms on the floor link ok, add them to the map
             map.add(floor);

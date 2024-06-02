@@ -241,4 +241,29 @@ public class Level {
             this.getRightDoor().setIsFinalDoor(false);
         }
     }
+
+
+
+    // Generate a hash for the room based on its properties
+    public int generateRoomHash() {
+        return Objects.hash(
+                name,
+                topDoor != null ? topDoor.hashCode() : 0,
+                bottomDoor != null ? bottomDoor.hashCode() : 0,
+                leftDoor != null ? leftDoor.hashCode() : 0,
+                rightDoor != null ? rightDoor.hashCode() : 0,
+                enemies,
+                keys,
+                buttons,
+                obstacles,
+                invisibleWalls
+        );
+    }
+
+    @Override
+    public int hashCode() {
+        return generateRoomHash();
+    }
+
+
 }

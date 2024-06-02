@@ -367,4 +367,14 @@ public class Player extends Character
             g.fillOval(posX, posY, width, height);
         }
     }
+
+    public void reset() {
+        setLives(3); // default lives are 3
+        discardKey();
+        setSpeed(5); // default speed is 5
+        // Reset position
+        setPosX(100);
+        setPosY(250);
+    }
+
 }

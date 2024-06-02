@@ -630,8 +630,8 @@ public class Assignment2 extends GameEngine {
         drawText(50,50, "Controls:", "Cinzel", 14);
         drawText( 50, 70,"W (Up), A (Left), S (Down), D (Right), F (Attack)", "Cinzel" ,14);
         drawText(50, 170, "Game Objective:", "Cinzel" ,14);
-        drawText(50, 190, "Navigate through the maze, collect keys,", "Cinzel" ,14);
-        drawText(50, 210, "Avoid enemies and obstacles, and reach the exit door.", "Cinzel" ,14);
+        drawText(50, 190, "Navigate through the maze, collect the key,", "Cinzel" ,14);
+        drawText(50, 210, "Avoid enemies and obstacles, and reach the gold exit door.", "Cinzel" ,14);
         drawText(50, 300, "Press Q to return to main menu", "Cinzel" ,14);
         drawText(50, 320, "Press V to toggle volume control", "Cinzel" ,14);
         drawText(50, 340, "Press T to toggle timer", "Cinzel" ,14);

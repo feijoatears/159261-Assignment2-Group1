@@ -10,7 +10,11 @@ import java.io.File;
 
 public class VolumeControl {
     private static VolumeControl instance;
-    private static FloatControl volumeControl;
+    private FloatControl bgVolumeControl;
+    private FloatControl keyVolumeControl;
+    private FloatControl attackVolumeControl;
+    private FloatControl damageVolumeControl;
+    private FloatControl wowVolumeControl;
 
     // Load sound files
     private final Clip keyCollectedSound = loadSound("resources/Sounds/Key.wav");
@@ -29,17 +33,56 @@ public class VolumeControl {
     private VolumeControl() {
         // Initialize volume control for background music
         if (backgroundMusic != null && backgroundMusic.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-            volumeControl = (FloatControl) backgroundMusic.getControl(FloatControl.Type.MASTER_GAIN);
+            bgVolumeControl = (FloatControl) backgroundMusic.getControl(FloatControl.Type.MASTER_GAIN);
+        }
+        if (keyCollectedSound != null && keyCollectedSound.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            keyVolumeControl = (FloatControl) keyCollectedSound.getControl(FloatControl.Type.MASTER_GAIN);
+        }
+        if (attackSound != null && attackSound.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            attackVolumeControl = (FloatControl) attackSound.getControl(FloatControl.Type.MASTER_GAIN);
+        }
+        if (damageSound != null && damageSound.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            damageVolumeControl = (FloatControl) damageSound.getControl(FloatControl.Type.MASTER_GAIN);
+        }
+        if (wowSound != null && wowSound.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            wowVolumeControl = (FloatControl) wowSound.getControl(FloatControl.Type.MASTER_GAIN);
         }
     }
 
-    public static void setVolume(float volume) {
+    public void setBgVolume(float volume) {
+        setVolume(bgVolumeControl, volume);
+    }
+
+    public void setKeyVolume(float volume) {
+        setVolume(keyVolumeControl, volume);
+    }
+
+    public void setAttackVolume(float volume) {
+        setVolume(attackVolumeControl, volume);
+    }
+
+    public void setDamageVolume(float volume) {
+        setVolume(damageVolumeControl, volume);
+    }
+
+    public void setWowVolume(float volume) {
+        setVolume(wowVolumeControl, volume);
+    }
+
+    public void setMasterVolume(float volume) {
+        setBgVolume(volume);
+        setKeyVolume(volume);
+        setAttackVolume(volume);
+        setDamageVolume(volume);
+        setWowVolume(volume);
+    }
+
+    private void setVolume(FloatControl volumeControl, float volume) {
         if (volumeControl != null) {
             float min = volumeControl.getMinimum();
             float max = volumeControl.getMaximum();
             float value = min + (volume * (max - min));
             volumeControl.setValue(value);
-
         }
     }
 

@@ -112,8 +112,7 @@ public class Assignment2 extends GameEngine {
         int randomRoomIndex = random.nextInt(randomFloor.size());
         Level randomRoom = randomFloor.get(randomRoomIndex);
 
-
-        // specific mid
+        // Specific mid
         int specificFloorIndex = 5;
         int specificRoomIndex = 5;
 
@@ -126,17 +125,14 @@ public class Assignment2 extends GameEngine {
                 add(loadAudio("resources/Sounds/buttonOff.wav"));
             }}));
 
-
             boolean validPosition = false;
             boolean validPosition2 = false;
             int posX = 0, posY = 0;
 
-
             /**
              * This is for randomly generating the key and button, for button im making it always spawn in room 5, 5.
-             *
              */
-            while (!validPosition) {
+            while (!validPosition || !validPosition2) {
                 // Generate a random position
                 posX = random.nextInt(width() - 100) + 50;
                 posY = random.nextInt(height() - 100) + 50;
@@ -146,7 +142,7 @@ public class Assignment2 extends GameEngine {
                 validPosition2 = true;
                 Rectangle keyHitbox = new Rectangle(posX, posY, 32, 32); // Assuming key size is 32x32
 
-                // Check collision with invisible walls
+                // Check collision with invisible walls in the random room
                 for (InvisibleWall wall : randomRoom.getInvisibleWalls()) {
                     if (wall.getHitbox().intersects(keyHitbox)) {
                         validPosition = false;
@@ -154,7 +150,7 @@ public class Assignment2 extends GameEngine {
                     }
                 }
 
-                // Check collision with obstacles
+                // Check collision with obstacles in the random room
                 if (validPosition) {
                     for (DamagingObject obstacle : randomRoom.getObstacles()) {
                         if (obstacle.getHitbox().intersects(keyHitbox)) {
@@ -164,8 +160,7 @@ public class Assignment2 extends GameEngine {
                     }
                 }
 
-
-                // check coll with wall2
+                // Check collision with invisible walls in the specific room
                 for (InvisibleWall wall : specificRoom.getInvisibleWalls()) {
                     if (wall.getHitbox().intersects(keyHitbox)) {
                         validPosition2 = false;
@@ -173,8 +168,8 @@ public class Assignment2 extends GameEngine {
                     }
                 }
 
-                // Check coll wtih obj2
-                if (validPosition) {
+                // Check collision with obstacles in the specific room
+                if (validPosition2) {
                     for (DamagingObject obstacle : specificRoom.getObstacles()) {
                         if (obstacle.getHitbox().intersects(keyHitbox)) {
                             validPosition2 = false;
@@ -182,25 +177,27 @@ public class Assignment2 extends GameEngine {
                         }
                     }
                 }
-
-
             }
+
             // Check if a key already exists in the level
             if (randomRoom.getKeys().isEmpty()) {
                 // Create the key at the valid position
                 key = new Key(posX, posY);
                 randomRoom.getKeys().add(key); // Add the key to the selected room only
+
+                // Debug statement for key position
+                System.out.println("Key placed at position: (" + posX + ", " + posY + ") in room (" + randomFloorIndex + ", " + randomRoomIndex + ")");
             }
 
-            System.out.println(randomFloorIndex + " " + randomRoomIndex); // for testing, delete later
+            System.out.println("Random floor index: " + randomFloorIndex + ", Random room index: " + randomRoomIndex); // For testing, delete later
 
             // Initialize objects for the current level
-
             map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
-
-            // map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
+        } else {
+            System.out.println("spike Specific floor or room index out of bounds.");
         }
     }
+
 
 
 
@@ -212,7 +209,44 @@ public class Assignment2 extends GameEngine {
     {
         setWindowSize(500, 500);
         // Set the initial volume to 20%
-        VolumeControl.setVolume(0.65f);
+        VolumeControl.getInstance().setMasterVolume(0.50f);
+        Random random = new Random();
+
+        //load font
+        if(cinzel == null)
+        {
+            try
+            {
+                InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/Cinzel-Regular.ttf");
+                assert is != null;
+                cinzel = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(14f);
+            }
+            catch (Exception e)
+            {
+                System.out.println("Couldn't load font: " + e.getMessage());
+            }
+        }
+
+        // TESTING NOTE, CHANGE numLevels TO '1' TO DEBUG FOR KEY AND FINISH FASTER (it spawns correctly just takes ages to find bc well 100 rooms)
+        map.generate(settingsOptionValues[1]); // Generate the map
+        map.setStart(random.nextInt(map.getMap().size()),random.nextInt(map.getMap().getLast().size()));
+        player.discardKey();
+
+        //System.out.println(random.nextInt(3) + 3);
+        if (volumeControl.getBackgroundMusic() != null) {
+            volumeControl.getBackgroundMusic().loop(Clip.LOOP_CONTINUOUSLY);
+        }
+
+        initPlayer();
+        initEnemies();
+        initObjects();
+
+
+    }
+    public void reloadinit()
+    {
+
+        VolumeControl.getInstance().setMasterVolume(0.50f);
         Random random = new Random();
 
         //load font
@@ -328,85 +362,7 @@ public class Assignment2 extends GameEngine {
     }*/
 
 
-    private void showCongratulatoryMessage() {
-        changeBackgroundColor(Color.BLACK);
-        clearBackground(width(), height());
 
-        Image congratsImage = loadImage("resources/Sprites/kick.png");
-
-        if (congratsImage != null) {
-            drawImage(congratsImage, (double) width() / 2 - congratsImage.getWidth(null) / 2, (double) height() / 2 - congratsImage.getHeight(null) / 2);
-        }
-
-        changeColor(Color.WHITE);
-        drawText((double) width() / 2 - 130, (double) height() / 2 + 10, "Press Q to return to the main menu", "Cinzel", 14);
-        gameWon = true;
-    }
-
-    private void reset() {
-        // Reset game state
-        keyCollected = false;
-        collisionHandled = false;
-        inStartMenu = true;
-        showMap = true;
-        showButtonPopup = false;
-        gameOver = false;
-        gameWon = false;
-        showHelpScreen = false;
-        settings = false;
-        test1 = false;
-        keyPresses.clear();
-        player.discardKey();
-        player.reset();
-
-        // Close the timer window if it is open
-        if (timerPopUp != null) {
-            timerPopUp.dispose();
-        }
-
-        // Close the volume slider window if it is open
-        if (volumeSliderPopUp != null) {
-            volumeSliderPopUp.dispose();
-        }
-
-        // Initialize the game
-        init();
-    }
-
-    public void reload() {
-        // Reset game state variables
-        keyCollected = false;
-        collisionHandled = false;
-        inStartMenu = false;
-        showMap = true;
-        showButtonPopup = false;
-        gameOver = false;
-        gameWon = false;
-        showHelpScreen = false;
-        settings = false;
-        test1 = false;
-        keyPresses.clear();
-
-        // Reset the player
-        player.reset();
-        player.discardKey();
-
-        // Reset volume
-        volumeControl.reset();
-
-        // Close the timer window if it is open
-        if (timerPopUp != null) {
-            timerPopUp.dispose();
-        }
-
-        // Close the volume slider window if it is open
-        if (volumeSliderPopUp != null) {
-            volumeSliderPopUp.dispose();
-        }
-
-        // Reinitialize the game
-        init();
-    }
 
 
 
@@ -700,6 +656,103 @@ public class Assignment2 extends GameEngine {
         gameOver = true;
     }
 
+    private Timer resetTimer;
+
+    private void showCongratulatoryMessage() {
+        changeBackgroundColor(Color.BLACK);
+        clearBackground(width(), height());
+
+        Image congratsImage = loadImage("resources/Sprites/kick.png");
+
+        if (congratsImage != null) {
+            drawImage(congratsImage, (double) width() / 2 - congratsImage.getWidth(null) / 2,
+                    (double) height() / 2 - congratsImage.getHeight(null) / 2);
+        }
+
+        changeColor(Color.WHITE);
+        drawText((double) width() / 2 - 130, (double) height() / 2 + 10,
+                "Press Q to return to the main menu", "Cinzel", 14);
+        gameWon = true;
+
+        // Schedule the reset to occur after a delay
+        resetTimer = new Timer(3000, e -> reset());
+        resetTimer.setRepeats(false); // Ensure the timer only runs once
+        resetTimer.start();
+    }
+
+
+    private boolean resetInProgress = false;
+    private void reset() {
+        if (resetInProgress) return; // Check if a reset is already in progress
+        resetInProgress = true; // Set flag to indicate a reset is in progress
+
+        // Reset game state
+        keyCollected = false;
+        collisionHandled = false;
+        inStartMenu = true;
+        showMap = true;
+        showButtonPopup = false;
+        gameOver = false;
+        gameWon = false;
+        showHelpScreen = false;
+        settings = false;
+        test1 = false;
+        keyPresses.clear();
+        player.discardKey();
+        player.reset();
+
+        // Close the timer window if it is open
+        if (timerPopUp != null) {
+            timerPopUp.dispose();
+        }
+
+        // Close the volume slider window if it is open
+        if (volumeSliderPopUp != null) {
+            volumeSliderPopUp.dispose();
+        }
+
+        // Initialize the game
+        init();
+
+        resetInProgress = false; // Reset the flag once the reset is complete
+    }
+
+
+    public void reload() {
+        // Reset game state variables
+        keyCollected = false;
+        collisionHandled = false;
+        inStartMenu = false;
+        showMap = true;
+        showButtonPopup = false;
+        gameOver = false;
+        gameWon = false;
+        showHelpScreen = false;
+        settings = false;
+        test1 = false;
+        keyPresses.clear();
+
+        // Reset the player
+        player.reset();
+        player.discardKey();
+
+        // Reset volume
+        volumeControl.reset();
+
+        // Close the timer window if it is open
+        if (timerPopUp != null) {
+            timerPopUp.dispose();
+        }
+
+        // Close the volume slider window if it is open
+        if (volumeSliderPopUp != null) {
+            volumeSliderPopUp.dispose();
+        }
+
+        reloadinit();
+
+    }
+
     static private String[] settingsOptionStrings = new String[]
             {
                 "Number of Lives: ",
@@ -711,7 +764,7 @@ public class Assignment2 extends GameEngine {
             {
                     3,
                     100,
-                    5,
+                    10,
                     2
             };
     private int optionIndex = 0;
@@ -824,6 +877,14 @@ public class Assignment2 extends GameEngine {
                 settings = false;
             }
             inStartMenu = true;
+            // Cancel the reset timer if it is running
+            if (resetTimer != null) {
+            resetTimer.stop();
+            resetTimer = null;
+            }
+
+            // Immediately reset the game
+           reset();
         }
 
         if(event.getKeyCode() == KeyEvent.VK_7)
@@ -1099,18 +1160,18 @@ public class Assignment2 extends GameEngine {
                 }
             });
 
-            volumeSlider = new JSlider(JSlider.HORIZONTAL, 50, 90, 75);
+            volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 20); // Start with volume set to 20%
             volumeSlider.addChangeListener(e -> {
                 int value = volumeSlider.getValue();
                 float volume = value / 100f;
-                VolumeControl.setVolume(volume);
+                VolumeControl.getInstance().setMasterVolume(volume); // Set the master volume
             });
-
-
 
             frame.add(volumeSlider);
             frame.setVisible(true);
         }
+
+
 
         public void dispose() {
             frame.dispose();

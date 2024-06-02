@@ -2,6 +2,7 @@ package src.generalClasses;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import src.Characters.Enemy;
 import src.Objects.*;
@@ -23,9 +24,12 @@ public class Level {
             rightDoor = null;
     private Image image;
 
-    public void setDoors(ArrayList<String> config) {
-        for (String s : config) {
-            switch (s) {
+    public void setDoors(ArrayList<String> config)
+    {
+        for (String s : config)
+        {
+            switch (s)
+            {
                 case "Up":
                     topDoor = new Door((500 / 2) - 20, 10, 55, 30);
                     topDoor.setImage(loadImage("resources/Objects/DoorTop.png"));
@@ -54,7 +58,6 @@ public class Level {
     public Level(Level l)
     {
         this.image = l.image;
-
         // Create new instances for mutable objects
         this.topDoor = l.topDoor != null ? new Door((500 / 2) - 20, 10, 55, 30) : null;
         this.bottomDoor = l.bottomDoor != null ? new Door((500 / 2) - 20, 500 - 42, 50, 30) : null;
@@ -193,61 +196,49 @@ public class Level {
 
     public void setFinalDoor(String doorType)
     {
-        if(doorType.equals("up"))
+        if ("up".equals(doorType) && this.getTopDoor() != null)
         {
             this.getTopDoor().setImage(loadImage("resources/Objects/ExitDoorTop.png"));
-            this.topDoor.setIsFinalDoor(true);
+            this.getTopDoor().setIsFinalDoor(true);
         }
-        if(doorType.equals("down"))
+        if ("down".equals(doorType) && this.getBottomDoor() != null)
         {
             this.getBottomDoor().setImage(loadImage("resources/Objects/ExitDoorBottom.png"));
-            this.bottomDoor.setIsFinalDoor(true);
+            this.getBottomDoor().setIsFinalDoor(true);
         }
-        if(doorType.equals("left"))
+        if ("left".equals(doorType) && this.getLeftDoor() != null)
         {
             this.getLeftDoor().setImage(loadImage("resources/Objects/ExitDoorLeft.png"));
-            this.leftDoor.setIsFinalDoor(true);
+            this.getLeftDoor().setIsFinalDoor(true);
         }
-        if(doorType.equals("right"))
+        if ("right".equals(doorType) && this.getRightDoor() != null)
         {
             this.getRightDoor().setImage(loadImage("resources/Objects/ExitDoorRight.png"));
-            this.rightDoor.setIsFinalDoor(true);
+            this.getRightDoor().setIsFinalDoor(true);
         }
     }
+
     public void removeFinalDoor(String doorType)
     {
-        //40 x 32 img
-        if(doorType.equals("up"))
+        if ("up".equals(doorType) && this.getTopDoor() != null && this.getTopDoor().getIsFinalDoor())
         {
-            if(this.topDoor.getIsFinalDoor())
-            {
-                this.getTopDoor().setImage(loadImage("resources/Objects/DoorTop.png"));
-                topDoor.setIsFinalDoor(false);
-            }
+            this.getTopDoor().setImage(loadImage("resources/Objects/DoorTop.png"));
+            this.getTopDoor().setIsFinalDoor(false);
         }
-        if(doorType.equals("down"))
+        if ("down".equals(doorType) && this.getBottomDoor() != null && this.getBottomDoor().getIsFinalDoor())
         {
-            if(this.bottomDoor.getIsFinalDoor())
-            {
-                this.getBottomDoor().setImage(loadImage("resources/Objects/DoorBottom.png"));
-                bottomDoor.setIsFinalDoor(false);
-            }
+            this.getBottomDoor().setImage(loadImage("resources/Objects/DoorBottom.png"));
+            this.getBottomDoor().setIsFinalDoor(false);
         }
-        if(doorType.equals("left"))
+        if ("left".equals(doorType) && this.getLeftDoor() != null && this.getLeftDoor().getIsFinalDoor())
         {
-            if(this.getLeftDoor().getIsFinalDoor())
-            {
-                this.getLeftDoor().setImage(loadImage("resources/Objects/DoorLeft.png"));
-                leftDoor.setIsFinalDoor(false);
-            }
+            this.getLeftDoor().setImage(loadImage("resources/Objects/DoorLeft.png"));
+            this.getLeftDoor().setIsFinalDoor(false);
         }
-        if(doorType.equals("right"))
+        if ("right".equals(doorType) && this.getRightDoor() != null && this.getRightDoor().getIsFinalDoor())
         {
-            if(this.getRightDoor().getIsFinalDoor())
-            {
-                this.getRightDoor().setImage(loadImage("resources/Objects/DoorRight.png"));
-                rightDoor.setIsFinalDoor(false);
-            }
+            this.getRightDoor().setImage(loadImage("resources/Objects/DoorRight.png"));
+            this.getRightDoor().setIsFinalDoor(false);
         }
     }
 }

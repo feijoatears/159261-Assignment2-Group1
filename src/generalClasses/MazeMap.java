@@ -336,18 +336,21 @@ public class MazeMap {
         level.addInvisibleWall(new InvisibleWall(305, 440, 115, 50));
     }
 
-    private void addScaledRoom24Walls(Level level) {
+    private void addScaledRoom24Walls(Level level)
+    {
         level.addInvisibleWall(new InvisibleWall(170, 185, 160, 75));
     }
 
-    private void addScaledRoom25Walls(Level level) {
+    private void addScaledRoom25Walls(Level level)
+    {
         level.addInvisibleWall(new InvisibleWall(75, 360, 125, 50));
         level.addInvisibleWall(new InvisibleWall(295, 330, 125, 55));
         level.addInvisibleWall(new InvisibleWall(80, 75, 125, 75));
         level.addInvisibleWall(new InvisibleWall(345, 0, 50, 100));
     }
 
-    private void addScaledRoom26Walls(Level level) {
+    private void addScaledRoom26Walls(Level level)
+    {
         level.addInvisibleWall(new InvisibleWall(100, 0, 110, 70));
        // level.addInvisibleWall(new InvisibleWall(25, 210, 130, 70));
         level.addInvisibleWall(new InvisibleWall(0, 315, 80, 120));
@@ -355,7 +358,8 @@ public class MazeMap {
         level.addInvisibleWall(new InvisibleWall(425, 325, 70, 75));
     }
 
-    private void addScaledRoom27Walls(Level level) {
+    private void addScaledRoom27Walls(Level level)
+    {
         level.addInvisibleWall(new InvisibleWall(100, 0, 110, 70));
         level.addInvisibleWall(new InvisibleWall(25, 210, 130, 70));
         level.addInvisibleWall(new InvisibleWall(0, 315, 80, 120));
@@ -363,7 +367,8 @@ public class MazeMap {
         level.addInvisibleWall(new InvisibleWall(425, 325, 70, 75));
     }
 
-    private void addScaledRoom28Walls(Level level) {
+    private void addScaledRoom28Walls(Level level)
+    {
         level.addInvisibleWall(new InvisibleWall(95, 20, 80, 120));
         level.addInvisibleWall(new InvisibleWall(180, 30, 20, 35));
         level.addInvisibleWall(new InvisibleWall(300, 0, 120, 70));
@@ -373,7 +378,8 @@ public class MazeMap {
         level.addInvisibleWall(new InvisibleWall(350, 425, 80, 75));
     }
 
-    private void addScaledRoom29Walls(Level level) {
+    private void addScaledRoom29Walls(Level level)
+    {
         level.addInvisibleWall(new InvisibleWall(70, 0, 120, 70));
         level.addInvisibleWall(new InvisibleWall(70, 420, 80, 70));
         level.addInvisibleWall(new InvisibleWall(350, 420, 80, 70));
@@ -456,10 +462,6 @@ public class MazeMap {
         //create final door
         setFinalDoor();
 
-
-        /*
-            FOR TESTING, CAN DELETE
-
         for (int i = 0; i < map.size(); i++) {
             for (int j = 0; j < map.get(i).size(); j++)
             {
@@ -492,141 +494,136 @@ public class MazeMap {
                     }
                 }
             }
-        }*/
+        }
     }
 
     public void setFinalDoor()
     {
-        int finalDoorPosY = new Random().nextInt(map.getLast().size()),
-                finalDoorPosX;
+        int finalDoorPosY = new Random().nextInt(map.getFirst().size());
+        int finalDoorPosX;
 
-        if (finalDoorPosY == 0 || finalDoorPosY == map.getLast().size() - 1)
-        {
-            finalDoorPosX = new Random().nextInt(map.size());
-        }
-        else
-        {
-            finalDoorPosX = new Random().nextBoolean() ? 0 : map.size() - 1;
-        }
+        finalDoorPosX = new Random().nextBoolean() ? 0 : map.size() - 1;
+
 
         Level finalLevel = map.get(finalDoorPosX).get(finalDoorPosY);
 
-        //making final door be top or bottom on the x axis cos its already slow to set and i dont wanna risk it
-
-        for (ArrayList<Level> floor : map)
-        {
-            for (Level current : floor)
-            {
-                if (current.getTopDoor() != null && current.getTopDoor().getIsFinalDoor())
-                {
+        //clear the map
+        for (ArrayList<Level> floor : map) {
+            for (Level current : floor) {
+                if (current.getTopDoor() != null && current.getTopDoor().getIsFinalDoor()) {
                     current.removeFinalDoor("up");
                 }
-                if (current.getBottomDoor() != null && current.getBottomDoor().getIsFinalDoor())
-                {
+                if (current.getBottomDoor() != null && current.getBottomDoor().getIsFinalDoor()) {
                     current.removeFinalDoor("down");
                 }
-                if (current.getLeftDoor() != null && current.getLeftDoor().getIsFinalDoor())
-                {
+                if (current.getLeftDoor() != null && current.getLeftDoor().getIsFinalDoor()) {
                     current.removeFinalDoor("left");
                 }
-                if (current.getRightDoor() != null && current.getRightDoor().getIsFinalDoor())
-                {
+                if (current.getRightDoor() != null && current.getRightDoor().getIsFinalDoor()) {
                     current.removeFinalDoor("right");
                 }
             }
         }
 
-        if(finalDoorPosX == 0 || finalDoorPosX == map.size() - 1) {
-            if (finalDoorPosY == 0 || finalDoorPosY == map.getLast().size()) {
-                //corner cases
-                if (finalDoorPosX == 0 && finalDoorPosY == 0) {
-                    //top-left corner
-                    if (finalLevel.getLeftDoor() != null) {
-                        finalLevel.setFinalDoor("left");
-                    } else if (finalLevel.getTopDoor() != null) {
-                        finalLevel.setFinalDoor("up");
-                    }
+        if (finalDoorPosY == 0) {
+            // top-left corner
+            if (finalLevel.getLeftDoor() != null) {
+                finalLevel.setFinalDoor("left");
+            } else if (finalLevel.getTopDoor() != null) {
+                finalLevel.setFinalDoor("up");
+            }
+        } else if (finalDoorPosY == map.getFirst().size() - 1)
+        {
+            // top-right corner
+            if (finalLevel.getRightDoor() != null) {
+                finalLevel.setFinalDoor("right");
+            } else if (finalLevel.getTopDoor() != null) {
+                finalLevel.setFinalDoor("up");
+            }
+        }
+        else if (finalDoorPosX == map.size() - 1 && finalDoorPosY == map.getFirst().size() - 1)
+        {
+            // bottom-right corner
+            if (finalLevel.getRightDoor() != null) {
+                finalLevel.setFinalDoor("right");
+            } else if (finalLevel.getBottomDoor() != null) {
+                finalLevel.setFinalDoor("down");
+            }
+        }
+        else
+        {
+            if (finalDoorPosX == 0)
+            {
+                // top floor, not a corner
+                if (finalLevel.getTopDoor() != null)
+                {
+                    finalLevel.setFinalDoor("up");
                 }
-                if (finalDoorPosX == 0 && finalDoorPosY == map.getLast().size() - 1) {
-                    //top-right corner
-                    if (finalLevel.getRightDoor() != null)
-                    {
-                        finalLevel.setFinalDoor("right");
-                    }
-                    else if (finalLevel.getTopDoor() != null)
-                    {
-                        finalLevel.setFinalDoor("up");
-                    }
+                else
+                {
+                    setFinalDoor();
                 }
-                if (finalDoorPosX == map.getLast().size() && finalDoorPosY == 0) {
-                    //bottom-left corner
-                    if (finalLevel.getLeftDoor() != null) {
-                        finalLevel.setFinalDoor("left");
-                    } else if (finalLevel.getBottomDoor() != null) {
-                        finalLevel.setFinalDoor("down");
-                    }
+            }
+            else
+            {
+                // bottom floor, not a corner
+                if (finalLevel.getBottomDoor() != null)
+                {
+                    finalLevel.setFinalDoor("down");
                 }
-                if (finalDoorPosX == map.getLast().size() && finalDoorPosY == map.getLast().size()) {
-                    //bottom-right corner
-                    if (finalLevel.getRightDoor() != null) {
-                        finalLevel.setFinalDoor("right");
-                    } else if (finalLevel.getBottomDoor() != null) {
-                        finalLevel.setFinalDoor("down");
-                    }
-                }
-            } else {
-                if (finalDoorPosX == 0) {
-                    //top floor, not a corner
-                    if (finalLevel.getTopDoor() != null) {
-                        finalLevel.setFinalDoor("up");
-                    }
-
-                }
-                if (finalDoorPosX == map.size() - 1) {
-                    //bottom floor, not a corner
-                    if (finalLevel.getBottomDoor() != null) {
-                        finalLevel.setFinalDoor("down");
-                    }
+                else
+                {
+                    setFinalDoor();
                 }
             }
         }
+        // Debug statement to indicate the position of the final door
+        System.out.println("Final door set at: Floor " + finalDoorPosX + ", Room " + finalDoorPosY);
     }
 
 
     // recursive depth first search to ensure all rooms are accessible
-    public void dfs(int x, int y, Set<Point> visited) {
+    public void dfs(int x, int y, Set<Point> visited)
+    {
         Point point = new Point(x, y);
-        if (visited.contains(point)) {
+        if (visited.contains(point))
+        {
             return;
         }
         visited.add(point);
 
         // up
-        if (x > 0) {
-            if (map.get(x).get(y).getTopDoor() != null) {
+        if (x > 0 && map.get(x - 1).get(y).getBottomDoor() != null)
+        {
+            if (map.get(x).get(y).getTopDoor() != null)
+            {
                 dfs(x - 1, y, visited);
             }
         }
         // down
-        if (x + 1 < map.size()) {
-            if (map.get(x).get(y).getBottomDoor() != null) {
+        if (x + 1 < map.size() && map.get(x + 1).get(y).getTopDoor() != null)
+        {
+            if (map.get(x).get(y).getBottomDoor() != null)
+            {
                 dfs(x + 1, y, visited);
             }
         }
         // left
-        if (y > 0) {
-            if (map.get(x).get(y).getLeftDoor() != null) {
+        if (y > 0 && map.get(x).get(y - 1).getRightDoor() != null)
+        {
+            if (map.get(x).get(y).getLeftDoor() != null)
+            {
                 dfs(x, y - 1, visited);
             }
         }
         // right
-        if (y + 1 < map.get(x).size()) {
-            if (map.get(x).get(y).getTopDoor() != null) {
+        if (y + 1 < map.get(x).size() && map.get(x).get(y + 1).getLeftDoor() != null)
+        {
+            if (map.get(x).get(y).getRightDoor() != null)
+            {
                 dfs(x, y + 1, visited);
             }
         }
         // PS: my life expectancy halved writing this
     }
-
-
 }

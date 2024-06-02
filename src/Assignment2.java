@@ -73,14 +73,17 @@ public class Assignment2 extends GameEngine {
         player.setSpeed(settingsOptionValues[2]);
     }
 
-    public void initEnemies() {
+    public void initEnemies()
+    {
         Random random = new Random();
 
         int windowWidth = width(); // Assuming width() gives the width of the game window
         int windowHeight = height(); // Assuming height() gives the height of the game window
 
-        for (ArrayList<Level> floor : map.getMap()) {
-            for (Level room : floor) {
+        for (ArrayList<Level> floor : map.getMap())
+        {
+            for (Level room : floor)
+            {
                 // Clear existing enemies in the current room
                 room.getEnemies().clear();
 
@@ -91,17 +94,14 @@ public class Assignment2 extends GameEngine {
                     int posX = random.nextInt(windowWidth);
                     int posY = random.nextInt(windowHeight);
 
-
                     room.getEnemies().add(new Vampire(posX, posY, settingsOptionValues[3], 1));
                 }
             }
         }
     }
 
-
-
-
-    public void initObjects() {
+    public void initObjects()
+    {
         Random random = new Random();
 
         // Select a random floor
@@ -485,8 +485,6 @@ public class Assignment2 extends GameEngine {
                 }
             }
         }
-
-
     }
 
     /**

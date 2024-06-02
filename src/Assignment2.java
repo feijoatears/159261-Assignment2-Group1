@@ -656,14 +656,29 @@ public class Assignment2 extends GameEngine {
         clearBackground(width(), height());
 
         Image congratsImage = loadImage("resources/Sprites/kick.png");
-
+        Image youEscaped = loadImage("resources/Sprites/youEscaped.png");
+        
         if (congratsImage != null) {
             drawImage(congratsImage, (double) width() / 2 - congratsImage.getWidth(null) / 2,
                     (double) height() / 2 - congratsImage.getHeight(null) / 2);
         }
 
+        if(youEscaped != null){
+            drawImage(youEscaped, 0, 0, width(), (double) height() / 5);
+        }
+
+        changeColor(Color.BLACK);
+        drawText((double) width() / 2 - 130-1, (double) height() - 10-1,
+                "Press Q to return to the main menu", "Cinzel", 14);
+        drawText((double) width() / 2 - 130+1, (double) height() - 10-1,
+                "Press Q to return to the main menu", "Cinzel", 14);
+        drawText((double) width() / 2 - 130-1, (double) height() - 10+1,
+                "Press Q to return to the main menu", "Cinzel", 14);
+        drawText((double) width() / 2 - 130+1, (double) height() - 10+1,
+                "Press Q to return to the main menu", "Cinzel", 14);
+        
         changeColor(Color.WHITE);
-        drawText((double) width() / 2 - 130, (double) height() / 2 + 10,
+        drawText((double) width() / 2 - 130, (double) height() - 10,
                 "Press Q to return to the main menu", "Cinzel", 14);
         gameWon = true;
 

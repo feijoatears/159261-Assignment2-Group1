@@ -53,8 +53,6 @@ public class Assignment2 extends GameEngine {
 
 
     private TimerPopUp timerPopUp;
-    private JSlider volumeSlider;
-    private boolean showVolumeSlider = false;
 
     private Font cinzel = null;
 
@@ -100,8 +98,7 @@ public class Assignment2 extends GameEngine {
         }
     }
 
-    public void initObjects()
-    {
+    public void initObjects() {
         Random random = new Random();
 
         // Select a random floor
@@ -112,9 +109,9 @@ public class Assignment2 extends GameEngine {
         int randomRoomIndex = random.nextInt(randomFloor.size());
         Level randomRoom = randomFloor.get(randomRoomIndex);
 
-        // Specific mid
-        int specificFloorIndex = 5;
-        int specificRoomIndex = 5;
+        // Dynamically set the specific mid to the center of the map
+        int specificFloorIndex = map.getMap().size() / 2;
+        int specificRoomIndex = map.getMap().get(specificFloorIndex).size() / 2;
 
         // Ensure the specific indices are within the map size bounds
         if (specificFloorIndex < map.getMap().size() && specificRoomIndex < map.getMap().get(specificFloorIndex).size()) {
@@ -129,9 +126,7 @@ public class Assignment2 extends GameEngine {
             boolean validPosition2 = false;
             int posX = 0, posY = 0;
 
-            /**
-             * This is for randomly generating the key and button, for button im making it always spawn in room 5, 5.
-             */
+            // Randomly generate the key and button positions
             while (!validPosition || !validPosition2) {
                 // Generate a random position
                 posX = random.nextInt(width() - 100) + 50;
@@ -182,7 +177,7 @@ public class Assignment2 extends GameEngine {
             // Check if a key already exists in the level
             if (randomRoom.getKeys().isEmpty()) {
                 // Create the key at the valid position
-                key = new Key(posX, posY);
+                Key key = new Key(posX, posY);
                 randomRoom.getKeys().add(key); // Add the key to the selected room only
 
                 // Debug statement for key position
@@ -194,13 +189,10 @@ public class Assignment2 extends GameEngine {
             // Initialize objects for the current level
             map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
         } else {
-            System.out.println("spike Specific floor or room index out of bounds.");
+            // Handle the case where specific indices are out of bounds
+            System.out.println("Specific floor or room index out of bounds. Skipping specific room object initialization.");
         }
     }
-
-
-
-
 
     /**
      * Initializes the game, loads images and sounds, and sets up the initial game state.

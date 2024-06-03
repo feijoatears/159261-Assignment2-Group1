@@ -39,24 +39,20 @@ public class Assignment2 extends GameEngine {
                     settings = false,
                     test1;
 
-    public static Player player = Player.getInstance();
+    private static final Player player = Player.getInstance();
+    private static final MazeMap map = MazeMap.getInstance();
+    private final VolumeControl volumeControl = VolumeControl.getInstance();
 
-    public VolumeControl volumeControl = VolumeControl.getInstance();
+    private final Button activeButton = null;
+    private final Set<Integer> keyPresses = new HashSet<>();
+    private Font cinzel = null;
+    private TimerPopUp timerPopUp;
 
-    Set<Integer> keyPresses = new HashSet<>();
 
     public Key key;
 
-    private Button activeButton = null;
-
-    static MazeMap map = MazeMap.getInstance();
-
-
-    private TimerPopUp timerPopUp;
-
-    private Font cinzel = null;
-
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         createGame(new Assignment2(), framerate);
 
     }
@@ -89,10 +85,27 @@ public class Assignment2 extends GameEngine {
                 if (random.nextBoolean())
                 {
                     // Randomly generate position within the room
-                    int posX = random.nextInt(windowWidth);
-                    int posY = random.nextInt(windowHeight);
 
-                    room.getEnemies().add(new Vampire(posX, posY, settingsOptionValues[3], 1));
+                    //if the enemy spawns inside an object, reset it and choose a new random position
+                    boolean validPos;
+                    do
+                    {
+                        validPos = true;
+                        Enemy e = new Vampire(random.nextInt(125,375), random.nextInt(125,375), settingsOptionValues[3], 1);
+
+                        for(InvisibleWall iWall : room.getInvisibleWalls())
+                        {
+                            if(e.getHitbox().intersects(iWall.getHitbox()))
+                            {
+                                validPos = false;
+                            }
+                        }
+                        if(validPos)
+                        {
+                            room.getEnemies().add(e);
+                        }
+                    } while(!validPos);
+
                 }
             }
         }
@@ -334,25 +347,6 @@ public class Assignment2 extends GameEngine {
         player.damage(currentLevel.getObstacles(), currentLevel.getEnemies());
         player.attackUpdate(dt);
     }
-
-    /* public boolean startQuizGame(MathButton mathButton) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println(mathButton.getQuizQuestion());
-        String answer = scanner.nextLine();
-        boolean isCorrect = mathButton.checkAnswer(answer);
-        if (isCorrect) {
-            System.out.println("Correct!");
-        } else {
-            System.out.println("Incorrect. The correct answer was: " + mathButton.getQuizAnswer());
-        }
-        return isCorrect;
-    }*/
-
-
-
-
-
-
 
     /**
      * Paints the game components on the screen.
@@ -623,10 +617,12 @@ public class Assignment2 extends GameEngine {
         drawText( 50, 70,"W (Up), A (Left), S (Down), D (Right), F (Attack)", "Cinzel" ,14);
         drawText(50, 170, "Game Objective:", "Cinzel" ,14);
         drawText(50, 190, "Navigate through the maze, collect the key,", "Cinzel" ,14);
-        drawText(50, 210, "Avoid enemies and obstacles, and reach the gold exit door.", "Cinzel" ,14);
+        drawText(50, 210, "Avoid enemies and obstacles.", "Cinzel" ,14);
+        drawText(50, 230, "Reach the gold exit door with the key to escape.", "Cinzel" ,14);
         drawText(50, 300, "Press Q to return to main menu", "Cinzel" ,14);
         drawText(50, 320, "Press V to toggle volume control", "Cinzel" ,14);
         drawText(50, 340, "Press T to toggle timer", "Cinzel" ,14);
+        drawText(50, 360, "Press M to toggle minimap", "Cinzel" ,14);
     }
     private void gameOver()
     {
@@ -651,8 +647,8 @@ public class Assignment2 extends GameEngine {
         Image youEscaped = loadImage("resources/Sprites/youEscaped.png");
         
         if (congratsImage != null) {
-            drawImage(congratsImage, (double) width() / 2 - congratsImage.getWidth(null) / 2,
-                    (double) height() / 2 - congratsImage.getHeight(null) / 2);
+            drawImage(congratsImage, (double) width() / 2 - (double) congratsImage.getWidth(null) / 2,
+                    (double) height() / 2 - (double) congratsImage.getHeight(null) / 2);
         }
 
         if(youEscaped != null){
@@ -717,7 +713,6 @@ public class Assignment2 extends GameEngine {
         resetInProgress = false; // Reset the flag once the reset is complete
     }
 
-
     public void reload() {
         // Reset game state variables
         keyCollected = false;
@@ -753,14 +748,14 @@ public class Assignment2 extends GameEngine {
 
     }
 
-    static private String[] settingsOptionStrings = new String[]
+    static private final String[] settingsOptionStrings = new String[]
             {
                 "Number of Lives: ",
                 "Number of Rooms: ",
                 "Player Speed",
                 "Enemy Speed",
             };
-    static private int[] settingsOptionValues = new int[]
+    static private final int[] settingsOptionValues = new int[]
             {
                     3,
                     100,
@@ -790,6 +785,9 @@ public class Assignment2 extends GameEngine {
                 drawText(300, (40 * i) + 100, String.valueOf(settingsOptionValues[i]), "Cinzel", 19);
             }
         }
+
+        drawText(15,height() - 50, "Use the arrow keys to navigate through each setting", "Cinzel", 12);
+        drawText(15,height() - 30, "Use the ENTER key to change the selected setting", "Cinzel", 12);
 
         drawText(15, height() - 10, "Press Q to return to the main menu", "Cinzel", 12);
     }

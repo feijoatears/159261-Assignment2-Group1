@@ -1,6 +1,5 @@
 package src.generalClasses;
 
-import src.Objects.Door;
 import src.Objects.InvisibleWall;
 
 import java.awt.*;
@@ -76,7 +75,7 @@ public class MazeMap {
 
     public void loadConfigs()
     {
-        String line = "";
+        String line;
 
         try {
             Scanner scanner = new Scanner(new File("resources/Levels/doors.settings"));
@@ -97,8 +96,9 @@ public class MazeMap {
             }
             configs.add(currentConfig);
             scanner.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e)
+        {
+            System.out.println("Couldn't load door configurations: " + e.getMessage());
         }
     }
 
@@ -135,7 +135,7 @@ public class MazeMap {
                 ArrayList<Level> floor = new ArrayList<>();
                 for (int y = 0; y < rooms; y++)
                 {
-                    Level current = null;
+                    Level current;
                     boolean validLevel;
 
                     // ensures doors link between rooms
@@ -234,7 +234,7 @@ public class MazeMap {
         //3D array
         ArrayList<ArrayList<ArrayList<Integer>>> rooms = new ArrayList<>();
         ArrayList<ArrayList<Integer>> roomCollisions = new ArrayList<>();
-        String line = null;
+        String line;
         try
         {
             Scanner scanner = new Scanner(new File("resources/Levels/collisions.settings"));
@@ -263,21 +263,20 @@ public class MazeMap {
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.println("Couldn't load room collision configurations: " + e.getMessage());
         }
 
         //4x nested loop this is terrible on performance im sorry
-        for(int i = 0; i < map.size(); i++)
-        {
-            for(int j = 0; j < map.get(i).size(); j++)
+        for (ArrayList<Level> levelArrayList : map) {
+            for (Level level : levelArrayList)
             {
-                for(int k = 0; k < rooms.size(); k++)
+                for (int k = 0; k < rooms.size(); k++)
                 {
-                    if(map.get(i).get(j).getHash() == Objects.hash(levels.get(k)))
+                    if (level.getHash() == Objects.hash(levels.get(k)))
                     {
                         for (int l = 0; l < rooms.get(k).size(); l++)
                         {
-                            map.get(i).get(j).addInvisibleWall
+                            level.addInvisibleWall
                             (
                                 new InvisibleWall
                                 (

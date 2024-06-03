@@ -13,13 +13,6 @@ public abstract class Object
     protected ArrayList<GameEngine.AudioClip> sounds;
     protected Rectangle hitbox;
 
-    public Object() { }
-
-    public Object(int posX, int posY)
-    {
-        this.posX = posX;
-        this.posY = posY;
-    };
     public Object(int posX, int posY, int width, int height)
     {
         this.posX = posX;
@@ -43,7 +36,7 @@ public abstract class Object
 
         this.width = image.getWidth(null);
         this.height = image.getHeight(null);
-    };
+    }
 
     public Image getImage()
     {
@@ -58,48 +51,13 @@ public abstract class Object
     {
         return posX;
     }
-    public void setPosX(int posX)
-    {
-        this.posX = posX;
-    }
-
     public int getPosY()
     {
         return posY;
     }
-    public void setPosY(int posY)
-    {
-        this.posY = posY;
-    }
 
-    public void setInteractable(boolean interactable)
-    {
-        isInteractable = interactable;
-    }
-    public boolean getIsInteractable()
-    {
-        return isInteractable;
-    }
-
-    public void setUsed(boolean used)
-    {
-        isUsed = used;
-    }
-    public boolean getIsUsed()
-    {
-        return isUsed;
-    }
-
-    public ArrayList<GameEngine.AudioClip> getSounds()
-    {
-        return sounds;
-    }
-
-    public void setHitbox(Rectangle hitbox)
-    {
-        this.hitbox = hitbox;
-    }
     public Rectangle getHitbox()
+
     {
         return hitbox;
     }
@@ -108,7 +66,6 @@ public abstract class Object
     {
         return width;
     }
-
     public int getHeight()
     {
         return height;

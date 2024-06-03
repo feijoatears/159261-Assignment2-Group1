@@ -1,18 +1,14 @@
 package src.Characters;
 
 import src.Direction;
-import src.GameEngine;
-import src.Objects.Button;
 import src.Objects.DamagingObject;
 import src.Objects.InvisibleWall;
 import src.Objects.Key;
 import src.generalClasses.MazeMap;
 import src.generalClasses.VolumeControl;
 
-
 import javax.sound.sampled.Clip;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,11 +40,10 @@ public class Player extends Character
     private boolean isMoving = false;
 
     // NATHANS SHIT ANIMATION FIX IF YOU HAVE TIME:
-    private Image[] attackFrames = new Image[4];
+    private final Image[] attackFrames = new Image[4];
     private int currentAttackFrame = 0;
     private boolean isAttacking = false;
     private long lastFrameTime = 0;
-    private long frameDuration = 100;
 
     private Player()
     {
@@ -138,9 +133,10 @@ public class Player extends Character
     }
 
     // In Player class
-    public void attackUpdate(double dt) {
+    public void attackUpdate() {
         if (isAttacking) {
             long currentTime = System.currentTimeMillis();
+            long frameDuration = 100;
             if (currentTime - lastFrameTime > frameDuration) {
                 currentAttackFrame++;
                 if (currentAttackFrame >= attackFrames.length) {
@@ -173,11 +169,6 @@ public class Player extends Character
         return hasKey;
     }
 
-    // Method to set a key as collected
-    public void collectKey()
-    {
-        hasKey = true;
-    }
     public void discardKey()
     {
         hasKey = false;
@@ -191,8 +182,7 @@ public class Player extends Character
     {
         isMoving = moving;
     }
-
-
+    
     //life functions
     public Image getHeartImage()
     {
@@ -205,10 +195,6 @@ public class Player extends Character
     public int getLives()
     {
         return lives;
-    }
-    public void gainLife()
-    {
-        lives += 1;
     }
 
     public synchronized void bounceBack(Direction direction, int steps) {
@@ -296,24 +282,6 @@ public class Player extends Character
                 }
             }, 500); // Delay of 500 milliseconds
             return true;
-        }
-        return false;
-    }
-
-    public boolean handleButtonCollision(ArrayList<Button> buttons) {
-        for (Button b : buttons) {
-            if (checkCollision(b.getHitbox())) {
-                if (!b.getIsUsed()) {
-                    b.activate();
-                    GameEngine.playAudio(b.getOnSound());
-                    return true;
-                }
-            } else {
-                if (b.getIsUsed()) {
-                    b.deactivate();
-                    GameEngine.playAudio(b.getOffSound());
-                }
-            }
         }
         return false;
     }

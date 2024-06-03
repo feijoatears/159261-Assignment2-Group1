@@ -1,24 +1,18 @@
 package src.Characters;
 
 import src.Direction;
-import src.GameEngine;
-import src.Objects.InvisibleWall;
 import src.generalClasses.Level;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 import static src.GameEngine.loadImage;
 
 public abstract class Character {
-    protected int posX, posY, width, height, speed = 5;
+    protected int posX, posY, width, height, speed;
     protected Direction direction;
-    protected Image spriteSheet, image;
-    protected Image[] frames = new Image[]{};
+    protected Image image;
+    protected Image[] frames;
     protected Rectangle hitbox;
-
-    // empty constructor
-    public Character() {}
 
     public Character(int posX, int posY, int speed, String frameString, int numFrames) {
         this.posX = posX;
@@ -36,16 +30,6 @@ public abstract class Character {
         this.width = image.getWidth(null);
         this.height = image.getHeight(null);
         this.hitbox = new Rectangle(posX, posY, width, height); // Smaller hitbox
-    }
-
-    private Image subImage(Image source, int x, int y, int w, int h) {
-        if (source == null) {
-            System.out.println("Error: cannot extract a subImage from a null image.\n");
-            return null;
-        }
-
-        BufferedImage buffered = (BufferedImage) source;
-        return buffered.getSubimage(x, y, w, h);
     }
 
     // Getters and setters for posX
@@ -95,16 +79,10 @@ public abstract class Character {
         return image;
     }
 
-    public int getSpeed() {
-        return speed;
-    }
     public void setSpeed(int speed) {
         this.speed = speed;
     }
 
-    public void setHitbox(Rectangle hitbox) {
-        this.hitbox = hitbox;
-    }
     public Rectangle getHitbox() {
         return hitbox;
     }

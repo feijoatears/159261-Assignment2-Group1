@@ -11,7 +11,7 @@ public class MathButton extends Button {
     private boolean quizActive = false;
     private String quizQuestion = "";
     private String quizAnswer = "";
-    private Random random = new Random();
+    private final Random random = new Random();
     private boolean isAnswered = false;
 
     public MathButton(int posX, int posY, ArrayList<AudioClip> sounds) {

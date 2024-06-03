@@ -25,9 +25,6 @@ public class Button extends Object
     private int[] finalRows = new int[3];
     private int[] selectedColumns = {1, 1, 1};
 
-
-
-
     public Button(int posX, int posY, ArrayList<AudioClip> sounds)
     {
         super(posX, posY, sounds);
@@ -38,8 +35,6 @@ public class Button extends Object
         this.image = images.getFirst();
 
         this.hitbox = new Rectangle(posX, posY, image.getHeight(null), image.getHeight(null));
-
-
     }
 
     public Image getCurrentImage()
@@ -67,9 +62,6 @@ public class Button extends Object
     {
         return sounds.get(1);
     }
-
-    // slots stuff
-
 
     public void showPopup(Graphics2D g, int width, int height) {
         if (!slotMachineActive) return;

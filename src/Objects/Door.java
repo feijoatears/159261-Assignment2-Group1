@@ -1,9 +1,5 @@
 package src.Objects;
 
-import java.awt.*;
-
-import static src.GameEngine.loadImage;
-
 public class Door extends Object
 {
     private boolean isFinalDoor = false;

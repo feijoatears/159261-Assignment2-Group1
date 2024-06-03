@@ -1,30 +1,22 @@
 package src.Characters;
 import src.Objects.*;
-import src.Characters.*;
 import src.generalClasses.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-
 
 
 public abstract class Enemy extends Character
 {
-    private int currentFrameIndex = 0,
-                damage = 0;
+    private int currentFrameIndex = 0;
 
     private final int[] eastFrames = {0, 1},
                         southFrames = {2, 3},
                         westFrames = {6, 7},
                         northFrames = {4, 5};
 
-    public Enemy(int posX, int posY, int speed, int damage, String frameString)
+    public Enemy(int posX, int posY, int speed, String frameString)
     {
         super(posX, posY, speed, frameString, 8);
-        this.damage = damage;
-    };
-
-    public void setDamage(int damage) { this.damage = damage; }
-    public int getDamage() { return damage; }
+    }
 
     public void chasePlayer(Player player, Level level) {
         int targetX = player.getPosX();

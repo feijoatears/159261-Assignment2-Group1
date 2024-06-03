@@ -1,7 +1,5 @@
 package src.Objects;
 
-import src.Characters.Player;
-
 import java.awt.*;
 
 public class DamagingObject extends Object

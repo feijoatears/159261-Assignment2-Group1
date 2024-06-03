@@ -1,6 +1,7 @@
 package src.Objects;
 
 import java.awt.*;
+import java.util.Objects;
 
 import static src.GameEngine.loadImage;
 
@@ -9,7 +10,7 @@ public class Key extends Object {
     private boolean isUsed;
 
     public Key(int posX, int posY) {
-        super(posX, posY, loadImage("resources/Objects/newKey.png"));
+        super(posX, posY, Objects.requireNonNull(loadImage("resources/Objects/newKey.png")));
         this.isInteractable = true;
         this.isUsed = false;
     }

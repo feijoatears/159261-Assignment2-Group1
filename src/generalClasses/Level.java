@@ -7,7 +7,6 @@ import java.util.Objects;
 import src.Characters.Enemy;
 import src.Objects.*;
 import src.Objects.Button;
-import src.Objects.Object;
 
 import static src.GameEngine.loadImage;
 
@@ -16,9 +15,9 @@ public class Level {
     private ArrayList<Key> keys = new ArrayList<>();
     private ArrayList<Button> buttons = new ArrayList<>();
     private ArrayList<DamagingObject> obstacles = new ArrayList<>();
-    private ArrayList<Door> doors = new ArrayList<>();
+    private final ArrayList<Door> doors = new ArrayList<>();
     private final ArrayList<InvisibleWall> invisibleWalls = new ArrayList<>();  // Properly declare the invisible walls list
-    private String name;
+    private final String name;
     private Door topDoor = null,
             bottomDoor = null,
             leftDoor = null,
@@ -55,13 +54,20 @@ public class Level {
             }
         }
     }
-    //DO NOT REMOVE THIS - stops levels from being referenced in memory
-    //stops doors being shared
+    //create deep copy of parent level constructor
     public Level(Level l)
     {
+        /*
+            had an issue with rooms, despite independent entities, referencing their parent level in memory
+            hence changing one thing about the room changed every iteration of that room: setting the escape
+            door in one level set all instances of that level to have the same escape door even if they weren't
+            compatible with the level design
+         */
         this.hash = Objects.hash(l);
+
+
         this.image = l.image;
-        // Create new instances for mutable objects
+
         this.topDoor = l.topDoor != null ? new Door((500 / 2) - 20, 10, 55, 30) : null;
         this.bottomDoor = l.bottomDoor != null ? new Door((500 / 2) - 20, 500 - 42, 50, 30) : null;
         this.rightDoor = l.rightDoor != null ? new Door(500 - 42, 500 / 2 - 20, 30, 50) : null;
@@ -128,18 +134,6 @@ public class Level {
         return keys;
     }
 
-    public void addKey(Key key) {
-        keys.add(key);
-    }
-
-    public void removeKey(Key key) {
-        keys.remove(key);
-    }
-
-    public ArrayList<Button> getButtons() {
-        return buttons;
-    }
-
     public ArrayList<DamagingObject> getObstacles() {
         return obstacles;
     }
@@ -160,40 +154,24 @@ public class Level {
         return leftDoor;
     }
 
-    public void setLeftDoor(Door leftDoor) {
-        this.leftDoor = leftDoor;
-    }
 
     public Door getRightDoor() {
         return rightDoor;
     }
 
-    public void setRightDoor(Door rightDoor) {
-        this.rightDoor = rightDoor;
-    }
 
     public Door getTopDoor() {
         return topDoor;
     }
 
-    public void setTopDoor(Door topDoor) {
-        this.topDoor = topDoor;
-    }
 
     public Door getBottomDoor() {
         return bottomDoor;
     }
 
-    public void setBottomDoor(Door bottomDoor) {
-        this.bottomDoor = bottomDoor;
-    }
 
     public Level(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public int getHash()
@@ -225,29 +203,6 @@ public class Level {
         }
     }
 
-    public void removeFinalDoor(String doorType)
-    {
-        if ("up".equals(doorType) && this.getTopDoor() != null && this.getTopDoor().getIsFinalDoor())
-        {
-            this.getTopDoor().setImage(loadImage("resources/Objects/DoorTop.png"));
-            this.getTopDoor().setIsFinalDoor(false);
-        }
-        if ("down".equals(doorType) && this.getBottomDoor() != null && this.getBottomDoor().getIsFinalDoor())
-        {
-            this.getBottomDoor().setImage(loadImage("resources/Objects/DoorBottom.png"));
-            this.getBottomDoor().setIsFinalDoor(false);
-        }
-        if ("left".equals(doorType) && this.getLeftDoor() != null && this.getLeftDoor().getIsFinalDoor())
-        {
-            this.getLeftDoor().setImage(loadImage("resources/Objects/DoorLeft.png"));
-            this.getLeftDoor().setIsFinalDoor(false);
-        }
-        if ("right".equals(doorType) && this.getRightDoor() != null && this.getRightDoor().getIsFinalDoor())
-        {
-            this.getRightDoor().setImage(loadImage("resources/Objects/DoorRight.png"));
-            this.getRightDoor().setIsFinalDoor(false);
-        }
-    }
 
     // Generate a hash for the room based on its properties
     public int generateRoomHash()

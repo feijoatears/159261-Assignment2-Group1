@@ -11,8 +11,7 @@ package src;
 
 import src.Characters.*;
 import src.Objects.*;
-import src.Objects.Button;
-import src.Objects.MathButton;
+
 import src.generalClasses.*;
 import src.generalClasses.VolumeControl;
 import src.Characters.Player;
@@ -32,7 +31,6 @@ public class Assignment2 extends GameEngine {
                     collisionHandled = false,
                     inStartMenu = true,
                     showMap = true,
-                    showButtonPopup = false,
                     gameOver = false,
                     gameWon = false,
                     showHelpScreen = false,
@@ -43,13 +41,9 @@ public class Assignment2 extends GameEngine {
     private static final MazeMap map = MazeMap.getInstance();
     private final VolumeControl volumeControl = VolumeControl.getInstance();
 
-    private final Button activeButton = null;
     private final Set<Integer> keyPresses = new HashSet<>();
     private Font cinzel = null;
     private TimerPopUp timerPopUp;
-
-
-    public Key key;
 
     public static void main(String[] args)
     {
@@ -70,9 +64,6 @@ public class Assignment2 extends GameEngine {
     public void initEnemies()
     {
         Random random = new Random();
-
-        int windowWidth = width(); // Assuming width() gives the width of the game window
-        int windowHeight = height(); // Assuming height() gives the height of the game window
 
         for (ArrayList<Level> floor : map.getMap())
         {
@@ -130,10 +121,6 @@ public class Assignment2 extends GameEngine {
         if (specificFloorIndex < map.getMap().size() && specificRoomIndex < map.getMap().get(specificFloorIndex).size()) {
             Level specificRoom = map.getMap().get(specificFloorIndex).get(specificRoomIndex);
 
-            specificRoom.getButtons().add(new Button(300, 300, new ArrayList<>() {{
-                add(loadAudio("resources/Sounds/buttonOn.wav"));
-                add(loadAudio("resources/Sounds/buttonOff.wav"));
-            }}));
 
             boolean validPosition = false;
             boolean validPosition2 = false;
@@ -158,31 +145,11 @@ public class Assignment2 extends GameEngine {
                     }
                 }
 
-                // Check collision with obstacles in the random room
-                if (validPosition) {
-                    for (DamagingObject obstacle : randomRoom.getObstacles()) {
-                        if (obstacle.getHitbox().intersects(keyHitbox)) {
-                            validPosition = false;
-                            break;
-                        }
-                    }
-                }
-
                 // Check collision with invisible walls in the specific room
                 for (InvisibleWall wall : specificRoom.getInvisibleWalls()) {
                     if (wall.getHitbox().intersects(keyHitbox)) {
                         validPosition2 = false;
                         break;
-                    }
-                }
-
-                // Check collision with obstacles in the specific room
-                if (validPosition2) {
-                    for (DamagingObject obstacle : specificRoom.getObstacles()) {
-                        if (obstacle.getHitbox().intersects(keyHitbox)) {
-                            validPosition2 = false;
-                            break;
-                        }
                     }
                 }
             }
@@ -198,10 +165,9 @@ public class Assignment2 extends GameEngine {
             }
 
             System.out.println("Random floor index: " + randomFloorIndex + ", Random room index: " + randomRoomIndex); // For testing, delete later
-
-            // Initialize objects for the current level
-            map.getCurrentLevel().getObstacles().add(new DamagingObject(loadImage("resources/Objects/spikes.png"), 400, 100, 50, 50));
-        } else {
+        }
+        else
+        {
             // Handle the case where specific indices are out of bounds
             System.out.println("Specific floor or room index out of bounds. Skipping specific room object initialization.");
         }
@@ -314,7 +280,6 @@ public class Assignment2 extends GameEngine {
 
         if (player.isMoving()) {
             player.move();
-            showButtonPopup = player.handleButtonCollision(currentLevel.getButtons());
 
             // Check key collision only in the current room
             Iterator<Key> keyIterator = currentLevel.getKeys().iterator();
@@ -345,7 +310,7 @@ public class Assignment2 extends GameEngine {
         handleDoorCollision();
         player.handleWallCollision(currentLevel); // Pass the current level here
         player.damage(currentLevel.getObstacles(), currentLevel.getEnemies());
-        player.attackUpdate(dt);
+        player.attackUpdate();
     }
 
     /**
@@ -377,7 +342,6 @@ public class Assignment2 extends GameEngine {
         if(settings)
         {
             displaySettings();
-            return;
         }
         else
         {
@@ -482,11 +446,9 @@ public class Assignment2 extends GameEngine {
         for (int i = 0; i < map.getMap().size(); i++)
         {
             changeColor(new Color(1, 1, 1, 0.5f));
-            ArrayList<Level> floor = map.getMap().get(i);
 
             for (int j = 0; j < map.getMap().get(i).size(); j++)
             {
-                Level room = map.getMap().get(i).get(j);
                 if(i == map.getCurrentFloorNum() && j == map.getCurrentRoomNum())
                 {
                     changeColor(red);
@@ -498,30 +460,6 @@ public class Assignment2 extends GameEngine {
     }
     public void drawMapObjects(Level currentLevel)
     {
-        for (Button b : currentLevel.getButtons())
-        {
-            Image buttonImage = b.getCurrentImage();
-            if (buttonImage == null)
-            {
-                System.err.println("Error: button image is null");
-            }
-            else
-            {
-                drawImage(buttonImage, b.getPosX(), b.getPosY());
-            }
-        }
-        for (DamagingObject o : currentLevel.getObstacles())
-        {
-            Image obstacleImage = o.getImage();
-            if (obstacleImage == null)
-            {
-                System.err.println("Error: obstacle image is null");
-            }
-            else
-            {
-                drawImage(obstacleImage, o.getPosX(), o.getPosY(), 50, 50);
-            }
-        }
         for (int i = 0; i < player.getLives(); i++)
         {
             Image heartImage = player.getHeartImage();
@@ -581,16 +519,6 @@ public class Assignment2 extends GameEngine {
 
 
     /**
-     * Updates the score.
-     *
-     * @param points The points to add to the score.
-     */
-//    public void updateScore(int points) {
-//        score += points;
-//        System.out.println("Score: " + score);
-//    }
-
-    /**
      * Displays the start menu.
      */
     public void displayStartMenu()
@@ -623,6 +551,8 @@ public class Assignment2 extends GameEngine {
         drawText(50, 320, "Press V to toggle volume control", "Cinzel" ,14);
         drawText(50, 340, "Press T to toggle timer", "Cinzel" ,14);
         drawText(50, 360, "Press M to toggle minimap", "Cinzel" ,14);
+
+        drawText(50, 450, "Press ESC at any time to exit the game", "Cinzel" ,14);
     }
     private void gameOver()
     {
@@ -687,7 +617,6 @@ public class Assignment2 extends GameEngine {
         collisionHandled = false;
         inStartMenu = true;
         showMap = true;
-        showButtonPopup = false;
         gameOver = false;
         gameWon = false;
         showHelpScreen = false;
@@ -719,7 +648,6 @@ public class Assignment2 extends GameEngine {
         collisionHandled = false;
         inStartMenu = false;
         showMap = true;
-        showButtonPopup = false;
         gameOver = false;
         gameWon = false;
         showHelpScreen = false;
@@ -800,6 +728,10 @@ public class Assignment2 extends GameEngine {
     public void keyPressed(KeyEvent event)
     {
         int keycode = event.getKeyCode();
+        if(keycode == KeyEvent.VK_ESCAPE)
+        {
+            System.exit(0);
+        }
         if(keycode == KeyEvent.VK_R)
         {
             reload();
@@ -920,23 +852,6 @@ public class Assignment2 extends GameEngine {
         }
 
         // ========================================================
-        // GAMBLE TIME
-        // ========================================================
-        if (event.getKeyCode() == KeyEvent.VK_X && showButtonPopup && activeButton != null) {
-            activeButton.rollSlotMachine();
-            mFrame.repaint();
-        }
-        // rig slot machine
-        if (event.getKeyCode() == KeyEvent.VK_R && showButtonPopup && activeButton != null) {
-            activeButton.rigSlotMachine();
-            mFrame.repaint();
-        }
-
-        // Handle attack key
-
-
-
-        // ========================================================
 
         //max of 2 key presses allowed
         if (keyPresses.size() >= 2)
@@ -968,17 +883,9 @@ public class Assignment2 extends GameEngine {
         player.setDirection(lastDirection);
     }
 
-
-
-    /*
-     * TODO:
-     * Menu/Player Options
-     */
-
     /**
      * Handles key release events to stop player movement.
      */
-
     public void keyReleased(KeyEvent event)
     {
         keyPresses.remove(event.getKeyCode());
@@ -1038,10 +945,8 @@ public class Assignment2 extends GameEngine {
         {
             d = Direction.East;
         }
-
         return d;
     }
-
 
     public void showTests(Level currentLevel) {
         changeColor(red);
@@ -1072,9 +977,6 @@ public class Assignment2 extends GameEngine {
         drawSolidRectangle(width() - 10, 0, 10, height());
         mGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
-
-
-
 
     private boolean isTimerWindowOpen = false;
     public class TimerPopUp {
@@ -1137,7 +1039,7 @@ public class Assignment2 extends GameEngine {
     private VolumeSliderPopUp volumeSliderPopUp;
 
 
-    public class VolumeSliderPopUp {
+    public static class VolumeSliderPopUp {
         private JFrame frame;
         private JSlider volumeSlider;
 
@@ -1169,15 +1071,9 @@ public class Assignment2 extends GameEngine {
             frame.setVisible(true);
         }
 
-
-
         public void dispose() {
             frame.dispose();
             Assignment2.isVolumeSliderWindowOpen = false; // Reset flag when disposing
         }
     }
-
-
-
-
 }

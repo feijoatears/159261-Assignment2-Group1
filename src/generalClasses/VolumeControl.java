@@ -4,8 +4,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.FloatControl;
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 
 public class VolumeControl {
@@ -99,7 +97,7 @@ public class VolumeControl {
             clip.open(audioInputStream);
             return clip;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Couldn't load sound: " + e.getMessage());
             return null;
         }
     }
@@ -122,10 +120,6 @@ public class VolumeControl {
 
     public Clip getBackgroundMusic() {
         return backgroundMusic;
-    }
-
-    public void setBackgroundMusic() {
-        instance = null;
     }
 
     public void reset() {
